@@ -24,7 +24,7 @@ Add the Facade to the aliases array in `config/app.php`:
 ```
 
 ## Configuration
-Add your OpenVidu API key to your `config/services.php` file:
+Add your OpenVidu Server configuration values to your `config/services.php` file:
 ```php
 return [   
     ...
