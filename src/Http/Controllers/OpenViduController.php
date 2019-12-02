@@ -38,7 +38,6 @@ class OpenViduController extends Controller
     }
 
     /**
-
      * @return string
      */
     public function sessions()
@@ -46,6 +45,77 @@ class OpenViduController extends Controller
         $sessions = OpenVidu::getActiveSessions();
         return response()->json(['sessions' => $sessions], 200);
     }
+
+    /**
+     * @param string $sessionId
+     * @return string
+     */
+    public function connections(string $sessionId)
+    {
+        $session = $session = OpenVidu::getSession($sessionId);
+        $connections = $session->getActiveConnections();
+        return response()->json(['connections' => $connections], 200);
+    }
+
+    /**
+     * @param string $sessionId
+     * @return string
+     */
+    public function close(string $sessionId)
+    {
+        $session = OpenVidu::getSession($sessionId);
+        $closed = $session->close();
+        return response()->json(['closed' => $closed], 200);
+    }
+
+
+    /**
+     * @param string $sessionId
+     * @return string
+     */
+    public function fetch(string $sessionId)
+    {
+        $session = OpenVidu::getSession($sessionId);
+        $hasChanges = $session->fetch();
+        return response()->json(['session' => $session, 'hasChanges' => $hasChanges], 200);
+    }
+
+
+    /**
+     * @param string $sessionId
+     * @return string
+     */
+    public function isBeingRecording(string $sessionId)
+    {
+        $session = OpenVidu::getSession($sessionId);
+        $isBeingRecording = $session->isBeingRecording();
+        return response()->json(['isBeingRecording' => $isBeingRecording], 200);
+    }
+
+    /**
+     * @param string $sessionId
+     * @param string $streamId
+     * @return string
+     */
+    public function forceUnpublish(string $sessionId, string $streamId)
+    {
+        $session = OpenVidu::getSession($sessionId);
+        $unpublished = $session->forceUnpublish($streamId);
+        return response()->json(['unpublished' => $unpublished], 200);
+    }
+
+    /**
+     * @param string $sessionId
+     * @param string $connectionId
+     * @return string
+     */
+    public function forceDisconnect(string $sessionId, string $connectionId)
+    {
+        $session = OpenVidu::getSession($sessionId);
+        $disconnect = $session->forceDisconnect($connectionId);
+        return response()->json(['disconnected' => $disconnect], 200);
+    }
+
 
     /**
      * @param StartRecordingRequest $request

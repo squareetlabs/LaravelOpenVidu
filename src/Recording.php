@@ -2,12 +2,11 @@
 
 namespace SquareetLabs\LaravelOpenVidu;
 
-use GuzzleHttp\Exception\GuzzleException;
 use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
-use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionCantCreateException;
+use SquareetLabs\LaravelOpenVidu\Enums\RecordingStatus;
 
 /**
  * Class Recording
@@ -26,13 +25,17 @@ class Recording
     private $createdAt;
 
     /** @var int */
-    private $size;
+    private $size = 0;
 
     /** @var float */
     private $duration;
 
     /** @var string */
     private $url;
+
+    /** @var RecordingStatus */
+    private $status;
+
 
     /** @var RecordingProperties */
     private $recordingProperties;
@@ -68,6 +71,7 @@ class Recording
     }
 
     /**
+     * Session associated to the recording
      * @return string
      */
     public function getSessionId(): string
@@ -76,6 +80,7 @@ class Recording
     }
 
     /**
+     * Time when the recording started in UTC milliseconds
      * @return int
      */
     public function getCreatedAt(): int
@@ -84,6 +89,7 @@ class Recording
     }
 
     /**
+     * Size of the recording in bytes (0 until the recording is stopped)
      * @return int
      */
     public function getSize(): int
@@ -92,6 +98,7 @@ class Recording
     }
 
     /**
+     * Duration of the recording in seconds (0 until the recording is stopped)
      * @return float
      */
     public function getDuration(): float
@@ -100,7 +107,12 @@ class Recording
     }
 
     /**
-     * @return string
+     * URL of the recording. You can access the file from there. It is
+     * <code>null</code> until recording reaches "ready" or "failed" status. If
+     * <a href="https://openvidu.io/docs/reference-docs/openvidu-server-params/"
+     * target="_blank">OpenVidu Server configuration</a> property
+     * <code>openvidu.recording.public-access</code> is false, this path will be
+     * secured with OpenVidu credentials
      */
     public function getUrl(): string
     {
@@ -108,6 +120,17 @@ class Recording
     }
 
     /**
+     * Status of the recording
+     * @return RecordingStatus
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+
+    /**
+     * Technical properties of the recorded file
      * @return RecordingProperties
      */
     public function getRecordingProperties(): RecordingProperties
@@ -117,7 +140,7 @@ class Recording
 
     /**
      * Resolution of the video file. Only defined if OutputMode of the Recording is
-     * set to {@link io.openvidu.java.client.Recording.OutputMode#COMPOSED}
+     * set to {@see OutputMode::COMPOSED}
      */
     public function getResolution(): string
     {
@@ -144,8 +167,6 @@ class Recording
 
     /**
      * @return string
-     * @throws OpenViduSessionCantCreateException
-     * @throws GuzzleException
      */
     public function __toString(): string
     {
@@ -153,12 +174,12 @@ class Recording
     }
 
     /**
+     * Recording unique identifier
      * @return string
      */
     public function getId(): string
     {
         return $this->id;
     }
-
 
 }

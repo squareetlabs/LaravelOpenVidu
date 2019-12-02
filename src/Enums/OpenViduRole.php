@@ -4,7 +4,7 @@ namespace SquareetLabs\LaravelOpenVidu\Enums;
 
 /**
  * Class OpenViduRole
- * @package SquareetLabs\LaravelOpenVidu
+ * @package SquareetLabs\LaravelOpenVidu\Enums
  */
 class OpenViduRole
 {

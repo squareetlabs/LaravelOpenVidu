@@ -2,6 +2,7 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Enums;
 
+
 /**
  * Class MediaMode
  * @package SquareetLabs\LaravelOpenVidu\Enums

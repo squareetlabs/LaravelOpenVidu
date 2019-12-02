@@ -48,11 +48,11 @@ class RecordingProperties implements JsonSerializable
         $this->name = $name;
         $this->outputMode = $outputMode;
         if ($this->outputMode === OutputMode::COMPOSED && $this->hasVideo) {
-            $this->resolution = $resolution;
-            $this->recordingLayout = $recordingLayout ? $recordingLayout : '';
+            $this->resolution = $resolution ? $resolution : '1920x1080';
+            $this->recordingLayout = $recordingLayout ? $recordingLayout : RecordingLayout::BEST_FIT;
 
             if ($this->recordingLayout === RecordingLayout::CUSTOM) {
-                $this->customLayout = $customLayout ? $customLayout : '';
+                $this->customLayout = $customLayout;
             }
         }
     }
@@ -71,12 +71,12 @@ class RecordingProperties implements JsonSerializable
     }
 
     /**
-     * Defines the mode of recording: {@link Recording.OutputMode#COMPOSED} for a
-     * single archive in a grid layout or {@link Recording.OutputMode#INDIVIDUAL}
+     * Defines the mode of recording: {@see OutputMode::COMPOSED} for a
+     * single archive in a grid layout or {@@see OutputMode::INDIVIDUAL}
      * for one archive for each stream.<br>
      * <br>
      *
-     * Default to {@link Recording.OutputMode#COMPOSED}
+     * Default to {@see OutputMode::COMPOSED}
      *
      * @return OutputMode|string
      */
@@ -87,12 +87,10 @@ class RecordingProperties implements JsonSerializable
 
     /**
      * Defines the layout to be used in the recording.<br>
-     * Will only have effect if
-     * {@link io.openvidu.java.client.RecordingProperties.Builder#outputMode(Recording.OutputMode)}
-     * has been called with value {@link Recording.OutputMode#COMPOSED}.<br>
+     * Will only have effect if has been cealled with value {@see OutputMode::COMPOSED}.<br>
      * <br>
      *
-     * Default to {@link RecordingLayout#BEST_FIT}
+     * Default to {@see RecordingLayout#BEST_FIT}
      *
      * @return RecordingLayout|string
      */
@@ -102,12 +100,10 @@ class RecordingProperties implements JsonSerializable
     }
 
     /**
-     * If {@link io.openvidu.java.client.RecordingProperties#recordingLayout()} is
-     * set to {@link io.openvidu.java.client.RecordingLayout#CUSTOM}, this property
+     * If {@see RecordingProperties::$recordingLayout} is
+     * set to {@see RecordingLayout::CUSTOM}, this property
      * defines the relative path to the specific custom layout you want to use.<br>
-     * See <a href=
-     * "https://openvidu.io/docs/advanced-features/recording#custom-recording-layouts"
-     * target="_blank">Custom recording layouts</a> to learn more
+     * See <a href="https://openvidu.io/docs/advanced-features/recording#custom-recording-layouts" target="_blank">Custom recording layouts</a> to learn more
      *
      * @return string|null
      */
@@ -118,11 +114,9 @@ class RecordingProperties implements JsonSerializable
 
     /**
      * Defines the resolution of the recorded video.<br>
-     * Will only have effect if
-     * {@link io.openvidu.java.client.RecordingProperties.Builder#outputMode(Recording.OutputMode)}
-     * has been called with value
-     * {@link  SquareetLabs\LaravelOpenVidu\Enums\OutputMode#COMPOSED}. For
-     * {@link  SquareetLabs\LaravelOpenVidu\Enums\OutputMode#INDIVIDUAL} all
+     * Will only have effect if has been called with value
+     * {@see  outputMode::COMPOSED}. For
+     * {@see  OutputMode::INDIVIDUAL} all
      * individual video files will have the native resolution of the published
      * stream.<br>
      * <br>
@@ -137,7 +131,7 @@ class RecordingProperties implements JsonSerializable
 
     /**
      * Defines whether to record audio or not. Cannot be set to false at the same
-     * time as {@link hasVideo()}.<br>
+     * time as {@see hasVideo()}.<br>
      * <br>
      *
      * Default to true
@@ -151,7 +145,7 @@ class RecordingProperties implements JsonSerializable
 
     /**
      * Defines whether to record video or not. Cannot be set to false at the same
-     * time as {@link hasAudio()}.<br>
+     * time as {@see hasAudio()}.<br>
      * <br>
      *
      * Default to true

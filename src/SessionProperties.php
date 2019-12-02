@@ -4,7 +4,9 @@ namespace SquareetLabs\LaravelOpenVidu;
 
 use InvalidArgumentException;
 use JsonSerializable;
+use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
+use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
 
 /**
  * Class SessionProperties
@@ -14,14 +16,23 @@ class SessionProperties implements JsonSerializable
 {
     /** @var  string */
     private $mediaMode;
-    /** @var  string */
+
+    /** @var  string
+     * {@see RecordingMode}
+     */
     private $recordingMode;
-    /** @var  string */
+    /** @var  string
+     * {@see OutputMode}
+     */
     private $defaultOutputMode;
-    /** @var  string */
+    /** @var  string
+     * {@see RecordingLayout}
+     */
     private $defaultRecordingLayout;
+
     /** @var  string */
     private $defaultCustomLayout;
+
     /** @var  string */
     private $customSessionId;
 
@@ -35,7 +46,7 @@ class SessionProperties implements JsonSerializable
      * @param string $defaultCustomLayout
      * @param string $customSessionId
      */
-    public function __construct(string $mediaMode, string $recordingMode, string $defaultOutputMode, string $defaultRecordingLayout, ?string $customSessionId = null, ?string $defaultCustomLayout = null)
+    public function __construct(string $mediaMode, string $recordingMode, string $defaultOutputMode, ?string $defaultRecordingLayout, ?string $customSessionId = null, ?string $defaultCustomLayout = null)
     {
         if ($defaultRecordingLayout == RecordingLayout::CUSTOM && empty($defaultCustomLayout)) {
             throw new InvalidArgumentException("If you pass the value \"CUSTOM\" for the parameter \"$defaultRecordingLayout\" you must indicate a value for the parameter \"$defaultCustomLayout\".");
@@ -48,13 +59,52 @@ class SessionProperties implements JsonSerializable
         $this->customSessionId = $customSessionId;
     }
 
-
     /**
      * @return string
      */
     public function getCustomSessionId(): string
     {
         return $this->customSessionId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMediaMode(): string
+    {
+        return $this->mediaMode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRecordingMode(): string
+    {
+        return $this->recordingMode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultOutputMode(): string
+    {
+        return $this->defaultOutputMode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultRecordingLayout(): string
+    {
+        return $this->defaultRecordingLayout;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultCustomLayout(): string
+    {
+        return $this->defaultCustomLayout;
     }
 
     /**

@@ -2,9 +2,12 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Enums;
 
+use SquareetLabs\LaravelOpenVidu\SessionProperties;
+
 /**
  * Class RecordingLayout
- * @package SquareetLabs\LaravelOpenVidu
+ * @package SquareetLabs\LaravelOpenVidu\Enums
+ * {@see SessionProperties::$defaultRecordingLayout} and {@see RecordingProperties::$recordingLayout}
  */
 class RecordingLayout
 {
@@ -19,4 +22,19 @@ class RecordingLayout
      * https://openvidu.io/docs/advanced-features/recording#custom-recording-layouts
      */
     public const CUSTOM = 'CUSTOM';
+
+    /**
+     * _(not available yet)_
+     */
+    public const PICTURE_IN_PICTURE = 'PICTURE_IN_PICTURE';
+
+    /**
+     * _(not available yet)_
+     */
+    public const VERTICAL_PRESENTATION = 'VERTICAL_PRESENTATION';
+
+    /**
+     * _(not available yet)_
+     */
+    public const HORIZONTAL_PRESENTATION = 'VERTICAL_PRESENTATION';
 }

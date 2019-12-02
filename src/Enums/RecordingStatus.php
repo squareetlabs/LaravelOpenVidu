@@ -2,9 +2,12 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Enums;
 
+use SquareetLabs\LaravelOpenVidu\Recording;
+
 /**
  * Class RecordingStatus
- * @package SquareetLabs\LaravelOpenVidu
+ * @package SquareetLabs\LaravelOpenVidu\Enums
+ * {@see Recording::$status}
  */
 class RecordingStatus
 {

@@ -4,7 +4,7 @@ namespace SquareetLabs\LaravelOpenVidu\Enums;
 
 /**
  * Class OutputMode
- * @package SquareetLabs\LaravelOpenVidu
+ * @package SquareetLabs\LaravelOpenVidu\Enums
  */
 class OutputMode
 {

@@ -8,9 +8,16 @@ use SquareetLabs\LaravelOpenVidu\Builders\RecordingBuilder;
 use SquareetLabs\LaravelOpenVidu\Enums\Uri;
 use SquareetLabs\LaravelOpenVidu\Events\SessionDeleted;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingNotFoundException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingResolutionException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingStatusException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduServerRecordingIsDisabledException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionCantRecordingException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionHasNotConnectedParticipantsException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionNotFoundException;
 
 /**
- * Class LaravelOpenVidu
+ * Class OpenVidu
  * @package App\SquareetLabs\LaravelOpenVidu
  */
 class OpenVidu
@@ -24,17 +31,16 @@ class OpenVidu
      * Array of active sessions. **This value will remain unchanged since the last time method [[LaravelOpenVidu.fetch]]
      * was called**. Exceptions to this rule are:
      *
-     * - Calling [[Session.fetch]] updates that specific Session status
-     * - Calling [[Session.close]] automatically removes the Session from the list of active Sessions
-     * - Calling [[Session.forceDisconnect]] automatically updates the inner affected connections for that specific Session
-     * - Calling [[Session.forceUnpublish]] also automatically updates the inner affected connections for that specific Session
-     * - Calling [[LaravelOpenVidu.startRecording]] and [[LaravelOpenVidu.stopRecording]] automatically updates the recording status of the
-     * Session ([[Session.recording]])
+     * - {@see Session::fetch} updates that specific Session status
+     * - {@see Session::close} automatically removes the Session from the list of active Sessions
+     * - {@see Session::forceDisconnect} automatically updates the inner affected connections for that specific Session
+     * - {@see Session::forceUnpublish} also automatically updates the inner affected connections for that specific Session
+     * - {@see OpenVidu::startRecording} and {@see OpenVidu::stopRecording} automatically updates the recording status of the Session ({@see Session.recording})
      *
-     * To get the array of active sessions with their current actual value, you must call [[LaravelOpenVidu.fetch]] before consulting
-     * property [[activeSessions]]
+     * To get the array of active sessions with their current actual value, you must {@see OpenVidu::fetch} before consulting
+     * property {@see activeSessions}
      */
-    private $activeSessions;
+    private $activeSessions = [];
 
     /**
      * SmsUp constructor.
@@ -80,93 +86,123 @@ class OpenVidu
     }
 
     /**
-     * Starts the recording of a {@link io.openvidu.java.client.Session}
-     *
-     * @param RecordingProperties The configuration for this recording
-     *   <ul>
-     *   <li><code>404</code>: no session exists for the passed <i>sessionId</i></li>
-     *   <li><code>406</code>: the session has no connected participants</li>
-     *   <li><code>422</code>: "resolution" parameter exceeds acceptable values (for both width and height, min 100px and max 1999px) or trying to start a recording with both "hasAudio" and "hasVideo" to false</li>
-     *   <li><code>409</code>: the session is not configured for using {@link SquareetLabs\LaravelOpenVidu\Enums\MediaMode#ROUTED} or it is already being recorded</li>
-     *   <li><code>501</code>: OpenVidu Server recording module is disabled (<i>openvidu.recording</i> property set to <i>false</i>)</li>
-     *   </ul>
+     * Starts the recording of a {@see Session}
+     * @param RecordingProperties|null $properties
      * @return Recording
      * @throws OpenViduException
+     * @throws OpenViduRecordingResolutionException
+     * @throws OpenViduServerRecordingIsDisabledException
+     * @throws OpenViduSessionCantRecordingException
+     * @throws OpenViduSessionHasNotConnectedParticipantsException
+     * @throws OpenViduSessionNotFoundException
      */
     public function startRecording(?RecordingProperties $properties = null): Recording
     {
+        $recording = null;
         $response = $this->client()->post(Uri::RECORDINGS_START, [
             RequestOptions::JSON => $properties->toArray()
         ]);
-        if ($response->getStatusCode() == 200) {
-            $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents()));
-            $activeSession = $this->getSession($recording->getSessionId());
-            if ($activeSession != null) {
-                $activeSession->setIsBeingRecorded(true);
-            }
-            return $recording;
-        } else {
-            $result = json_decode($response->getBody()->getContents());
-            if ($result && isset($result['message'])) {
-                throw new OpenViduException($result['message'], $response->getStatusCode());
-            }
-            throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+        switch ($response->getStatusCode()) {
+            case 200:
+                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents()));
+                $activeSession = $this->getSession($recording->getSessionId());
+                if ($activeSession != null) {
+                    $activeSession->setIsBeingRecorded(true);
+                }
+                return $recording;
+            case 404:
+                throw new OpenViduSessionNotFoundException();
+            case 406:
+                throw new OpenViduSessionHasNotConnectedParticipantsException();
+            case 409:
+                throw new OpenViduSessionCantRecordingException(__('The session is not configured for using media routed or it is already being recorded'));
+            case 422:
+                throw new OpenViduRecordingResolutionException();
+            case 501:
+                throw new OpenViduServerRecordingIsDisabledException();
+            default:
+                $result = json_decode($response->getBody()->getContents());
+                if ($result && isset($result['message'])) {
+                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                }
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
-    public function getSession(string $sessionId): ?Session
+    /**
+     * Gets an existing {@see Session}
+     * @param string $sessionId
+     * @return Session
+     * @throws OpenViduSessionNotFoundException
+     */
+    public function getSession(string $sessionId): Session
     {
         if (array_key_exists($sessionId, $this->activeSessions)) {
             return $this->activeSessions[$sessionId];
         }
-        return null;
+        throw new OpenViduSessionNotFoundException();
     }
 
     /**
-     * @param string $recordingId
+     * Stops the recording of a {@see Session}
+     * @param string $recordingId The `id` property of the {@see Recording} you want to stop
      * @return Recording
      * @throws OpenViduException
+     * @throws OpenViduRecordingNotFoundException
+     * @throws OpenViduRecordingStatusException
+     * @throws OpenViduSessionNotFoundException
      */
     public function stopRecording(string $recordingId): Recording
     {
         $response = $this->client()->post(Uri::RECORDINGS_STOP . '/' . $recordingId);
-        if ($response->getStatusCode() == 200) {
-            $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents()));
-            $activeSession = $this->getSession($recording->getSessionId());
-            if ($activeSession != null) {
-                $activeSession->setIsBeingRecorded(false);
-            }
-            return $recording;
-        } else {
-            $result = json_decode($response->getBody()->getContents());
-            if ($result && isset($result['message'])) {
-                throw new OpenViduException($result['message'], $response->getStatusCode());
-            }
-            throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+        switch ($response->getStatusCode()) {
+            case 200:
+                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents()));
+                $activeSession = $this->getSession($recording->getSessionId());
+                if ($activeSession != null) {
+                    $activeSession->setIsBeingRecorded(false);
+                }
+                return $recording;
+            case 404:
+                throw new OpenViduRecordingNotFoundException();
+            case 406:
+                throw new OpenViduRecordingStatusException(__('The recording has `starting` status. Wait until `started` status before stopping the recording.'));
+            default:
+                $result = json_decode($response->getBody()->getContents());
+                if ($result && isset($result['message'])) {
+                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                }
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
     /**
-     * @param string $recordingId
-     * @return Recording
+     * Gets an existing {@see Recording}
+     * @param string $recordingId The `id` property of the {@see Recording} you want to retrieve
+     * @return string
      * @throws OpenViduException
+     * @throws OpenViduRecordingNotFoundException
      */
     public function getRecording(string $recordingId): string
     {
         $response = $this->client()->get(Uri::RECORDINGS_URI . '/' . $recordingId);
-        if ($response->getStatusCode() == 200) {
-            $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents()));
-            return $recording;
-        } else {
-            $result = json_decode($response->getBody()->getContents());
-            if ($result && isset($result['message'])) {
-                throw new OpenViduException($result['message'], $response->getStatusCode());
-            }
-            throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+        switch ($response->getStatusCode()) {
+            case 200:
+                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents()));
+                return $recording;
+            case 404:
+                throw new OpenViduRecordingNotFoundException();
+            default:
+                $result = json_decode($response->getBody()->getContents());
+                if ($result && isset($result['message'])) {
+                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                }
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
     /**
+     * Gets an array with all existing recordings
      * @return array
      * @throws OpenViduException
      */
@@ -174,36 +210,49 @@ class OpenVidu
     {
         $recordings = [];
         $response = $this->client()->get(Uri::RECORDINGS_URI);
-        if ($response->getStatusCode() == 200) {
-            $items = json_decode($response->getBody()->getContents());
-            foreach ($items as $item) {
-                $recordings[] = RecordingBuilder::build($item);
-            }
-            return $recordings;
-        } else {
-            $result = json_decode($response->getBody()->getContents());
-            if ($result && isset($result['message'])) {
-                throw new OpenViduException($result['message'], $response->getStatusCode());
-            }
-            throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+        switch ($response->getStatusCode()) {
+            case 200:
+                $items = json_decode($response->getBody()->getContents());
+                foreach ($items as $item) {
+                    $recordings[] = RecordingBuilder::build($item);
+                }
+                return $recordings;
+            default:
+                $result = json_decode($response->getBody()->getContents());
+                if ($result && isset($result['message'])) {
+                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                }
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
+
     /**
-     * @param string $recordingId
+     * Deletes a {@see Recording}. The recording must have status `stopped`, `ready` or `failed`
+     * @param string $recordingId The `id` property of the {@see Recording} you want to delete
      * @return bool
      * @throws OpenViduException
+     * @throws OpenViduRecordingNotFoundException
+     * @throws OpenViduRecordingStatusException
      */
     public function deleteRecording(string $recordingId): bool
     {
         $response = $this->client()->delete(Uri::RECORDINGS_URI . '/' . $recordingId);
-        if ($response->getStatusCode() != 200) {
-            $result = json_decode($response->getBody()->getContents());
-            if ($result && isset($result['message'])) {
-                throw new OpenViduException($result['message'], $response->getStatusCode());
-            }
-            throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
-        } else return true;
+
+        switch ($response->getStatusCode()) {
+            case 200:
+                return true;
+            case 404:
+                throw new OpenViduRecordingNotFoundException();
+            case 409:
+                throw new OpenViduRecordingStatusException(__('The recording has `started` status. Stop it before deletion'));
+            default:
+                $result = json_decode($response->getBody()->getContents());
+                if ($result && isset($result['message'])) {
+                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                }
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+        }
     }
 
     /**
@@ -211,26 +260,26 @@ class OpenVidu
      * since the last time method {@link SquareetLabs\LaravelOpenVidu#fetch()}
      * was called</strong>. Exceptions to this rule are:
      * <ul>
-     * <li>Calling {@link io.openvidu.java.client.Session#fetch()} updates that
+     * <li>Calling {@see Session::fetch} updates that
      * specific Session status</li>
-     * <li>Calling {@link io.openvidu.java.client.Session#close()} automatically
+     * <li>Calling {@see Session::close()} automatically
      * removes the Session from the list of active Sessions</li>
      * <li>Calling
-     * {@link SquareetLabs\LaravelOpenVidu\Session#forceDisconnect(Connection)}
+     * {@see Session::forceDisconnect(string)}
      * automatically updates the inner affected connections for that specific
      * Session</li>
-     * <li>Calling {@link SquareetLabs\LaravelOpenVidu\Session#forceUnpublish(Publisher)}
+     * <li>Calling {@see Session::forceUnpublish(string)}
      * also automatically updates the inner affected connections for that specific
      * Session</li>
-     * <li>Calling {@link io.openvidu.java.client.OpenVidu#startRecording(String)}
-     * and {@link SquareetLabs\LaravelOpenVidu#stopRecording(String)}
+     * <li>Calling {@see OpenVidu::startRecording(string)}
+     * and {@see LaravelOpenVidu::stopRecording(string)}
      * automatically updates the recording status of the Session
-     * ({@link SquareetLabs\LaravelOpenVidu\Session#isBeingRecorded()})</li>
+     * ({@see Session::isBeingRecorded()})</li>
      * </ul>
      * <br>
      * To get the list of active sessions with their current actual value, you must
-     * call first {@link SquareetLabs\LaravelOpenVidu#fetch()} and then
-     * {@link SquareetLabs\LaravelOpenVidu#getActiveSessions()}
+     * call first {@see OpenVidu::fetch()} and then
+     * {@see OpenVidu::getActiveSessions()}
      */
     public function getActiveSessions(): array
     {
