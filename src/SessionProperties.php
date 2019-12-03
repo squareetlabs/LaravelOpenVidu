@@ -62,7 +62,7 @@ class SessionProperties implements JsonSerializable
     /**
      * @return string
      */
-    public function getCustomSessionId(): string
+    public function getCustomSessionId(): ?string
     {
         return $this->customSessionId;
     }
@@ -94,7 +94,7 @@ class SessionProperties implements JsonSerializable
     /**
      * @return string
      */
-    public function getDefaultRecordingLayout(): string
+    public function getDefaultRecordingLayout(): ?string
     {
         return $this->defaultRecordingLayout;
     }
@@ -102,7 +102,7 @@ class SessionProperties implements JsonSerializable
     /**
      * @return string
      */
-    public function getDefaultCustomLayout(): string
+    public function getDefaultCustomLayout(): ?string
     {
         return $this->defaultCustomLayout;
     }

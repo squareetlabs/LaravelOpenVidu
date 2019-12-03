@@ -7,7 +7,6 @@ use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use SquareetLabs\LaravelOpenVidu\Builders\RecordingBuilder;
 use SquareetLabs\LaravelOpenVidu\Enums\Uri;
-use SquareetLabs\LaravelOpenVidu\Events\SessionDeleted;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingNotFoundException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingResolutionException;
@@ -48,7 +47,7 @@ class OpenVidu
     public function createSession(?SessionProperties $properties = null): Session
     {
         $session = new Session($this->client(), $properties);
-        Cache::store('openvidu')->forever($session->getSessionId(), $session);
+        Cache::store('openvidu')->forever($session->getSessionId(), $session->toJson());
         return $session;
     }
 
@@ -128,7 +127,7 @@ class OpenVidu
     public function getSession(string $sessionId): Session
     {
         if (Cache::store('openvidu')->has($sessionId)) {
-            return Cache::store('openvidu')->get($sessionId);
+            return (new Session($this->client()))->fromJson(Cache::store('openvidu')->get($sessionId));
         }
         throw new OpenViduSessionNotFoundException();
     }

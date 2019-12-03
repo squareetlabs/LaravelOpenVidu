@@ -3,11 +3,10 @@
 namespace SquareetLabs\LaravelOpenVidu\Providers;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use SquareetLabs\LaravelOpenVidu\Cache\SessionStore;
-use SquareetLabs\LaravelOpenVidu\Events\SessionDeleted;
 use SquareetLabs\LaravelOpenVidu\OpenVidu;
 
 /**
@@ -62,8 +61,16 @@ class OpenViduServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Cache::extend('openvidu', function ($app) {
-            return Cache::repository(new SessionStore());
+        if ($this->app->runningInConsole()) {
+            $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+
+            $this->publishes([
+                __DIR__ . '/../../database/migrations' => database_path('migrations'),
+            ], 'openvidu-migrations');
+
+        }
+        Cache::extend('openvidu', function () {
+            return Cache::repository(new SessionStore(DB::connection(), config('cache.stores.openvidu.table')));
         });
     }
 }

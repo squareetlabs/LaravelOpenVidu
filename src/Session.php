@@ -37,7 +37,7 @@ class Session implements \JsonSerializable
     private $recording;
 
     /** @var array */
-    private $activeConnections;
+    private $activeConnections = [];
 
     /** @var int */
     private $createdAt;
@@ -89,6 +89,8 @@ class Session implements \JsonSerializable
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
             }
+        } else {
+            return $this->sessionId;
         }
     }
 
@@ -186,16 +188,99 @@ class Session implements \JsonSerializable
         ]);
         if ($response->getStatusCode() === 200) {
             $beforeJSON = $this->toJson();
-            $this->resetSessionWithJson($response->getBody()->getContents());
+            $this->fromJson($response->getBody()->getContents());
             $afterJSON = $this->toJson();
             if ($beforeJSON !== $afterJSON) {
-                Cache::store('openvidu')->update($this->sessionId, $this);
+                Cache::store('openvidu')->update($this->sessionId, $this->toJson());
                 return true;
             }
             return false;
         }
     }
 
+    /**
+     * Convert the model instance to JSON.
+     *
+     * @param int $options
+     * @return string
+     *
+     */
+    public function toJson($options = 0): string
+    {
+        $json = json_encode($this->jsonSerialize(), $options);
+        return $json;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $array = ['sessionId' => $this->sessionId, 'properties' => $this->properties->toArray(), 'recording' => $this->recording, 'createdAt' => $this->createdAt];
+        foreach ($this->activeConnections as $connection) {
+            $array['activeConnections'][] = $connection->toArray();
+        }
+
+        foreach ($array as $key => $value) {
+            if (is_null($value) || $value == '')
+                unset($array[$key]);
+        }
+        return $array;
+    }
+
+    /**
+     * @param string $json
+     * @return Session
+     */
+    function fromJson(string $json): Session
+    {
+        $JSONSession = json_decode($json);
+        $this->sessionId = $JSONSession->sessionId;
+        $this->createdAt = isset($JSONSession->createdAt) ? $JSONSession->createdAt : null;
+        $this->recording = isset($JSONSession->recording) ? $this->recording : null;;
+
+        if (isset($JSONSession->properties)) {
+            $this->properties = new SessionProperties($JSONSession->properties->mediaMode, $JSONSession->properties->recordingMode, $JSONSession->properties->defaultOutputMode, isset($JSONSession->properties->defaultRecordingLayout) ? $JSONSession->properties->defaultRecordingLayout : null,
+                isset($JSONSession->properties->customSessionId) ? $JSONSession->properties->customSessionId : null,
+                isset($JSONSession->properties->defaultCustomLayout) ? $JSONSession->properties->defaultCustomLayout : null);
+        } else {
+            $this->properties = new SessionProperties($JSONSession->properties->mediaMode, $JSONSession->properties->recordingMode, $JSONSession->properties->defaultOutputMode, $JSONSession->properties->defaultRecordingLayout, $JSONSession->properties->customSessionId, $JSONSession->properties->defaultCustomLayout);
+        }
+
+        $this->activeConnections = [];
+        if (isset($JSONSession->connections)) {
+            foreach ($JSONSession->connections as $connection) {
+                $content = $connection->content;
+                $publishers = [];
+                foreach ($content->publishers as $publisher) {
+                    $publishers[] = new Publisher($publisher->streamId, $publisher->createdAt, $publisher->hasAudio, $publisher->hasVideo, $publisher->audioActive, $publisher->videoActive, $publisher->frameRate, $publisher->typeOfVideo, $publisher->videoDimensions);
+                }
+                $subscribers = [];
+                foreach ($content->subscribers as $subscriber) {
+                    $subscribers[] = $subscriber->streamId;
+                }
+                $this->activeConnections[] = new Connection($content->connectionId, $content->createdAt, $content->role, $content->token, $content->location, $content->platform, $content->serverData, $content->clientData, $publishers, $subscribers);
+            }
+            usort($this->activeConnections[], function ($a, $b) {
+                ($a->createdAt > $b->createdAt) ? 1 : ($b->createdAt > $a->createdAt) ? -1 : 0;
+            });
+        }
+        return $this;
+    }
 
     /**
      * Forces the user with Connection `connectionId` to leave the session. OpenVidu Browser will trigger the proper events on the client-side
@@ -354,113 +439,6 @@ class Session implements \JsonSerializable
     {
         $this->recording = $recording;
         Cache::store('openvidu')->update($this->sessionId, $this);
-    }
-
-
-    /**
-     * Convert the model instance to JSON.
-     *
-     * @param int $options
-     * @return string
-     *
-     */
-    public function toJson($options = 0): string
-    {
-        $json = json_encode($this->jsonSerialize(), $options);
-        return $json;
-    }
-
-    /**
-     * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
-    }
-
-    /**
-     * Convert the model instance to an array.
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        $array = ['sessionId' => $this->sessionId, 'properties' => $this->properties->toArray(), 'recording' => $this->recording, 'createdAt' => $this->createdAt];
-        foreach ($this->activeConnections as $connection) {
-            $array['activeConnections'][] = $connection->toArray();
-        }
-
-        foreach ($array as $key => $value) {
-            if (is_null($value) || $value == '')
-                unset($array[$key]);
-        }
-        return $array;
-    }
-
-    /**
-     * @param string $json
-     */
-    protected function resetSessionWithJson(string $json)
-    {
-        $JSONSession = json_decode($json);
-        $this->sessionId = $JSONSession->id;
-        $this->createdAt = $JSONSession->created_at;
-        $this->recording = $JSONSession->recording;
-
-        if ($this->properties) {
-            $this->properties = new SessionProperties($JSONSession->mediaMode, $JSONSession->recordingMode, $JSONSession->defaultOutputMode, $JSONSession->defaultRecordingLayout,
-                $this->properties->getCustomSessionId() ? $this->properties->getCustomSessionId() : $JSONSession->customSessionId,
-                $JSONSession->defaultCustomLayout ? $JSONSession->defaultCustomLayout : $this->properties->getDefaultCustomLayout());
-        } else {
-            $this->properties = new SessionProperties($JSONSession->mediaMode, $JSONSession->recordingMode, $JSONSession->defaultOutputMode, $JSONSession->defaultRecordingLayout, $JSONSession->customSessionId, $JSONSession->defaultCustomLayout);
-        }
-
-        $this->activeConnections = [];
-
-        foreach ($JSONSession->connections as $connection) {
-            $content = $connection->content;
-            $publishers = [];
-            foreach ($content->publishers as $publisher) {
-                $publishers[] = new Publisher($publisher->streamId, $publisher->createdAt, $publisher->hasAudio, $publisher->hasVideo, $publisher->audioActive, $publisher->videoActive, $publisher->frameRate, $publisher->typeOfVideo, $publisher->videoDimensions);
-            }
-            $subscribers = [];
-            foreach ($content->subscribers as $subscriber) {
-                $subscribers[] = $subscriber->streamId;
-            }
-            $this->activeConnections[] = new Connection($content->connectionId, $content->createdAt, $content->role, $content->token, $content->location, $content->platform, $content->serverData, $content->clientData, $publishers, $subscribers);
-        }
-        usort($this->activeConnections[], function ($a, $b) {
-            ($a->createdAt > $b->createdAt) ? 1 : ($b->createdAt > $a->createdAt) ? -1 : 0;
-        });
-    }
-
-    /**
-     * @param Session $other
-     * @return bool
-     */
-    protected function equalTo(Session $other)
-    {
-        $equals = (
-            $this->createdAt === $other->createdAt &&
-            $this->createdAt === $other->createdAt &&
-            $this->recording === $other->recording &&
-            count($this->activeConnections) === count($other->activeConnections) &&
-            $this->properties->toJson() === $other->properties->toJson()
-        );
-        if ($equals) {
-            $i = 0;
-            while ($equals && $i < count($this->activeConnections)) {
-                $equals = $this->activeConnections[$i]->equalTo($other->activeConnections[$i]);
-                $i++;
-            }
-            return $equals;
-        } else {
-            return false;
-        }
     }
 
     /**
