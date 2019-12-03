@@ -52,6 +52,7 @@ return [
             ...
             'openvidu' => [
                    'driver' => 'openvidu',
+                   'table' => 'openvidu_cache'
                ]
     ]
     ...
