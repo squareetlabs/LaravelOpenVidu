@@ -1,7 +1,7 @@
 # Laravel client for controlling your videocalls from your Openvidu server.
-## This is a Laravel package wrapping OpenVidu Server REST API ##
+### This is a Laravel package wrapping OpenVidu Server REST API
 
-### Installation ###
+## Installation
 
 You can install this package via composer:
 ```bash
@@ -21,6 +21,10 @@ SquareetLabs\LaravelOpenVidu\Providers\OpenViduServiceProvider::class,
 Add the Facade to the aliases array in `config/app.php`:
 ```php
 'OpenVidu' => SquareetLabs\LaravelOpenVidu\Facades\LaravelOpenVidu::class,
+```
+### Run migrations
+```bash
+php artisan migrate
 ```
 
 ## Configuration
