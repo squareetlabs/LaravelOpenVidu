@@ -1,7 +1,7 @@
 # Laravel client for controlling your videocalls from your Openvidu server.
-## This is a Laravel package wrapping OpenVidu Server REST API ##
+### This is a Laravel package wrapping OpenVidu Server REST API
 
-### Installation ###
+## Installation
 
 You can install this package via composer:
 ```bash
@@ -22,6 +22,10 @@ Add the Facade to the aliases array in `config/app.php`:
 ```php
 'OpenVidu' => SquareetLabs\LaravelOpenVidu\Facades\LaravelOpenVidu::class,
 ```
+### Run migrations
+```bash
+php artisan migrate
+```
 
 ## Configuration
 Add your OpenVidu Server configuration values to your `config/services.php` file:
@@ -40,7 +44,7 @@ return [
 ```
 Set `debug` to `true` if you want to debug OpenVidu API consumptions from Guzzle Client
 
-You must also add the openvidu cache driver to your `config/services.php` file:
+You must also add the openvidu cache driver to your `config/cache.php` file:
 ```php
 return [   
     'stores' => [
@@ -48,6 +52,7 @@ return [
             ...
             'openvidu' => [
                    'driver' => 'openvidu',
+                   'table' => 'openvidu_cache'
                ]
     ]
     ...
