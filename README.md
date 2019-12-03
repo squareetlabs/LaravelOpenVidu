@@ -44,7 +44,7 @@ return [
 ```
 Set `debug` to `true` if you want to debug OpenVidu API consumptions from Guzzle Client
 
-You must also add the openvidu cache driver to your `config/services.php` file:
+You must also add the openvidu cache driver to your `config/cache.php` file:
 ```php
 return [   
     'stores' => [
