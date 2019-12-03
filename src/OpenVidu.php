@@ -4,6 +4,7 @@ namespace SquareetLabs\LaravelOpenVidu;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use Illuminate\Support\Facades\Cache;
 use SquareetLabs\LaravelOpenVidu\Builders\RecordingBuilder;
 use SquareetLabs\LaravelOpenVidu\Enums\Uri;
 use SquareetLabs\LaravelOpenVidu\Events\SessionDeleted;
@@ -27,20 +28,7 @@ class OpenVidu
      * @var
      */
     private $config;
-    /**
-     * Array of active sessions. **This value will remain unchanged since the last time method [[LaravelOpenVidu.fetch]]
-     * was called**. Exceptions to this rule are:
-     *
-     * - {@see Session::fetch} updates that specific Session status
-     * - {@see Session::close} automatically removes the Session from the list of active Sessions
-     * - {@see Session::forceDisconnect} automatically updates the inner affected connections for that specific Session
-     * - {@see Session::forceUnpublish} also automatically updates the inner affected connections for that specific Session
-     * - {@see OpenVidu::startRecording} and {@see OpenVidu::stopRecording} automatically updates the recording status of the Session ({@see Session.recording})
-     *
-     * To get the array of active sessions with their current actual value, you must {@see OpenVidu::fetch} before consulting
-     * property {@see activeSessions}
-     */
-    private $activeSessions = [];
+
 
     /**
      * SmsUp constructor.
@@ -60,7 +48,7 @@ class OpenVidu
     public function createSession(?SessionProperties $properties = null): Session
     {
         $session = new Session($this->client(), $properties);
-        $this->activeSessions[$session->getSessionId()] = $session;
+        Cache::store('openvidu')->forever($session->getSessionId(), $session);
         return $session;
     }
 
@@ -95,6 +83,7 @@ class OpenVidu
      * @throws OpenViduSessionCantRecordingException
      * @throws OpenViduSessionHasNotConnectedParticipantsException
      * @throws OpenViduSessionNotFoundException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function startRecording(?RecordingProperties $properties = null): Recording
     {
@@ -134,11 +123,12 @@ class OpenVidu
      * @param string $sessionId
      * @return Session
      * @throws OpenViduSessionNotFoundException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function getSession(string $sessionId): Session
     {
-        if (array_key_exists($sessionId, $this->activeSessions)) {
-            return $this->activeSessions[$sessionId];
+        if (Cache::store('openvidu')->has($sessionId)) {
+            return Cache::store('openvidu')->get($sessionId);
         }
         throw new OpenViduSessionNotFoundException();
     }
@@ -151,6 +141,7 @@ class OpenVidu
      * @throws OpenViduRecordingNotFoundException
      * @throws OpenViduRecordingStatusException
      * @throws OpenViduSessionNotFoundException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function stopRecording(string $recordingId): Recording
     {
@@ -280,19 +271,15 @@ class OpenVidu
      * To get the list of active sessions with their current actual value, you must
      * call first {@see OpenVidu::fetch()} and then
      * {@see OpenVidu::getActiveSessions()}
+     * @throws OpenViduException
      */
     public function getActiveSessions(): array
     {
-        return array_values($this->activeSessions);
-    }
-
-    /**
-     * Handle the event.
-     * @param SessionDeleted $event
-     */
-    public function handle(SessionDeleted $event)
-    {
-        unset($this->activeSessions[$event->sessionId]);
+        try {
+            return Cache::store('openvidu')->getAll();
+        } catch (\Exception $e) {
+            throw new OpenViduException("Make sure you have correctly configured the openvidu cache driver.", 500);
+        }
     }
 }
 

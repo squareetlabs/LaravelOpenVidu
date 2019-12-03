@@ -6,14 +6,13 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Cache;
 use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OpenViduRole;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
 use SquareetLabs\LaravelOpenVidu\Enums\Uri;
-use SquareetLabs\LaravelOpenVidu\Events\SessionDeleted;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionCantCloseException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionCantCreateException;
@@ -154,7 +153,7 @@ class Session implements \JsonSerializable
         try {
             $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId);
             if ($response->getStatusCode() === 200) {
-                Event::dispatch(new SessionDeleted($this->sessionId));
+                Cache::store('openvidu')->forget($this->sessionId);
             }
         } catch (Exception $e) {
             throw new OpenViduSessionCantCloseException("Could not close session", $e);
@@ -189,7 +188,11 @@ class Session implements \JsonSerializable
             $beforeJSON = $this->toJson();
             $this->resetSessionWithJson($response->getBody()->getContents());
             $afterJSON = $this->toJson();
-            return ($beforeJSON !== $afterJSON);
+            if ($beforeJSON !== $afterJSON) {
+                Cache::store('openvidu')->update($this->sessionId, $this);
+                return true;
+            }
+            return false;
         }
     }
 
@@ -239,6 +242,7 @@ class Session implements \JsonSerializable
                     }
                 }
             }
+            Cache::store('openvidu')->update($this->sessionId, $this);
             return true;
         } else {
             $result = json_decode($response->getBody()->getContents());
@@ -294,6 +298,7 @@ class Session implements \JsonSerializable
                     });
                 }
             }
+            Cache::store('openvidu')->update($this->sessionId, $this);
             return true;
         } else {
             $result = json_decode($response->getBody()->getContents());
@@ -310,15 +315,15 @@ class Session implements \JsonSerializable
      * {@see fetch()} was called</strong>.
      * Exceptions to this rule are:
      * <ul>
-     * <li>Calling {@link SquareetLabs\LaravelOpenVidu\Session#forceUnpublish(String)}
+     * <li>Calling {@see Session::forceUnpublish(string)}
      * updates each affected Connection status</li>
-     * <li>Calling {@link SquareetLabs\LaravelOpenVidu\Session#forceDisconnect(String)}
+     * <li>Calling {@see Session::forceDisconnect(string)}
      * updates each affected Connection status</li>
      * </ul>
      * <br>
      * To get the list of active connections with their current actual value, you
-     * must call first {@link SquareetLabs\LaravelOpenVidu\Session#fetch()} and then
-     * {@link SquareetLabs\LaravelOpenVidu\Session#f#getActiveConnections()}
+     * must call first {@see Session::fetch()} and then
+     * {@see Session::getActiveConnections()}
      */
     public function getActiveConnections(): array
     {
@@ -348,6 +353,7 @@ class Session implements \JsonSerializable
     public function setIsBeingRecorded(bool $recording)
     {
         $this->recording = $recording;
+        Cache::store('openvidu')->update($this->sessionId, $this);
     }
 
 

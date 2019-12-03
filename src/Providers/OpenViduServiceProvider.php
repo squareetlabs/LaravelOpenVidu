@@ -2,9 +2,11 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Providers;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use SquareetLabs\LaravelOpenVidu\Cache\SessionStore;
 use SquareetLabs\LaravelOpenVidu\Events\SessionDeleted;
 use SquareetLabs\LaravelOpenVidu\OpenVidu;
 
@@ -60,9 +62,8 @@ class OpenViduServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Event::listen(
-            SessionDeleted::class,
-            OpenVidu::class
-        );
+        Cache::extend('openvidu', function ($app) {
+            return Cache::repository(new SessionStore());
+        });
     }
 }
