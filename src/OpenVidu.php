@@ -121,6 +121,8 @@ class OpenVidu
      * Gets an existing {@see Session}
      * @param string $sessionId
      * @return Session
+     * @throws Exceptions\OpenViduSessionCantCreateException
+     * @throws OpenViduException
      * @throws OpenViduSessionNotFoundException
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */

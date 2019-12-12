@@ -49,7 +49,7 @@
         "SquareetLabs\\LaravelOpenVidu\\Providers\\OpenViduServiceProvider"
       ],
       "aliases": {
-        "SmsUp": "SquareetLabs\\LaravelOpenVidu\\Facades\\OpenVidu"
+        "OpenVidu": "SquareetLabs\\LaravelOpenVidu\\Facades\\OpenVidu"
       }
     }
   },

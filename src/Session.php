@@ -13,9 +13,10 @@ use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
 use SquareetLabs\LaravelOpenVidu\Enums\Uri;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduConnectionNotFoundException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException;
-use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionCantCloseException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionCantCreateException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionNotFoundException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduTokenCantCreateException;
 
 /**
@@ -148,17 +149,24 @@ class Session implements \JsonSerializable
     /**
      * Gracefully closes the Session: unpublishes all streams and evicts every
      * participant
-     * @throws OpenViduSessionCantCloseException
+     * @throws OpenViduException
      */
     public function close()
     {
-        try {
-            $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId);
-            if ($response->getStatusCode() === 200) {
+        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId);
+        switch ($response->getStatusCode()) {
+            case 204:
                 Cache::store('openvidu')->forget($this->sessionId);
-            }
-        } catch (Exception $e) {
-            throw new OpenViduSessionCantCloseException("Could not close session", $e);
+                break;
+            case 404:
+                throw new OpenViduSessionNotFoundException();
+                break;
+            default:
+                $result = json_decode($response->getBody()->getContents());
+                if ($result && isset($result['message'])) {
+                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                }
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -301,40 +309,47 @@ class Session implements \JsonSerializable
                 'Accept' => 'application/json',
             ]
         ]);
-        if ($response->getStatusCode() === 204) {
-            $connectionClosed = null;
-            $this->activeConnections = array_filter($this->activeConnections, function (Connection $connection) use ($connectionId) {
-                if ($connection->getConnectionId() !== $connectionId) {
-                    return true;
-                } else {
-                    $connectionClosed = $connection;
-                    return false;
+        switch ($response->getStatusCode()) {
+            case 204:
+                $connectionClosed = null;
+                $this->activeConnections = array_filter($this->activeConnections, function (Connection $connection) use ($connectionId) {
+                    if ($connection->getConnectionId() !== $connectionId) {
+                        return true;
+                    } else {
+                        $connectionClosed = $connection;
+                        return false;
 
-                }
-            });
-            if ($connectionClosed != null) {
-                foreach ($connectionClosed->publishers as $publisher) {
-                    foreach ($this->activeConnections as $con) {
-                        $con->subscribers = array_filter($con->subscribers, function ($subscriber) use ($publisher) {
-                            if (is_array($subscriber) && array_key_exists('streamId', $subscriber)) {
-                                // Subscriber with advanced webRtc configuration properties
-                                return $subscriber['streamId'] !== $publisher->streamId;
-                            } else {
-                                // Regular string subscribers
-                                return $subscriber !== $publisher->streamId;
-                            }
-                        });
+                    }
+                });
+                if ($connectionClosed != null) {
+                    foreach ($connectionClosed->publishers as $publisher) {
+                        foreach ($this->activeConnections as $con) {
+                            $con->subscribers = array_filter($con->subscribers, function ($subscriber) use ($publisher) {
+                                if (is_array($subscriber) && array_key_exists('streamId', $subscriber)) {
+                                    // Subscriber with advanced webRtc configuration properties
+                                    return $subscriber['streamId'] !== $publisher->streamId;
+                                } else {
+                                    // Regular string subscribers
+                                    return $subscriber !== $publisher->streamId;
+                                }
+                            });
+                        }
                     }
                 }
-            }
-            Cache::store('openvidu')->update($this->sessionId, $this);
-            return true;
-        } else {
-            $result = json_decode($response->getBody()->getContents());
-            if ($result && isset($result['message'])) {
-                throw new OpenViduException($result['message'], $response->getStatusCode());
-            }
-            throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                Cache::store('openvidu')->update($this->sessionId, $this);
+                break;
+            case 400:
+                throw new OpenViduSessionNotFoundException();
+                break;
+            case 404:
+                throw new OpenViduConnectionNotFoundException();
+                break;
+            default:
+                $result = json_decode($response->getBody()->getContents());
+                if ($result && isset($result['message'])) {
+                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                }
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -364,33 +379,39 @@ class Session implements \JsonSerializable
                 'Accept' => 'application/json',
             ]
         ]);
-
-        if ($response->getStatusCode() === 204) {
-            foreach ($this->activeConnections as $connection) {
-                $connection->publishers = array_filter($connection->publishers, function (array $publisher) use ($streamId) {
-                    return $streamId !== $publisher->streamId;
-                });
-
-                if ($connection->subscribers && count($connection->subscribers) > 0) {
-                    $connection->subscribers = array_filter($connection->subscribers, function (array $subscriber) use ($streamId) {
-                        if (array_key_exists('streamId', $subscriber)) {
-                            // Subscriber with advanced webRtc configuration properties
-                            return $subscriber['streamId'] !== $streamId;
-                        } else {
-                            // Regular string subscribers
-                            return $subscriber !== $streamId;
-                        }
+        switch ($response->getStatusCode()) {
+            case 204:
+                foreach ($this->activeConnections as $connection) {
+                    $connection->publishers = array_filter($connection->publishers, function (array $publisher) use ($streamId) {
+                        return $streamId !== $publisher->streamId;
                     });
+
+                    if ($connection->subscribers && count($connection->subscribers) > 0) {
+                        $connection->subscribers = array_filter($connection->subscribers, function (array $subscriber) use ($streamId) {
+                            if (array_key_exists('streamId', $subscriber)) {
+                                // Subscriber with advanced webRtc configuration properties
+                                return $subscriber['streamId'] !== $streamId;
+                            } else {
+                                // Regular string subscribers
+                                return $subscriber !== $streamId;
+                            }
+                        });
+                    }
                 }
-            }
-            Cache::store('openvidu')->update($this->sessionId, $this);
-            return true;
-        } else {
-            $result = json_decode($response->getBody()->getContents());
-            if ($result && isset($result['message'])) {
-                throw new OpenViduException($result['message'], $response->getStatusCode());
-            }
-            throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                Cache::store('openvidu')->update($this->sessionId, $this);
+                break;
+            case 400:
+                throw new OpenViduSessionNotFoundException();
+                break;
+            case 404:
+                throw new OpenViduConnectionNotFoundException();
+                break;
+            default:
+                $result = json_decode($response->getBody()->getContents());
+                if ($result && isset($result['message'])) {
+                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                }
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
