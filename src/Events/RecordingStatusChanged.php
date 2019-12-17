@@ -2,6 +2,7 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Events;
 
+use Illuminate\Queue\SerializesModels;
 use stdClass;
 
 /**
@@ -10,6 +11,7 @@ use stdClass;
  */
 class RecordingStatusChanged implements WebhookEventInterface
 {
+    use SerializesModels;
     /**
      * @var string $sessionId
      * Session for which the event was triggered

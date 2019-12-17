@@ -3,12 +3,6 @@
 namespace SquareetLabs\LaravelOpenVidu\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
-use SquareetLabs\LaravelOpenVidu\Enums\OpenViduRole;
-use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
-use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
-use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
 
 /**
  * Class WebhookEventRequest

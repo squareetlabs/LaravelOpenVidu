@@ -168,7 +168,7 @@ class OpenViduController extends Controller
      */
     public function webhook(WebhookEventRequest $request)
     {
-        WebhookEventFactory::create($request->all());
+        event(WebhookEventFactory::create($request->all()));
         return response()->json(['success' => true], 200);
     }
 }

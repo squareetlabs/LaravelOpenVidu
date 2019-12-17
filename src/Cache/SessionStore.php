@@ -2,13 +2,16 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Cache;
 
+use Closure;
 use Exception;
 use Illuminate\Cache\RetrievesMultipleKeys;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\PostgresConnection;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\InteractsWithTime;
 use Illuminate\Support\Str;
+use Throwable;
 
 class SessionStore implements Store
 {
@@ -17,7 +20,7 @@ class SessionStore implements Store
     /**
      * The database connection instance.
      *
-     * @var \Illuminate\Database\ConnectionInterface
+     * @var ConnectionInterface
      */
     protected $connection;
 
@@ -73,7 +76,7 @@ class SessionStore implements Store
     /**
      * Get a query builder for the cache table.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     protected function table()
     {
@@ -169,7 +172,7 @@ class SessionStore implements Store
      * @param string $key
      * @param mixed $value
      * @return int|bool
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function increment($key, $value = 1)
     {
@@ -183,9 +186,9 @@ class SessionStore implements Store
      *
      * @param string $key
      * @param mixed $value
-     * @param \Closure $callback
+     * @param Closure $callback
      * @return int|bool
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function incrementOrDecrement($key, $value, Closure $callback)
     {
@@ -249,7 +252,7 @@ class SessionStore implements Store
      * @param string $key
      * @param mixed $value
      * @return int|bool
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function decrement($key, $value = 1)
     {
@@ -319,7 +322,7 @@ class SessionStore implements Store
     /**
      * Get the underlying database connection.
      *
-     * @return \Illuminate\Database\ConnectionInterface
+     * @return ConnectionInterface
      */
     public function getConnection()
     {

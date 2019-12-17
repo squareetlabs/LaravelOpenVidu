@@ -2,13 +2,14 @@
 
 namespace SquareetLabs\LaravelOpenVidu;
 
+use JsonSerializable;
 use SquareetLabs\LaravelOpenVidu\Enums\OpenViduRole;
 
 /**
  * Class Connection
  * @package SquareetLabs\LaravelOpenVidu
  */
-class Connection implements \JsonSerializable
+class Connection implements JsonSerializable
 {
 
     /** @var  string

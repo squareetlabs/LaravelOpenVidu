@@ -1,4 +1,5 @@
 <?php
+
 namespace SquareetLabs\LaravelOpenVidu\Factories;
 
 use SquareetLabs\LaravelOpenVidu\Events\ParticipantJoined;
@@ -21,25 +22,25 @@ class WebhookEventFactory
         $object = json_decode($webhookEvent);
         switch ($object->event) {
             case 'sessionCreated':
-                new SessionCreated($object);
+                return new SessionCreated($object);
                 break;
             case 'sessionDestroyed':
-                new SessionDestroyed($object);
+                return new SessionDestroyed($object);
                 break;
             case 'participantJoined':
-                new ParticipantJoined($object);
+                return new ParticipantJoined($object);
                 break;
             case 'participantLeft':
-                new ParticipantLeft($object);
+                return new ParticipantLeft($object);
                 break;
             case 'webrtcConnectionCreated':
-                new WebRTCConnectionCreated($object);
+                return new WebRTCConnectionCreated($object);
                 break;
             case 'webrtcConnectionDestroyed':
-                new WebRTCConnectionDestroyed($object);
+                return new WebRTCConnectionDestroyed($object);
                 break;
             case 'recordingStatusChanged':
-                new RecordingStatusChanged($object);
+                return new RecordingStatusChanged($object);
                 break;
         }
     }

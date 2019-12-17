@@ -2,6 +2,7 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Events;
 
+use Illuminate\Queue\SerializesModels;
 use stdClass;
 
 /**
@@ -10,6 +11,7 @@ use stdClass;
  */
 class ParticipantLeft implements WebhookEventInterface
 {
+    use SerializesModels;
     /**
      * @var string $sessionId
      * Session for which the event was triggered
@@ -71,12 +73,12 @@ class ParticipantLeft implements WebhookEventInterface
      */
     public function __construct(stdClass $data)
     {
-        $this->sessionId =  property_exists($data, 'sessionId') ? $data->sessionId : null;
-        $this->timestamp =  property_exists($data, 'timestamp') ? $data->timestamp : null;
+        $this->sessionId = property_exists($data, 'sessionId') ? $data->sessionId : null;
+        $this->timestamp = property_exists($data, 'timestamp') ? $data->timestamp : null;
         $this->participantId = property_exists($data, 'participantId') ? $data->participantId : null;
         $this->platform = property_exists($data, 'platform') ? $data->platform : null;
-        $this->startTime =  property_exists($data, 'startTime') ? $data->startTime : null;
-        $this->duration =  property_exists($data, 'duration') ? $data->duration : null;
+        $this->startTime = property_exists($data, 'startTime') ? $data->startTime : null;
+        $this->duration = property_exists($data, 'duration') ? $data->duration : null;
         $this->reason = property_exists($data, 'reason') ? $data->reason : null;
         $this->event = $data->event;
     }

@@ -2,9 +2,11 @@
 
 namespace SquareetLabs\LaravelOpenVidu;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
+use Psr\SimpleCache\InvalidArgumentException;
 use SquareetLabs\LaravelOpenVidu\Builders\RecordingBuilder;
 use SquareetLabs\LaravelOpenVidu\Enums\Uri;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException;
@@ -82,7 +84,7 @@ class OpenVidu
      * @throws OpenViduSessionCantRecordingException
      * @throws OpenViduSessionHasNotConnectedParticipantsException
      * @throws OpenViduSessionNotFoundException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function startRecording(?RecordingProperties $properties = null): Recording
     {
@@ -124,7 +126,7 @@ class OpenVidu
      * @throws Exceptions\OpenViduSessionCantCreateException
      * @throws OpenViduException
      * @throws OpenViduSessionNotFoundException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getSession(string $sessionId): Session
     {
@@ -142,7 +144,7 @@ class OpenVidu
      * @throws OpenViduRecordingNotFoundException
      * @throws OpenViduRecordingStatusException
      * @throws OpenViduSessionNotFoundException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function stopRecording(string $recordingId): Recording
     {
@@ -278,7 +280,7 @@ class OpenVidu
     {
         try {
             return Cache::store('openvidu')->getAll();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new OpenViduException("Make sure you have correctly configured the openvidu cache driver.", 500);
         }
     }

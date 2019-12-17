@@ -2,6 +2,7 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Events;
 
+use Illuminate\Queue\SerializesModels;
 use stdClass;
 
 /**
@@ -10,7 +11,7 @@ use stdClass;
  */
 class WebRTCConnectionDestroyed implements WebhookEventInterface
 {
-
+    use SerializesModels;
     /**
      * @var string $sessionId
      * Session for which the event was triggered
@@ -120,12 +121,12 @@ class WebRTCConnectionDestroyed implements WebhookEventInterface
         $this->receivingFrom = property_exists($data, 'receivingFrom') ? $data->receivingFrom : null;
         $this->audioEnabled = property_exists($data, 'audioEnabled') ? $data->sessionaudioEnabledId : null;
         $this->videoEnabled = property_exists($data, 'videoEnabled') ? $data->videoEnabled : null;
-        $this->videoSource =  property_exists($data, 'videoSource') ? $data->videoSource : null;
-        $this->videoFramerate =  property_exists($data, 'videoFramerate') ? $data->videoFramerate : null;
-        $this->videoDimensions =  property_exists($data, 'videoDimensions') ? $data->videoDimensions : null;
+        $this->videoSource = property_exists($data, 'videoSource') ? $data->videoSource : null;
+        $this->videoFramerate = property_exists($data, 'videoFramerate') ? $data->videoFramerate : null;
+        $this->videoDimensions = property_exists($data, 'videoDimensions') ? $data->videoDimensions : null;
         $this->startTime = property_exists($data, 'startTime') ? $data->startTime : null;
         $this->duration = property_exists($data, 'duration') ? $data->duration : null;
         $this->reason = property_exists($data, 'reason') ? $data->reason : null;
-        $this->event =  $data->event;
+        $this->event = $data->event;
     }
 }

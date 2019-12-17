@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
+use JsonSerializable;
 use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OpenViduRole;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
@@ -23,7 +24,7 @@ use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduTokenCantCreateException;
  * Class Session
  * @package SquareetLabs\LaravelOpenVidu
  */
-class Session implements \JsonSerializable
+class Session implements JsonSerializable
 {
     /** @var  Client */
     private $client;
