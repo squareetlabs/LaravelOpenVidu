@@ -814,6 +814,230 @@ use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 OpenVidu::deleteRecording($recordingId);
 ```
 
+
+### Available Events
+At the moment of raising the OpenVidu server we can indicate multiple [configuration options](https://openvidu.io/docs/reference-docs/openvidu-server-params/), one of them is if we want to use the webhook service to receive events in an endpoint. In our case the default endpoint is _'/openvidu/webhook'_ 
+
+##### Event `ParticipantJoined` is launched when a user has connected to a session.  Example of use:
+
+```php
+use SquareetLabs\LaravelOpenVidu\Events\ParticipantJoined;
+
+class ParticipantJoinedListener
+{
+    /**
+     * Handle the event.
+     *
+     * @param  ParticipantJoined  $event
+     * @return void
+     */
+    public function handle(ParticipantJoined $event)
+    {
+        $event->sessionId;      // Session for which the event was triggered, a string with the session unique identifier
+        $event->timestamp;      // Time when the event was triggered, UTC milliseconds
+        $event->participantId;  // Identifier of the participant, a string with the participant unique identifier
+        $event->platform;       // Complete description of the platform used by the participant to connect to the session
+    }
+}
+```
+
+##### Event `ParticipantLeft` is launchedwhen a user has left a session.  Example of use:
+
+```php
+use SquareetLabs\LaravelOpenVidu\Events\ParticipantLeft;
+
+class ParticipantLeftListener
+{
+    /**
+     * Handle the event.
+     *
+     * @param  ParticipantLeft  $event
+     * @return void
+     */
+    public function handle(ParticipantLeft $event)
+    {
+        $event->sessionId;      // Session for which the event was triggered
+        $event->timestamp;      // Time when the event was triggered
+        $event->participantId;  // Identifier of the participant
+        $event->platform;       // Complete description of the platform used by the participant to connect to the session
+        $event->startTime;      // Time when the participant joined the session
+        $event->duration;       // Total duration of the participant's connection to the session
+        $event->reason;         // How the participant left the session.
+    }
+}
+```
+
+##### Event `RecordingStatusChanged` is launched when the status of a recording has changed. The status may be: started, stopped, ready, failed.  Example of use:
+
+```php
+use SquareetLabs\LaravelOpenVidu\Events\RecordingStatusChanged;
+
+class RecordingStatusChangedListener
+{
+    /**
+     * Handle the event.
+     *
+     * @param  RecordingStatusChanged  $event
+     * @return void
+     */
+    public function handle(RecordingStatusChanged $event)
+    {
+       $event->sessionId;	    // Session for which the event was triggered
+       $event->timestamp;	    // Time when the event was triggered
+       $event->startTime;	    // Time when the recording started
+       $event->id;	            // Unique identifier of the recording
+       $event->name;	        // Name given to the recording file
+       $event->outputMode;	    // Output mode of the recording
+       $event->hasAudio;	    // Wheter the recording file has audio or not
+       $event->hasVideo;	    // Wheter the recording file has video or not
+       $event->recordingLayout;	// The type of layout used in the recording. Only defined if outputMode is COMPOSED and hasVideo is true
+       $event->resolution;	    // Resolution of the recorded file. Only defined if outputMode is COMPOSED and hasVideo is true	
+       $event->size;            // The size of the video file. 0 until status is stopped
+       $event->duration;	    //  Duration of the video file. 0 until status is stopped
+       $event->status;	        // Status of the recording
+       $event->reason;	        // Why the recording stopped. Only defined when status is stopped or ready
+    }
+}
+```
+
+
+##### Event `SessionCreated` is launched when a new session has been created.  Example of use:
+
+```php
+use SquareetLabs\LaravelOpenVidu\Events\SessionCreated;
+
+class SessionCreatedListener
+{
+    /**
+     * Handle the event.
+     *
+     * @param  SessionCreated  $event
+     * @return void
+     */
+    public function handle(SessionCreated $event)
+    {
+        $event->sessionId; // Session for which the event was triggered
+        $event->timestamp; // Time when the event was triggered
+    }
+}
+```
+
+
+##### Event `SessionDestroyed` is launched when when a session has finished.  Example of use:
+
+```php
+use SquareetLabs\LaravelOpenVidu\Events\SessionDestroyed;
+
+class SessionDestroyedListener
+{
+    /**
+     * Handle the event.
+     *
+     * @param  SessionCreated  $event
+     * @return void
+     */
+    public function handle(SessionDestroyed $event)
+    {
+        $event->sessionId;      // Session for which the event was triggered
+        $event->timestamp;      // Time when the event was triggered
+        $event->startTime;	    // Time when the session started
+        $event->duration;	    // Total duration of the session
+        $event->reason;	        // Why the session was destroyed
+    }
+}
+```
+
+##### Event `WebRTCConnectionCreated` is launched hen a new media stream has been established. Can be an "INBOUND" connection (the user is receiving a stream from a publisher of the session) or an "OUTBOUND" connection (the user is a publishing a stream to the session).  Example of use:
+
+```php
+use SquareetLabs\LaravelOpenVidu\Events\WebRTCConnectionCreated;
+
+class WebRTCConnectionCreatedListener
+{
+    /**
+     * Handle the event.
+     *
+     * @param  WebRTCConnectionCreated  $event
+     * @return void
+     */
+    public function handle(WebRTCConnectionCreated $event)
+    {
+       $event->sessionId;        // Session for which the event was triggered
+       $event->timestamp;        // Time when the event was triggered	UTC milliseconds
+       $event->participantId;    // Identifier of the participant	
+       $event->connection;       // Whether the media connection is an inbound connection (the participant is receiving media from OpenVidu) or an outbound connection (the participant is sending media to OpenVidu)	["INBOUND","OUTBOUND"]
+       $event->receivingFrom;    // If connection is "INBOUND", the participant from whom the media stream is being received	
+       $event->audioEnabled;     // Whether the media connection has negotiated audio or not
+       $event->videoEnabled;     // Whether the media connection has negotiated video or not
+       $event->videoSource;      // If videoEnabled is true, the type of video that is being transmitted
+       $event->videoFramerate;   // If videoEnabled is true, the framerate of the transmitted video
+       $event->videoDimensions;  // If videoEnabled is true, the dimensions transmitted video
+    }
+}
+```
+
+##### Event `WebRTCConnectionCreated` is launched when  when any media stream connection is closed.  Example of use:
+
+```php
+use SquareetLabs\LaravelOpenVidu\Events\WebRTCConnectionDestroyed;
+
+class WebRTCConnectionDestroyedListener
+{
+    /**
+     * Handle the event.
+     *
+     * @param  WebRTCConnectionDestroyed  $event
+     * @return void
+     */
+    public function handle(WebRTCConnectionDestroyed $event)
+    {
+       $event->sessionId;        // Session for which the event was triggered
+       $event->timestamp;        // Time when the event was triggered	UTC milliseconds
+       $event->participantId;    // Identifier of the participant	
+       $event->connection;       // Whether the media connection is an inbound connection (the participant is receiving media from OpenVidu) or an outbound connection (the participant is sending media to OpenVidu)	["INBOUND","OUTBOUND"]
+       $event->receivingFrom;    // If connection is "INBOUND", the participant from whom the media stream is being received	
+       $event->audioEnabled;     // Whether the media connection has negotiated audio or not
+       $event->videoEnabled;     // Whether the media connection has negotiated video or not
+       $event->videoSource;      // If videoEnabled is true, the type of video that is being transmitted
+       $event->videoFramerate;   // If videoEnabled is true, the framerate of the transmitted video
+       $event->videoDimensions;  // If videoEnabled is true, the dimensions transmitted video
+       $event->startTime;        // Time when the media connection was established	UTC milliseconds
+       $event->duration;         // Total duration of the media connection	Seconds
+       $event->reason;           // How the WebRTC connection was destroyed
+    }
+}
+```
+
+Finally remember to add them to your `EventServiceProvider`:
+````php
+protected $listen = [
+        ...
+        'SquareetLabs\LaravelOpenVidu\Events\ParticipantJoined' => [
+            'App\Listeners\ParticipantJoinedListener',
+        ],
+        'SquareetLabs\LaravelOpenVidu\Events\ParticipantLeft' => [
+            'App\Listeners\ParticipantLeftListener',
+        ],
+        'SquareetLabs\LaravelOpenVidu\Events\RecordingStatusChanged' => [
+            'App\Listeners\RecordingStatusChangedListener',
+        ],
+        'SquareetLabs\LaravelOpenVidu\Events\SessionCreated' => [
+            'App\Listeners\SessionCreatedListener',
+        ],
+        'SquareetLabs\LaravelOpenVidu\Events\SessionDestroyed' => [
+            'App\Listeners\SessionDestroyedListener',
+        ],
+        'SquareetLabs\LaravelOpenVidu\Events\WebRTCConnectionCreated' => [
+            'App\Listeners\WebRTCConnectionCreatedListener',
+        ],
+        'SquareetLabs\LaravelOpenVidu\Events\WebRTCConnectionDestroyed' => [
+            'App\Listeners\WebRTCConnectionDestroyedListener',
+        ],
+        ...
+    ];
+````
+
+
 ## OpenVidu
 Visit [OpenVidu Documentation](https://openvidu.io/docs/home/) for more information.
 
