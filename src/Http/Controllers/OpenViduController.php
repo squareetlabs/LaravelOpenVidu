@@ -7,8 +7,10 @@ use SquareetLabs\LaravelOpenVidu\Builders\RecordingPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\SessionPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\TokenOptionsBuilder;
 use SquareetLabs\LaravelOpenVidu\Facades\OpenVidu;
+use SquareetLabs\LaravelOpenVidu\Factories\WebhookEventFactory;
 use SquareetLabs\LaravelOpenVidu\Http\Requests\GenerateTokenRequest;
 use SquareetLabs\LaravelOpenVidu\Http\Requests\StartRecordingRequest;
+use SquareetLabs\LaravelOpenVidu\Http\Requests\WebhookEventRequest;
 
 /**
  * Class SmsUpReportController
@@ -157,5 +159,16 @@ class OpenViduController extends Controller
     {
         $recording = OpenVidu::deleteRecording($recordingId);
         return response()->json(['recording' => $recording], 200);
+    }
+
+
+    /**
+     * @param WebhookEventRequest $request
+     * @return string
+     */
+    public function webhook(WebhookEventRequest $request)
+    {
+        WebhookEventFactory::create($request->all());
+        return response()->json(['success' => true], 200);
     }
 }

@@ -17,3 +17,6 @@ Route::post('/recordings/start', 'OpenViduController@startRecording')->name('ope
 Route::post('/recordings/{recordingId}/stop', 'OpenViduController@stopRecording')->name('openvidu.recordings.recording.stop');
 Route::get('/recordings/{recordingId}', 'OpenViduController@recording')->name('openvidu.recordings.recording');
 Route::delete('/recordings/{recordingId}', 'OpenViduController@deleteRecording')->name('openvidu.recordings.recording.delete');
+
+
+Route::post('/webhook', 'OpenViduController@webhook')->name('openvidu.webhook');
