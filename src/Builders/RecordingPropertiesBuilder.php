@@ -8,7 +8,7 @@ use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
 use SquareetLabs\LaravelOpenVidu\RecordingProperties;
 
 /**
- * Class RecordingPropertiesFactory
+ * Class RecordingPropertiesBuilder
  * @package SquareetLabs\LaravelOpenVidu\Builders
  */
 class RecordingPropertiesBuilder

@@ -9,7 +9,7 @@ use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
 use SquareetLabs\LaravelOpenVidu\SessionProperties;
 
 /**
- * Class SessionPropertiesFactory
+ * Class SessionPropertiesBuilder
  * @package SquareetLabs\LaravelOpenVidu\Builders
  */
 class SessionPropertiesBuilder

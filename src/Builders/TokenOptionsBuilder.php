@@ -5,7 +5,7 @@ namespace SquareetLabs\LaravelOpenVidu\Builders;
 use SquareetLabs\LaravelOpenVidu\TokenOptions;
 
 /**
- * Class TokenOptionsFactory
+ * Class TokenOptionsBuilder
  * @package SquareetLabs\LaravelOpenVidu\Builders
  */
 class TokenOptionsBuilder

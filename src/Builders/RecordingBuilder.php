@@ -9,7 +9,7 @@ use SquareetLabs\LaravelOpenVidu\Recording;
 use SquareetLabs\LaravelOpenVidu\RecordingProperties;
 
 /**
- * Class RecordingFactory
+ * Class RecordingBuilder
  * @package SquareetLabs\LaravelOpenVidu\Builders
  */
 class RecordingBuilder

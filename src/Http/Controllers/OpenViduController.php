@@ -3,6 +3,7 @@
 namespace SquareetLabs\LaravelOpenVidu\Http\Controllers;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Event;
 use SquareetLabs\LaravelOpenVidu\Builders\RecordingPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\SessionPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\TokenOptionsBuilder;
@@ -168,7 +169,7 @@ class OpenViduController extends Controller
      */
     public function webhook(WebhookEventRequest $request)
     {
-        event(WebhookEventFactory::create($request->all()));
+        Event::dispatch(WebhookEventFactory::create($request->all()));
         return response()->json(['success' => true], 200);
     }
 }
