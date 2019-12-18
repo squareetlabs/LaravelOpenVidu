@@ -1,7 +1,7 @@
 <?php
 
 namespace SquareetLabs\LaravelOpenVidu;
-
+use JsonSerializable;
 use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
@@ -12,7 +12,7 @@ use SquareetLabs\LaravelOpenVidu\Enums\RecordingStatus;
  * Class Recording
  * @package SquareetLabs\LaravelOpenVidu
  */
-class Recording
+class Recording implements JsonSerializable
 {
 
     /** @var  string */
@@ -182,4 +182,44 @@ class Recording
         return $this->id;
     }
 
+
+    /**
+     * Convert the model instance to JSON.
+     *
+     * @param int $options
+     * @return string
+     *
+     */
+    public function toJson($options = 0): string
+    {
+        $json = json_encode($this->jsonSerialize(), $options);
+        return $json;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $array = ['id' => $this->id, 'sessionId' => $this->sessionId, 'size' => $this->size, 'status' => $this->status,'duration' => $this->duration, 'resolution' => $this->getResolution(),  'hasAudio' => $this->hasAudio(), 'hasVideo' => $this->hasVideo(), 'url' => $this->url, 'createdAt' => $this->createdAt];
+        foreach ($array as $key => $value) {
+            if (is_null($value) || $value == '')
+                unset($array[$key]);
+        }
+        return $array;
+    }
 }

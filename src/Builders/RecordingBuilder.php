@@ -20,7 +20,7 @@ class RecordingBuilder
      */
     public static function build($properties)
     {
-        if (is_array($properties)) {
+        if (is_array($properties) && array_key_exists('sessionId', $properties)) {
             return new Recording(
                 $properties['id'],
                 $properties['sessionId'],
@@ -29,16 +29,18 @@ class RecordingBuilder
                 $properties['duration'],
                 $properties['url'],
                 new RecordingProperties(
-                    array_key_exists('hasAudio', $properties) ? $properties['hasAudio'] : true,
-                    array_key_exists('hasVideo', $properties) ? $properties['hasVideo'] : true,
+                    $properties['sessionId'],
                     array_key_exists('name', $properties) ? $properties['name'] : RecordingLayout::BEST_FIT,
                     array_key_exists('outputMode', $properties) ? $properties['outputMode'] : OutputMode::COMPOSED,
                     array_key_exists('recordingLayout', $properties) ? $properties['recordingLayout'] : RecordingLayout::BEST_FIT,
-                    array_key_exists('customLayout', $properties) ? $properties['customLayout'] : MediaMode::ROUTED,
-                    array_key_exists('resolution', $properties) ? $properties['resolution'] : null
+                    array_key_exists('resolution', $properties) ? $properties['resolution'] : null,
+                    array_key_exists('hasAudio', $properties) ? $properties['hasAudio'] : true,
+                    array_key_exists('hasVideo', $properties) ? $properties['hasVideo'] : true,
+                    array_key_exists('customLayout', $properties) ? $properties['customLayout'] : MediaMode::ROUTED
+
                 ));
         }
-        return null;
+        throw new OpenViduInvalidArgumentException('RecordingBuilder::build spects an array and '.gettype($properties).' is given');
 
     }
 }

@@ -94,7 +94,7 @@ class OpenVidu
         ]);
         switch ($response->getStatusCode()) {
             case 200:
-                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents()));
+                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
                 $activeSession = $this->getSession($recording->getSessionId());
                 if ($activeSession != null) {
                     $activeSession->setIsBeingRecorded(true);
@@ -112,8 +112,8 @@ class OpenVidu
                 throw new OpenViduServerRecordingIsDisabledException();
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && isset($result['message'])) {
-                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                if ($result && property_exists($result, 'message')) {
+                    throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
@@ -151,7 +151,7 @@ class OpenVidu
         $response = $this->client()->post(Uri::RECORDINGS_STOP . '/' . $recordingId);
         switch ($response->getStatusCode()) {
             case 200:
-                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents()));
+                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
                 $activeSession = $this->getSession($recording->getSessionId());
                 if ($activeSession != null) {
                     $activeSession->setIsBeingRecorded(false);
@@ -163,8 +163,8 @@ class OpenVidu
                 throw new OpenViduRecordingStatusException(__('The recording has `starting` status. Wait until `started` status before stopping the recording.'));
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && isset($result['message'])) {
-                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                if ($result && property_exists($result, 'message')) {
+                    throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
@@ -182,14 +182,14 @@ class OpenVidu
         $response = $this->client()->get(Uri::RECORDINGS_URI . '/' . $recordingId);
         switch ($response->getStatusCode()) {
             case 200:
-                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents()));
+                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
                 return $recording;
             case 404:
                 throw new OpenViduRecordingNotFoundException();
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && isset($result['message'])) {
-                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                if ($result && property_exists($result, 'message')) {
+                    throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
@@ -206,15 +206,15 @@ class OpenVidu
         $response = $this->client()->get(Uri::RECORDINGS_URI);
         switch ($response->getStatusCode()) {
             case 200:
-                $items = json_decode($response->getBody()->getContents());
+                $items = json_decode($response->getBody()->getContents(), true);
                 foreach ($items as $item) {
                     $recordings[] = RecordingBuilder::build($item);
                 }
                 return $recordings;
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && isset($result['message'])) {
-                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                if ($result && property_exists($result, 'message')) {
+                    throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
@@ -242,8 +242,8 @@ class OpenVidu
                 throw new OpenViduRecordingStatusException(__('The recording has `started` status. Stop it before deletion'));
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && isset($result['message'])) {
-                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                if ($result && property_exists($result, 'message')) {
+                    throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }

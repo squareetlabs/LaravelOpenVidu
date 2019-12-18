@@ -19,7 +19,7 @@ class Uri
     /**
      * https://openvidu.io/docs/reference-docs/REST-API/#post-apirecordingsstopltrecording_idgt
      */
-    public const RECORDINGS_STOP = ' api/recordings/stop';
+    public const RECORDINGS_STOP = 'api/recordings/stop';
     /**
      * https://openvidu.io/docs/reference-docs/REST-API/#post-apisessions
      */

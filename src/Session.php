@@ -86,8 +86,8 @@ class Session implements JsonSerializable
                 return $this->properties->getCustomSessionId();
             } else {
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && isset($result['message'])) {
-                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                if ($result && property_exists($result,'message')) {
+                    throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
             }
@@ -164,8 +164,8 @@ class Session implements JsonSerializable
                 break;
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && isset($result['message'])) {
-                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                if ($result && property_exists($result,'message')) {
+                    throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
@@ -337,7 +337,7 @@ class Session implements JsonSerializable
                         }
                     }
                 }
-                Cache::store('openvidu')->update($this->sessionId, $this);
+                Cache::store('openvidu')->update($this->sessionId, $this->toJson());
                 break;
             case 400:
                 throw new OpenViduSessionNotFoundException();
@@ -347,8 +347,8 @@ class Session implements JsonSerializable
                 break;
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && isset($result['message'])) {
-                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                if ($result && property_exists($result,'message')) {
+                    throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
@@ -399,7 +399,7 @@ class Session implements JsonSerializable
                         });
                     }
                 }
-                Cache::store('openvidu')->update($this->sessionId, $this);
+                Cache::store('openvidu')->update($this->sessionId, $this->toJson());
                 break;
             case 400:
                 throw new OpenViduSessionNotFoundException();
@@ -409,8 +409,8 @@ class Session implements JsonSerializable
                 break;
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && isset($result['message'])) {
-                    throw new OpenViduException($result['message'], $response->getStatusCode());
+                if ($result && property_exists($result,'message')) {
+                    throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
@@ -460,7 +460,7 @@ class Session implements JsonSerializable
     public function setIsBeingRecorded(bool $recording)
     {
         $this->recording = $recording;
-        Cache::store('openvidu')->update($this->sessionId, $this);
+        Cache::store('openvidu')->update($this->sessionId, $this->toJson());
     }
 
     /**
