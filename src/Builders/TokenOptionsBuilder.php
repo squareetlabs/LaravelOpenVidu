@@ -19,6 +19,6 @@ class TokenOptionsBuilder
         if (is_array($tokenOptions)) {
             return new TokenOptions($tokenOptions['role'], $tokenOptions['data']);
         }
-        throw new OpenViduInvalidArgumentException('TokenOptionsBuilder::build spects an array and '.gettype($properties).' is given');
+        throw new OpenViduInvalidArgumentException('TokenOptionsBuilder::build spects an array and ' . gettype($properties) . ' is given');
     }
 }

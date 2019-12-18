@@ -31,7 +31,7 @@ class RecordingPropertiesBuilder
                 array_key_exists('customLayout', $properties) ? $properties['customLayout'] : MediaMode::ROUTED
             );
         }
-        throw new OpenViduInvalidArgumentException('RecordingPropertiesBuilder::build spects an array and '.gettype($properties).' is given');
+        throw new OpenViduInvalidArgumentException('RecordingPropertiesBuilder::build spects an array and ' . gettype($properties) . ' is given');
 
     }
 }

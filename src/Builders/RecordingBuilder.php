@@ -40,7 +40,7 @@ class RecordingBuilder
 
                 ));
         }
-        throw new OpenViduInvalidArgumentException('RecordingBuilder::build spects an array and '.gettype($properties).' is given');
+        throw new OpenViduInvalidArgumentException('RecordingBuilder::build spects an array and ' . gettype($properties) . ' is given');
 
     }
 }

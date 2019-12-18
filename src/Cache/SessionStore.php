@@ -44,6 +44,50 @@ class SessionStore implements Store
     }
 
     /**
+     * Update an item from the cache by key.
+     *
+     * @param string|array $key
+     * @param $value
+     * @return mixed
+     */
+    public function update($key, $value)
+    {
+        if ($this->table()->where('key', '=', $key)->exists()) {
+            $value = $this->serialize($value);
+            $this->table()->where('key', $key)->update(compact('value'));
+            return $this->get($key);
+        }
+        return;
+    }
+
+    /**
+     * Get a query builder for the cache table.
+     *
+     * @return Builder
+     */
+    protected function table()
+    {
+        return $this->connection->table($this->table);
+    }
+
+    /**
+     * Serialize the given value.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    protected function serialize($value)
+    {
+        $result = serialize($value);
+
+        if ($this->connection instanceof PostgresConnection && Str::contains($result, "\0")) {
+            $result = base64_encode($result);
+        }
+
+        return $result;
+    }
+
+    /**
      * Retrieve an item from the cache by key.
      *
      * @param string|array $key
@@ -74,16 +118,6 @@ class SessionStore implements Store
     }
 
     /**
-     * Get a query builder for the cache table.
-     *
-     * @return Builder
-     */
-    protected function table()
-    {
-        return $this->connection->table($this->table);
-    }
-
-    /**
      * Remove an item from the cache.
      *
      * @param string $key
@@ -109,23 +143,6 @@ class SessionStore implements Store
         }
 
         return unserialize($value);
-    }
-
-    /**
-     * Update an item from the cache by key.
-     *
-     * @param string|array $key
-     * @param $value
-     * @return mixed
-     */
-    public function update($key, $value)
-    {
-        if ($this->table()->where('key', '=', $key)->exists()) {
-            $value = $this->serialize($value);
-            $this->table()->where('key', $key)->update(compact('value'));
-            return $this->get($key);
-        }
-        return;
     }
 
     /**
@@ -223,23 +240,6 @@ class SessionStore implements Store
 
             return $new;
         });
-    }
-
-    /**
-     * Serialize the given value.
-     *
-     * @param mixed $value
-     * @return string
-     */
-    protected function serialize($value)
-    {
-        $result = serialize($value);
-
-        if ($this->connection instanceof PostgresConnection && Str::contains($result, "\0")) {
-            $result = base64_encode($result);
-        }
-
-        return $result;
     }
 
     /**

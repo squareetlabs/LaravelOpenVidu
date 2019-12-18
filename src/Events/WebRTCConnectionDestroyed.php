@@ -3,7 +3,6 @@
 namespace SquareetLabs\LaravelOpenVidu\Events;
 
 use Illuminate\Queue\SerializesModels;
-use stdClass;
 
 /**
  * Class WebRTCConnectionCreated
@@ -109,24 +108,25 @@ class WebRTCConnectionDestroyed implements WebhookEventInterface
      */
     public $event;
 
+
     /**
-     * Create a new ParticipantJoined event instance.
-     * @param stdClass $data
+     * Create a new SessionCreated event instance.
+     * @param array $data
      */
-    public function __construct(stdClass $data)
+    public function __construct(array $data)
     {
-        $this->sessionId = property_exists($data, 'sessionId') ? $data->sessionId : null;
-        $this->timestamp = property_exists($data, 'timestamp') ? $data->timestamp : null;
-        $this->participantId = property_exists($data, 'participantId') ? $data->participantId : null;
-        $this->receivingFrom = property_exists($data, 'receivingFrom') ? $data->receivingFrom : null;
-        $this->audioEnabled = property_exists($data, 'audioEnabled') ? $data->sessionaudioEnabledId : null;
-        $this->videoEnabled = property_exists($data, 'videoEnabled') ? $data->videoEnabled : null;
-        $this->videoSource = property_exists($data, 'videoSource') ? $data->videoSource : null;
-        $this->videoFramerate = property_exists($data, 'videoFramerate') ? $data->videoFramerate : null;
-        $this->videoDimensions = property_exists($data, 'videoDimensions') ? $data->videoDimensions : null;
-        $this->startTime = property_exists($data, 'startTime') ? $data->startTime : null;
-        $this->duration = property_exists($data, 'duration') ? $data->duration : null;
-        $this->reason = property_exists($data, 'reason') ? $data->reason : null;
-        $this->event = $data->event;
+        $this->sessionId = array_key_exists('sessionId', $data) ? $data['sessionId'] : null;
+        $this->timestamp = array_key_exists('timestamp', $data) ? $data['timestamp'] : null;
+        $this->participantId = array_key_exists('participantId', $data) ? $data['participantId'] : null;
+        $this->receivingFrom = array_key_exists('receivingFrom', $data) ? $data['receivingFrom'] : null;
+        $this->audioEnabled = array_key_exists('audioEnabled', $data) ? $data['audioEnabled'] : null;
+        $this->videoEnabled = array_key_exists('videoEnabled', $data) ? $data['videoEnabled'] : null;
+        $this->videoSource = array_key_exists('videoSource', $data) ? $data['videoSource'] : null;
+        $this->videoFramerate = array_key_exists('videoFramerate', $data) ? $data['videoFramerate'] : null;
+        $this->videoDimensions = array_key_exists('videoDimensions', $data) ? $data['videoDimensions'] : null;
+        $this->startTime = array_key_exists('startTime', $data) ? $data['startTime'] : null;
+        $this->duration = array_key_exists('duration', $data) ? $data['duration'] : null;
+        $this->reason = array_key_exists('reason', $data) ? $data['reason'] : null;
+        $this->event = $data['event'];
     }
 }

@@ -1,13 +1,13 @@
 <?php
 
-namespace SquareetLabs\LaravelOpenVidu\Factories;
+namespace SquareetLabs\LaravelOpenVidu\Dispatchers;
 
+use Illuminate\Support\Facades\Event;
 use SquareetLabs\LaravelOpenVidu\Events\ParticipantJoined;
 use SquareetLabs\LaravelOpenVidu\Events\ParticipantLeft;
 use SquareetLabs\LaravelOpenVidu\Events\RecordingStatusChanged;
 use SquareetLabs\LaravelOpenVidu\Events\SessionCreated;
 use SquareetLabs\LaravelOpenVidu\Events\SessionDestroyed;
-use SquareetLabs\LaravelOpenVidu\Events\WebhookEventInterface;
 use SquareetLabs\LaravelOpenVidu\Events\WebRTCConnectionCreated;
 use SquareetLabs\LaravelOpenVidu\Events\WebRTCConnectionDestroyed;
 
@@ -15,32 +15,31 @@ use SquareetLabs\LaravelOpenVidu\Events\WebRTCConnectionDestroyed;
  * Class WebhookEventFactory
  * @package SquareetLabs\LaravelOpenVidu\Factories
  */
-class WebhookEventFactory
+class WebhookEventDispatcher
 {
-    public static function create(string $webhookEvent): WebhookEventInterface
+    public static function dispatch(array $webhookEvent)
     {
-        $object = json_decode($webhookEvent);
-        switch ($object->event) {
+        switch ($webhookEvent['event']) {
             case 'sessionCreated':
-                return new SessionCreated($object);
+                Event::dispatch(new SessionCreated($webhookEvent));
                 break;
             case 'sessionDestroyed':
-                return new SessionDestroyed($object);
+                Event::dispatch(new SessionDestroyed($webhookEvent));
                 break;
             case 'participantJoined':
-                return new ParticipantJoined($object);
+                Event::dispatch(new ParticipantJoined($webhookEvent));
                 break;
             case 'participantLeft':
-                return new ParticipantLeft($object);
+                Event::dispatch(new ParticipantLeft($webhookEvent));
                 break;
             case 'webrtcConnectionCreated':
-                return new WebRTCConnectionCreated($object);
+                Event::dispatch(new WebRTCConnectionCreated($webhookEvent));
                 break;
             case 'webrtcConnectionDestroyed':
-                return new WebRTCConnectionDestroyed($object);
+                Event::dispatch(new WebRTCConnectionDestroyed($webhookEvent));
                 break;
             case 'recordingStatusChanged':
-                return new RecordingStatusChanged($object);
+                Event::dispatch(new RecordingStatusChanged($webhookEvent));
                 break;
         }
     }

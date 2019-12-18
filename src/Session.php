@@ -86,7 +86,7 @@ class Session implements JsonSerializable
                 return $this->properties->getCustomSessionId();
             } else {
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result,'message')) {
+                if ($result && property_exists($result, 'message')) {
                     throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
@@ -164,7 +164,7 @@ class Session implements JsonSerializable
                 break;
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result,'message')) {
+                if ($result && property_exists($result, 'message')) {
                     throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
@@ -347,7 +347,7 @@ class Session implements JsonSerializable
                 break;
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result,'message')) {
+                if ($result && property_exists($result, 'message')) {
                     throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
@@ -409,7 +409,7 @@ class Session implements JsonSerializable
                 break;
             default:
                 $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result,'message')) {
+                if ($result && property_exists($result, 'message')) {
                     throw new OpenViduException($result->message, $response->getStatusCode());
                 }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());

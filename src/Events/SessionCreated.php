@@ -3,7 +3,6 @@
 namespace SquareetLabs\LaravelOpenVidu\Events;
 
 use Illuminate\Queue\SerializesModels;
-use stdClass;
 
 /**
  * Class SessionCreated
@@ -32,12 +31,12 @@ class SessionCreated implements WebhookEventInterface
 
     /**
      * Create a new SessionCreated event instance.
-     * @param stdClass $data
+     * @param array $data
      */
-    public function __construct(stdClass $data)
+    public function __construct(array $data)
     {
-        $this->sessionId = property_exists($data, 'sessionId') ? $data->sessionId : null;
-        $this->timestamp = property_exists($data, 'timestamp') ? $data->timestamp : null;
-        $this->event = $data->event;
+        $this->sessionId = array_key_exists('sessionId', $data) ? $data['sessionId'] : null;
+        $this->timestamp = array_key_exists('timestamp', $data) ? $data['timestamp'] : null;
+        $this->event = $data['event'];
     }
 }

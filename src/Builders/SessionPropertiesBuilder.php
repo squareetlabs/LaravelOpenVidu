@@ -6,7 +6,6 @@ use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
-use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException;
 use SquareetLabs\LaravelOpenVidu\SessionProperties;
 
 /**
@@ -31,6 +30,6 @@ class SessionPropertiesBuilder
                 array_key_exists('defaultCustomLayout', $properties) ? $properties['defaultCustomLayout'] : null
             );
         }
-        throw new OpenViduInvalidArgumentException('SessionPropertiesBuilder::build spects an array and '.gettype($properties).' is given');
+        throw new OpenViduInvalidArgumentException('SessionPropertiesBuilder::build spects an array and ' . gettype($properties) . ' is given');
     }
 }

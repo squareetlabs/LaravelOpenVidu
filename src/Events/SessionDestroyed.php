@@ -3,7 +3,6 @@
 namespace SquareetLabs\LaravelOpenVidu\Events;
 
 use Illuminate\Queue\SerializesModels;
-use stdClass;
 
 /**
  * Class SessionDestroyed
@@ -55,17 +54,16 @@ class SessionDestroyed implements WebhookEventInterface
     public $event;
 
     /**
-     * Create a new SessionDestroyed event instance.
-     * @param stdClass $data
+     * Create a new SessionCreated event instance.
+     * @param array $data
      */
-    public function __construct(stdClass $data)
+    public function __construct(array $data)
     {
-        $this->sessionId = property_exists($data, 'sessionId') ? $data->sessionId : null;
-        $this->timestamp = property_exists($data, 'timestamp') ? $data->timestamp : null;
-        $this->startTime = property_exists($data, 'startTime') ? $data->startTime : null;
-        $this->duration = property_exists($data, 'duration') ? $data->duration : null;
-        $this->reason = property_exists($data, 'reason') ? $data->reason : null;
-        $this->event = $data->event;
+        $this->sessionId = array_key_exists('sessionId', $data) ? $data['sessionId'] : null;
+        $this->timestamp = array_key_exists('timestamp', $data) ? $data['timestamp'] : null;
+        $this->startTime = array_key_exists('startTime', $data) ? $data['startTime'] : null;
+        $this->duration = array_key_exists('duration', $data) ? $data['duration'] : null;
+        $this->reason = array_key_exists('reason', $data) ? $data['reason'] : null;
+        $this->event = $data['event'];
     }
-
 }

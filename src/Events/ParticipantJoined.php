@@ -3,7 +3,6 @@
 namespace SquareetLabs\LaravelOpenVidu\Events;
 
 use Illuminate\Queue\SerializesModels;
-use stdClass;
 
 /**
  * Class ParticipantJoined
@@ -48,15 +47,15 @@ class ParticipantJoined implements WebhookEventInterface
     public $event;
 
     /**
-     * Create a new ParticipantJoined event instance.
-     * @param stdClass $data
+     * Create a new SessionCreated event instance.
+     * @param array $data
      */
-    public function __construct(stdClass $data)
+    public function __construct(array $data)
     {
-        $this->sessionId = property_exists($data, 'sessionId') ? $data->sessionId : null;
-        $this->timestamp = property_exists($data, 'timestamp') ? $data->timestamp : null;
-        $this->participantId = property_exists($data, 'participantId') ? $data->participantId : null;
-        $this->platform = property_exists($data, 'platform') ? $data->platform : null;
-        $this->event = $data->event;
+        $this->sessionId = array_key_exists('sessionId', $data) ? $data['sessionId'] : null;
+        $this->timestamp = array_key_exists('timestamp', $data) ? $data['timestamp'] : null;
+        $this->participantId = array_key_exists('participantId', $data) ? $data['participantId'] : null;
+        $this->platform = array_key_exists('platform', $data) ? $data['platform'] : null;
+        $this->event = $data['event'];
     }
 }

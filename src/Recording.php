@@ -1,6 +1,7 @@
 <?php
 
 namespace SquareetLabs\LaravelOpenVidu;
+
 use JsonSerializable;
 use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
@@ -139,33 +140,6 @@ class Recording implements JsonSerializable
     }
 
     /**
-     * Resolution of the video file. Only defined if OutputMode of the Recording is
-     * set to {@see OutputMode::COMPOSED}
-     */
-    public function getResolution(): string
-    {
-        return $this->recordingProperties->resolution();
-    }
-
-    /**
-     * <code>true</code> if the recording has an audio track, <code>false</code>
-     * otherwise (currently fixed to true)
-     */
-    public function hasAudio(): bool
-    {
-        return $this->recordingProperties->hasAudio();
-    }
-
-    /**
-     * <code>true</code> if the recording has a video track, <code>false</code>
-     * otherwise (currently fixed to true)
-     */
-    public function hasVideo(): bool
-    {
-        return $this->recordingProperties->hasVideo();
-    }
-
-    /**
      * @return string
      */
     public function __toString(): string
@@ -181,7 +155,6 @@ class Recording implements JsonSerializable
     {
         return $this->id;
     }
-
 
     /**
      * Convert the model instance to JSON.
@@ -215,11 +188,38 @@ class Recording implements JsonSerializable
      */
     public function toArray(): array
     {
-        $array = ['id' => $this->id, 'sessionId' => $this->sessionId, 'size' => $this->size, 'status' => $this->status,'duration' => $this->duration, 'resolution' => $this->getResolution(),  'hasAudio' => $this->hasAudio(), 'hasVideo' => $this->hasVideo(), 'url' => $this->url, 'createdAt' => $this->createdAt];
+        $array = ['id' => $this->id, 'sessionId' => $this->sessionId, 'size' => $this->size, 'status' => $this->status, 'duration' => $this->duration, 'resolution' => $this->getResolution(), 'hasAudio' => $this->hasAudio(), 'hasVideo' => $this->hasVideo(), 'url' => $this->url, 'createdAt' => $this->createdAt];
         foreach ($array as $key => $value) {
             if (is_null($value) || $value == '')
                 unset($array[$key]);
         }
         return $array;
+    }
+
+    /**
+     * Resolution of the video file. Only defined if OutputMode of the Recording is
+     * set to {@see OutputMode::COMPOSED}
+     */
+    public function getResolution(): string
+    {
+        return $this->recordingProperties->resolution();
+    }
+
+    /**
+     * <code>true</code> if the recording has an audio track, <code>false</code>
+     * otherwise (currently fixed to true)
+     */
+    public function hasAudio(): bool
+    {
+        return $this->recordingProperties->hasAudio();
+    }
+
+    /**
+     * <code>true</code> if the recording has a video track, <code>false</code>
+     * otherwise (currently fixed to true)
+     */
+    public function hasVideo(): bool
+    {
+        return $this->recordingProperties->hasVideo();
     }
 }
