@@ -36,5 +36,5 @@ class RecordingLayout
     /**
      * _(not available yet)_
      */
-    public const HORIZONTAL_PRESENTATION = 'VERTICAL_PRESENTATION';
+    public const HORIZONTAL_PRESENTATION = 'HORIZONTAL_PRESENTATION';
 }

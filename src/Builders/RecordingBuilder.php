@@ -5,6 +5,7 @@ namespace SquareetLabs\LaravelOpenVidu\Builders;
 use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduInvalidArgumentException;
 use SquareetLabs\LaravelOpenVidu\Recording;
 use SquareetLabs\LaravelOpenVidu\RecordingProperties;
 
@@ -17,6 +18,7 @@ class RecordingBuilder
     /**
      * @param $properties
      * @return Recording|null
+     * @throws OpenViduInvalidArgumentException
      */
     public static function build($properties)
     {

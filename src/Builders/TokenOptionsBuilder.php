@@ -2,6 +2,7 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Builders;
 
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduInvalidArgumentException;
 use SquareetLabs\LaravelOpenVidu\TokenOptions;
 
 /**
@@ -13,12 +14,13 @@ class TokenOptionsBuilder
     /**
      * @param array $tokenOptions
      * @return TokenOptions|null
+     * @throws OpenViduInvalidArgumentException
      */
     public static function build(array $tokenOptions)
     {
         if (is_array($tokenOptions)) {
             return new TokenOptions($tokenOptions['role'], $tokenOptions['data']);
         }
-        throw new OpenViduInvalidArgumentException('TokenOptionsBuilder::build spects an array and ' . gettype($properties) . ' is given');
+        throw new OpenViduInvalidArgumentException('TokenOptionsBuilder::build spects an array and ' . gettype($tokenOptions) . ' is given');
     }
 }

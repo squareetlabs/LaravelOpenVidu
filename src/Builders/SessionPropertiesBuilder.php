@@ -6,6 +6,7 @@ use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduInvalidArgumentException;
 use SquareetLabs\LaravelOpenVidu\SessionProperties;
 
 /**

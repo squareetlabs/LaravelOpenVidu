@@ -168,7 +168,6 @@ class OpenViduController extends Controller
      */
     public function webhook(WebhookEventRequest $request)
     {
-        file_put_contents(storage_path('logs/webhook-package.log'), json_encode($request->all()) . PHP_EOL . PHP_EOL . PHP_EOL, FILE_APPEND);
         WebhookEventDispatcher::dispatch($request->all());
         return response()->json(['success' => true], 200);
     }
