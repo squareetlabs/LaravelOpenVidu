@@ -1,6 +1,15 @@
 # Laravel client for controlling your videocalls from your Openvidu server.
-### This is a Laravel package wrapping OpenVidu Server REST API
 
+<p align="center">
+<a href="https://scrutinizer-ci.com/g/squareetlabs/LaravelOpenVidu/"><img src="https://scrutinizer-ci.com/g/squareetlabs/LaravelOpenVidu/badges/quality-score.png?b=master" alt="Quality Score"></a>
+<a href="https://scrutinizer-ci.com/g/squareetlabs/LaravelOpenVidu/"><img src="https://scrutinizer-ci.com/g/squareetlabs/LaravelOpenVidu/badges/build.png?b=master" alt="Build Status"></a>
+<a href="https://scrutinizer-ci.com/g/squareetlabs/LaravelOpenVidu/"><img src="https://scrutinizer-ci.com/g/squareetlabs/LaravelOpenVidu/badges/code-intelligence.svg?b=master" alt="Code Intelligence"></a>
+<a href="https://packagist.org/packages/squareetlabs/laravel-openvidu"><img class="latest_stable_version_img" src="https://poser.pugx.org/squareetlabs/laravel-openvidu/v/stable" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/squareetlabs/laravel-openvidu"><img class="total_img" src="https://poser.pugx.org/squareetlabs/laravel-openvidu/downloads" alt="Total Downloads"></a> 
+<a href="https://packagist.org/packages/squareetlabs/laravel-openvidu"><img class="license_img" src="https://poser.pugx.org/squareetlabs/laravel-openvidu/license" alt="License"></a>
+</p>
+
+### This is a Laravel package wrapping OpenVidu Server REST API
 ## Installation
 
 You can install this package via composer:
