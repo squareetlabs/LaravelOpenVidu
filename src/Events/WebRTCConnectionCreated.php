@@ -2,7 +2,6 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Events;
 
-use Illuminate\Queue\SerializesModels;
 
 /**
  * Class WebRTCConnectionCreated
@@ -10,7 +9,6 @@ use Illuminate\Queue\SerializesModels;
  */
 class WebRTCConnectionCreated
 {
-    use SerializesModels;
     /**
      * @var string $sessionId
      * Session for which the event was triggered

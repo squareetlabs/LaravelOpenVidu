@@ -2,7 +2,6 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Events;
 
-use Illuminate\Queue\SerializesModels;
 
 /**
  * Class ParticipantJoined
@@ -10,7 +9,6 @@ use Illuminate\Queue\SerializesModels;
  */
 class ParticipantJoined
 {
-    use SerializesModels;
     /**
      * @var string $sessionId
      * Session for which the event was triggered
@@ -24,7 +22,7 @@ class ParticipantJoined
      * UTC milliseconds
      */
     public $timestamp;
-    
+
     /**
      * @var string $participantId
      * Identifier of the participant

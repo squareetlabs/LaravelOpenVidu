@@ -162,7 +162,7 @@ class Session implements JsonSerializable
      * To update every Session object owned by OpenVidu object, call
      * {@see fetch()}
      *
-     * @return true if the Session status has changed with respect to the server,
+     * @return bool true if the Session status has changed with respect to the server,
      * false if not. This applies to any property or sub-property of the object
      */
 
