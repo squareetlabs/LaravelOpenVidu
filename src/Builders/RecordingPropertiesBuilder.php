@@ -15,13 +15,13 @@ use SquareetLabs\LaravelOpenVidu\RecordingProperties;
 class RecordingPropertiesBuilder
 {
     /**
-     * @param $properties
+     * @param array $properties
      * @return RecordingProperties|null
      * @throws OpenViduInvalidArgumentException
      */
-    public static function build($properties)
+    public static function build(array $properties)
     {
-        if (is_array($properties) && array_key_exists('session', $properties)) {
+        if (array_key_exists('session', $properties)) {
             return new RecordingProperties(
                 $properties['session'],
                 array_key_exists('name', $properties) ? $properties['name'] : RecordingLayout::BEST_FIT,
@@ -33,7 +33,6 @@ class RecordingPropertiesBuilder
                 array_key_exists('customLayout', $properties) ? $properties['customLayout'] : MediaMode::ROUTED
             );
         }
-        throw new OpenViduInvalidArgumentException('RecordingPropertiesBuilder::build spects an array and ' . gettype($properties) . ' is given');
-
+        throw new OpenViduInvalidArgumentException('RecordingPropertiesBuilder::build spects an array with session key');
     }
 }

@@ -16,13 +16,13 @@ use SquareetLabs\LaravelOpenVidu\RecordingProperties;
 class RecordingBuilder
 {
     /**
-     * @param $properties
+     * @param array $properties
      * @return Recording|null
      * @throws OpenViduInvalidArgumentException
      */
-    public static function build($properties)
+    public static function build(array $properties)
     {
-        if (is_array($properties) && array_key_exists('sessionId', $properties)) {
+        if (array_key_exists('sessionId', $properties)) {
             return new Recording(
                 $properties['id'],
                 $properties['sessionId'],
@@ -42,7 +42,7 @@ class RecordingBuilder
 
                 ));
         }
-        throw new OpenViduInvalidArgumentException('RecordingBuilder::build spects an array and ' . gettype($properties) . ' is given');
+        throw new OpenViduInvalidArgumentException('RecordingBuilder::build spects an array with sessionId key.');
 
     }
 }
