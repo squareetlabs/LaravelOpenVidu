@@ -102,14 +102,19 @@ class OpenVidu
                 return $recording;
             case 404:
                 throw new OpenViduSessionNotFoundException();
+                break;
             case 406:
                 throw new OpenViduSessionHasNotConnectedParticipantsException();
+                break;
             case 409:
                 throw new OpenViduSessionCantRecordingException(__('The session is not configured for using media routed or it is already being recorded'));
+                break;
             case 422:
                 throw new OpenViduRecordingResolutionException();
+                break;
             case 501:
                 throw new OpenViduServerRecordingIsDisabledException();
+                break;
             default:
                 $result = json_decode($response->getBody()->getContents());
                 if ($result && property_exists($result, 'message')) {
@@ -159,8 +164,10 @@ class OpenVidu
                 return $recording;
             case 404:
                 throw new OpenViduRecordingNotFoundException();
+                break;
             case 406:
                 throw new OpenViduRecordingStatusException(__('The recording has `starting` status. Wait until `started` status before stopping the recording.'));
+                break;
             default:
                 $result = json_decode($response->getBody()->getContents());
                 if ($result && property_exists($result, 'message')) {
@@ -187,6 +194,7 @@ class OpenVidu
                 return $recording;
             case 404:
                 throw new OpenViduRecordingNotFoundException();
+                break;
             default:
                 $result = json_decode($response->getBody()->getContents());
                 if ($result && property_exists($result, 'message')) {
@@ -240,8 +248,10 @@ class OpenVidu
                 return true;
             case 404:
                 throw new OpenViduRecordingNotFoundException();
+                break;
             case 409:
                 throw new OpenViduRecordingStatusException(__('The recording has `started` status. Stop it before deletion'));
+                break;
             default:
                 $result = json_decode($response->getBody()->getContents());
                 if ($result && property_exists($result, 'message')) {

@@ -224,10 +224,10 @@ class Session implements JsonSerializable
                             $con->subscribers = array_filter($con->subscribers, function ($subscriber) use ($publisher) {
                                 if (is_array($subscriber) && array_key_exists('streamId', $subscriber)) {
                                     // Subscriber with advanced webRtc configuration properties
-                                    return $subscriber['streamId'] !== $publisher->streamId;
+                                    return $subscriber['streamId'] !== $publisher->getStreamId();
                                 } else {
                                     // Regular string subscribers
-                                    return $subscriber !== $publisher->streamId;
+                                    return $subscriber !== $publisher->getStreamId();
                                 }
                             });
                         }
