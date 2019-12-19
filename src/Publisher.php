@@ -154,9 +154,9 @@ class Publisher implements JsonSerializable
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getVideoDimensions(): array
+    public function getVideoDimensions(): string
     {
         return $this->videoDimensions;
     }

@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
  * Class RecordingStatusChanged
  * @package SquareetLabs\LaravelOpenVidu\Events
  */
-class RecordingStatusChanged implements WebhookEventInterface
+class RecordingStatusChanged
 {
     use SerializesModels;
     /**
@@ -113,14 +113,14 @@ class RecordingStatusChanged implements WebhookEventInterface
     public $status;
 
     /**
-     * @var $reason
+     * @var string $reason
      * Why the recording stopped. Only defined when status is stopped or ready
      * ["recordingStoppedByServer","lastParticipantLeft","sessionClosedByServer","automaticStop","openviduServerStopped","mediaServerDisconnect"]
      */
     public $reason;
 
     /**
-     * @var $event
+     * @var string $event
      * Openvidu server webhook event
      */
     public $event;
@@ -131,21 +131,21 @@ class RecordingStatusChanged implements WebhookEventInterface
      */
     public function __construct(array $data)
     {
-        $this->sessionId = array_key_exists('sessionId', $data) ? $data['sessionId'] : null;
-        $this->timestamp = array_key_exists('timestamp', $data) ? $data['timestamp'] : null;
-        $this->participantId = array_key_exists('participantId', $data) ? $data['participantId'] : null;
-        $this->startTime = array_key_exists('startTime', $data) ? $data['startTime'] : null;
-        $this->id = array_key_exists('id', $data) ? $data['id'] : null;
-        $this->name = array_key_exists('name', $data) ? $data['name'] : null;
-        $this->outputMode = array_key_exists('outputMode', $data) ? $data['outputMode'] : null;
-        $this->hasAudio = array_key_exists('hasAudio', $data) ? $data['hasAudio'] : null;
-        $this->hasVideo = array_key_exists('hasVideo', $data) ? $data['hasVideo'] : null;
-        $this->recordingLayout = array_key_exists('recordingLayout', $data) ? $data['recordingLayout'] : null;
-        $this->resolution = array_key_exists('resolution', $data) ? $data['resolution'] : null;
-        $this->size = array_key_exists('size', $data) ? $data['size'] : null;
-        $this->duration = array_key_exists('duration', $data) ? $data['duration'] : null;
-        $this->status = array_key_exists('status', $data) ? $data['status'] : null;
-        $this->reason = array_key_exists('reason', $data) ? $data['reason'] : null;
+        $this->sessionId = $data['sessionId'];
+        $this->timestamp = $data['timestamp'];
+        $this->participantId = $data['participantId'];
+        $this->startTime = $data['startTime'];
+        $this->id = $data['id'];
+        $this->name = $data['name'];
+        $this->outputMode = $data['outputMode'];
+        $this->hasAudio = $data['hasAudio'];
+        $this->hasVideo = $data['hasVideo'];
+        $this->recordingLayout = $data['recordingLayout'];
+        $this->resolution = $data['resolution'];
+        $this->size = $data['size'];
+        $this->duration = $data['duration'];
+        $this->status = $data['status'];
+        $this->reason = $data['reason'];
         $this->event = $data['event'];
     }
 }

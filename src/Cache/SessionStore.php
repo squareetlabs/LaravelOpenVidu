@@ -341,7 +341,7 @@ class SessionStore implements Store
      * Items not found in the cache will have a null value.
      *
      * @param array $keys
-     * @return array
+     * @return void
      */
     public function many(array $keys)
     {
@@ -353,7 +353,7 @@ class SessionStore implements Store
      *
      * @param array $values
      * @param int $seconds
-     * @return bool
+     * @return void
      */
     public function putMany(array $values, $seconds)
     {

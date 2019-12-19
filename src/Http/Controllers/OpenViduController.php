@@ -7,6 +7,7 @@ use SquareetLabs\LaravelOpenVidu\Builders\RecordingPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\SessionPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\TokenOptionsBuilder;
 use SquareetLabs\LaravelOpenVidu\Dispatchers\WebhookEventDispatcher;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduInvalidArgumentException;
 use SquareetLabs\LaravelOpenVidu\Facades\OpenVidu;
 use SquareetLabs\LaravelOpenVidu\Http\Requests\GenerateTokenRequest;
 use SquareetLabs\LaravelOpenVidu\Http\Requests\StartRecordingRequest;
@@ -21,6 +22,7 @@ class OpenViduController extends Controller
     /**
      * @param GenerateTokenRequest $request
      * @return string
+     * @throws OpenViduInvalidArgumentException
      */
     public function token(GenerateTokenRequest $request)
     {
@@ -122,6 +124,7 @@ class OpenViduController extends Controller
     /**
      * @param StartRecordingRequest $request
      * @return string
+     * @throws OpenViduInvalidArgumentException
      */
     public function startRecording(StartRecordingRequest $request)
     {

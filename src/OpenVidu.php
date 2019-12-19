@@ -43,7 +43,6 @@ class OpenVidu
     /**
      * @param SessionProperties|null $properties
      * @return Session
-     * @throws Exceptions\OpenViduSessionCantCreateException
      * @throws Exceptions\OpenViduException
      */
     public function createSession(?SessionProperties $properties = null): Session
@@ -85,6 +84,7 @@ class OpenVidu
      * @throws OpenViduSessionHasNotConnectedParticipantsException
      * @throws OpenViduSessionNotFoundException
      * @throws InvalidArgumentException
+     * @throws Exceptions\OpenViduInvalidArgumentException
      */
     public function startRecording(?RecordingProperties $properties = null): Recording
     {
@@ -123,7 +123,6 @@ class OpenVidu
      * Gets an existing {@see Session}
      * @param string $sessionId
      * @return Session
-     * @throws Exceptions\OpenViduSessionCantCreateException
      * @throws OpenViduException
      * @throws OpenViduSessionNotFoundException
      * @throws InvalidArgumentException
@@ -145,6 +144,7 @@ class OpenVidu
      * @throws OpenViduRecordingStatusException
      * @throws OpenViduSessionNotFoundException
      * @throws InvalidArgumentException
+     * @throws Exceptions\OpenViduInvalidArgumentException
      */
     public function stopRecording(string $recordingId): Recording
     {
@@ -176,6 +176,7 @@ class OpenVidu
      * @return string
      * @throws OpenViduException
      * @throws OpenViduRecordingNotFoundException
+     * @throws Exceptions\OpenViduInvalidArgumentException
      */
     public function getRecording(string $recordingId): string
     {
@@ -199,6 +200,7 @@ class OpenVidu
      * Gets an array with all existing recordings
      * @return array
      * @throws OpenViduException
+     * @throws Exceptions\OpenViduInvalidArgumentException
      */
     public function getRecordings(): array
     {

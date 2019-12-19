@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
  * Class WebRTCConnectionCreated
  * @package SquareetLabs\LaravelOpenVidu\Events
  */
-class WebRTCConnectionDestroyed implements WebhookEventInterface
+class WebRTCConnectionDestroyed
 {
     use SerializesModels;
     /**
@@ -33,14 +33,14 @@ class WebRTCConnectionDestroyed implements WebhookEventInterface
     public $participantId;
 
     /**
-     * @var $startTime
+     * @var int $startTime
      * Time when the media connection was established
      * UTC milliseconds
      */
     public $startTime;
 
     /**
-     * @var $duration
+     * @var int $duration
      * Total duration of the media connection
      * Seconds
      */
@@ -96,14 +96,14 @@ class WebRTCConnectionDestroyed implements WebhookEventInterface
     public $videoDimensions;
 
     /**
-     * @var $reason
+     * @var  string $reason
      * How the WebRTC connection was destroyed
      *["unsubscribe","unpublish","disconnect","forceUnpublishByUser","forceUnpublishByServer","forceDisconnectByUser","forceDisconnectByServer","sessionClosedByServer","networkDisconnect","openviduServerStopped","mediaServerDisconnect"]
      */
     public $reason;
 
     /**
-     * @var $event
+     * @var string $event
      * Openvidu server webhook event
      */
     public $event;
@@ -115,18 +115,18 @@ class WebRTCConnectionDestroyed implements WebhookEventInterface
      */
     public function __construct(array $data)
     {
-        $this->sessionId = array_key_exists('sessionId', $data) ? $data['sessionId'] : null;
-        $this->timestamp = array_key_exists('timestamp', $data) ? $data['timestamp'] : null;
-        $this->participantId = array_key_exists('participantId', $data) ? $data['participantId'] : null;
-        $this->receivingFrom = array_key_exists('receivingFrom', $data) ? $data['receivingFrom'] : null;
-        $this->audioEnabled = array_key_exists('audioEnabled', $data) ? $data['audioEnabled'] : null;
-        $this->videoEnabled = array_key_exists('videoEnabled', $data) ? $data['videoEnabled'] : null;
-        $this->videoSource = array_key_exists('videoSource', $data) ? $data['videoSource'] : null;
-        $this->videoFramerate = array_key_exists('videoFramerate', $data) ? $data['videoFramerate'] : null;
-        $this->videoDimensions = array_key_exists('videoDimensions', $data) ? $data['videoDimensions'] : null;
-        $this->startTime = array_key_exists('startTime', $data) ? $data['startTime'] : null;
-        $this->duration = array_key_exists('duration', $data) ? $data['duration'] : null;
-        $this->reason = array_key_exists('reason', $data) ? $data['reason'] : null;
+        $this->sessionId = $data['sessionId'];
+        $this->timestamp = $data['timestamp'];
+        $this->participantId = $data['participantId'];
+        $this->receivingFrom = $data['receivingFrom'];
+        $this->audioEnabled = $data['audioEnabled'];
+        $this->videoEnabled = $data['videoEnabled'];
+        $this->videoSource = $data['videoSource'];
+        $this->videoFramerate = $data['videoFramerate'];
+        $this->videoDimensions = $data['videoDimensions'];
+        $this->startTime = $data['startTime'];
+        $this->duration = $data['duration'];
+        $this->reason = $data['reason'];
         $this->event = $data['event'];
     }
 }

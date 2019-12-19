@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
  * Class SessionCreated
  * @package SquareetLabs\LaravelOpenVidu\Events
  */
-class SessionCreated implements WebhookEventInterface
+class SessionCreated
 {
     use SerializesModels;
     /**
@@ -35,8 +35,8 @@ class SessionCreated implements WebhookEventInterface
      */
     public function __construct(array $data)
     {
-        $this->sessionId = array_key_exists('sessionId', $data) ? $data['sessionId'] : null;
-        $this->timestamp = array_key_exists('timestamp', $data) ? $data['timestamp'] : null;
+        $this->sessionId = $data['sessionId'];
+        $this->timestamp = $data['timestamp'];
         $this->event = $data['event'];
     }
 }

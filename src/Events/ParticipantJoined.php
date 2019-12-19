@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
  * Class ParticipantJoined
  * @package SquareetLabs\LaravelOpenVidu\Events
  */
-class ParticipantJoined implements WebhookEventInterface
+class ParticipantJoined
 {
     use SerializesModels;
     /**
@@ -24,8 +24,7 @@ class ParticipantJoined implements WebhookEventInterface
      * UTC milliseconds
      */
     public $timestamp;
-
-
+    
     /**
      * @var string $participantId
      * Identifier of the participant
@@ -52,10 +51,10 @@ class ParticipantJoined implements WebhookEventInterface
      */
     public function __construct(array $data)
     {
-        $this->sessionId = array_key_exists('sessionId', $data) ? $data['sessionId'] : null;
-        $this->timestamp = array_key_exists('timestamp', $data) ? $data['timestamp'] : null;
-        $this->participantId = array_key_exists('participantId', $data) ? $data['participantId'] : null;
-        $this->platform = array_key_exists('platform', $data) ? $data['platform'] : null;
+        $this->sessionId = $data['sessionId'];
+        $this->timestamp = $data['timestamp'];
+        $this->participantId = $data['participantId'];
+        $this->platform = $data['platform'];
         $this->event = $data['event'];
     }
 }

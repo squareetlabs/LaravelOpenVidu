@@ -18,6 +18,7 @@ class SessionPropertiesBuilder
     /**
      * @param $properties
      * @return SessionProperties|null
+     * @throws OpenViduInvalidArgumentException
      */
     public static function build($properties)
     {
