@@ -46,7 +46,7 @@ class SessionStore implements Store
     /**
      * Update an item from the cache by key.
      *
-     * @param string|array $key
+     * @param string $key
      * @param $value
      * @return mixed
      */
