@@ -88,9 +88,8 @@ class OpenVidu
      */
     public function startRecording(?RecordingProperties $properties = null): Recording
     {
-        $recording = null;
         $response = $this->client()->post(Uri::RECORDINGS_START, [
-            RequestOptions::JSON => $properties->toArray()
+            RequestOptions::JSON => $properties->toArray() ?? null
         ]);
         switch ($response->getStatusCode()) {
             case 200:
@@ -107,7 +106,7 @@ class OpenVidu
                 throw new OpenViduSessionHasNotConnectedParticipantsException();
                 break;
             case 409:
-                throw new OpenViduSessionCantRecordingException(__('The session is not configured for using media routed or it is already being recorded'));
+                throw new OpenViduSessionCantRecordingException("The session is not configured for using media routed or it is already being recorded");
                 break;
             case 422:
                 throw new OpenViduRecordingResolutionException();
@@ -116,10 +115,6 @@ class OpenVidu
                 throw new OpenViduServerRecordingIsDisabledException();
                 break;
             default:
-                $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result, 'message')) {
-                    throw new OpenViduException($result->message, $response->getStatusCode());
-                }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
@@ -166,13 +161,9 @@ class OpenVidu
                 throw new OpenViduRecordingNotFoundException();
                 break;
             case 406:
-                throw new OpenViduRecordingStatusException(__('The recording has `starting` status. Wait until `started` status before stopping the recording.'));
+                throw new OpenViduRecordingStatusException("The recording has `starting` status. Wait until `started` status before stopping the recording.");
                 break;
             default:
-                $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result, 'message')) {
-                    throw new OpenViduException($result->message, $response->getStatusCode());
-                }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
@@ -196,10 +187,6 @@ class OpenVidu
                 throw new OpenViduRecordingNotFoundException();
                 break;
             default:
-                $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result, 'message')) {
-                    throw new OpenViduException($result->message, $response->getStatusCode());
-                }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
@@ -222,10 +209,6 @@ class OpenVidu
                 }
                 return $recordings;
             default:
-                $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result, 'message')) {
-                    throw new OpenViduException($result->message, $response->getStatusCode());
-                }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
@@ -250,13 +233,9 @@ class OpenVidu
                 throw new OpenViduRecordingNotFoundException();
                 break;
             case 409:
-                throw new OpenViduRecordingStatusException(__('The recording has `started` status. Stop it before deletion'));
+                throw new OpenViduRecordingStatusException("The recording has `started` status. Stop it before deletion.");
                 break;
             default:
-                $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result, 'message')) {
-                    throw new OpenViduException($result->message, $response->getStatusCode());
-                }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }

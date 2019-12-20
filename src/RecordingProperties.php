@@ -22,9 +22,9 @@ class RecordingProperties implements JsonSerializable
     private $hasVideo;
     /** @var  string */
     private $name;
-    /** @var  OutputMode */
+    /** @var  string */
     private $outputMode;
-    /** @var  RecordingLayout */
+    /** @var  string */
     private $recordingLayout;
     /** @var  string */
     private $resolution;
@@ -40,7 +40,7 @@ class RecordingProperties implements JsonSerializable
      * @param string $resolution
      * @param string $customLayout
      */
-    public function __construct(string $session, string $name, string $outputMode, string $recordingLayout, ?string $resolution, ?bool $hasAudio = true, ?bool $hasVideo = true, ?string $customLayout = null)
+    public function __construct(string $session, string $name, string $outputMode, string $recordingLayout, ?string $resolution = null, ?bool $hasAudio = true, ?bool $hasVideo = true, ?string $customLayout = null)
     {
         $this->session = $session;
         $this->hasAudio = $hasAudio;

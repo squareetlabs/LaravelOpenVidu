@@ -76,7 +76,6 @@ class Session implements JsonSerializable
                     break;
                 default:
                     throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
-                    break;
             }
         } else {
             return $this->sessionId;

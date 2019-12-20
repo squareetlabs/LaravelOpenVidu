@@ -22,7 +22,7 @@ class Recording implements JsonSerializable
     /** @var  string */
     private $sessionId;
 
-    /** @var int */
+    /** @var string */
     private $createdAt;
 
     /** @var int */
@@ -64,11 +64,11 @@ class Recording implements JsonSerializable
     }
 
     /**
-     * @return SessionProperties
+     * @return RecordingProperties
      */
-    private function getDefaultRecordingProperties(): SessionProperties
+    private function getDefaultRecordingProperties(): RecordingProperties
     {
-        return new SessionProperties(MediaMode::ROUTED, RecordingMode::MANUAL, OutputMode::COMPOSED, RecordingLayout::BEST_FIT);
+        return new RecordingProperties($this->sessionId, $this->sessionId, OutputMode::COMPOSED, RecordingLayout::BEST_FIT);
     }
 
     /**
