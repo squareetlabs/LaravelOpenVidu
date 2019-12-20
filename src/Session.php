@@ -244,15 +244,6 @@ class Session implements JsonSerializable
                 }
                 $this->activeConnections[] = ConnectionBuilder::build($ensure, $publishers, $subscribers);
             }
-            usort($this->activeConnections[], function ($a, $b) {
-                if ($a->createdAt > $b->createdAt) {
-                    return 1;
-                }
-                if ($b->createdAt > $a->createdAt) {
-                    return -1;
-                }
-                return 0;
-            });
         }
         return $this;
     }
