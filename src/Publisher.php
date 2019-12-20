@@ -108,7 +108,7 @@ class Publisher implements JsonSerializable
     /**
      * @return bool
      */
-    public function isHasAudio(): bool
+    public function hasAudio(): bool
     {
         return $this->hasAudio;
     }
@@ -116,7 +116,7 @@ class Publisher implements JsonSerializable
     /**
      * @return bool
      */
-    public function isHasVideo(): bool
+    public function hasVideo(): bool
     {
         return $this->hasVideo;
     }
@@ -229,15 +229,15 @@ class Publisher implements JsonSerializable
     public function equalTo(Publisher $other): bool
     {
         return (
-            $this->streamId === $other->streamId &&
-            $this->createdAt === $other->createdAt &&
-            $this->hasAudio === $other->hasAudio &&
-            $this->hasVideo === $other->hasVideo &&
-            $this->audioActive === $other->audioActive &&
-            $this->videoActive === $other->videoActive &&
-            $this->frameRate === $other->frameRate &&
-            $this->typeOfVideo === $other->typeOfVideo &&
-            $this->videoDimensions === $other->videoDimensions
+            $this->streamId === $other->getStreamId() &&
+            $this->createdAt === $other->getCreatedAt() &&
+            $this->hasAudio === $other->hasAudio() &&
+            $this->hasVideo === $other->hasVideo() &&
+            $this->audioActive === $other->isAudioActive() &&
+            $this->videoActive === $other->isVideoActive() &&
+            $this->frameRate === $other->getFrameRate() &&
+            $this->typeOfVideo === $other->getTypeOfVideo() &&
+            $this->videoDimensions === $other->getVideoDimensions()
         );
     }
 }

@@ -22,7 +22,6 @@ class OpenViduController extends Controller
     /**
      * @param GenerateTokenRequest $request
      * @return string
-     * @throws OpenViduInvalidArgumentException
      */
     public function token(GenerateTokenRequest $request)
     {

@@ -182,6 +182,36 @@ class Connection implements JsonSerializable
     }
 
     /**
+     * Remove publishers based on streamId
+     * @param string $streamId
+     */
+    public function unpublish(string $streamId)
+    {
+        $this->publishers = array_filter($this->publishers, function (Publisher $publisher) use ($streamId) {
+            return $streamId !== $publisher->getStreamId();
+        });
+    }
+
+    /**
+     * Remove subscribers  based on streamId
+     * @param string $streamId
+     */
+    public function unsubscribe(string $streamId)
+    {
+        if ($this->subscribers && count($this->subscribers) > 0) {
+            $this->subscribers = array_filter($this->subscribers, function ($subscriber) use ($streamId) {
+                if (is_array($subscriber) && array_key_exists('streamId', $subscriber)) {
+                    return $subscriber['streamId'] !== $streamId;
+                } else {
+
+                    return $subscriber !== $streamId;
+                }
+            });
+        }
+    }
+
+
+    /**
      * Convert the model instance to JSON.
      *
      * @param int $options
@@ -234,6 +264,8 @@ class Connection implements JsonSerializable
         return $array;
     }
 
+
+
     /**
      * @param Connection $other
      * @return bool
@@ -241,23 +273,23 @@ class Connection implements JsonSerializable
     public function equal(Connection $other): bool
     {
         $equals = (
-            $this->connectionId === $other->connectionId &&
-            $this->createdAt === $other->createdAt &&
-            $this->role === $other->role &&
-            $this->token === $other->token &&
-            $this->location === $other->location &&
-            $this->platform === $other->platform &&
-            $this->serverData === $other->serverData &&
+            $this->connectionId === $other->getConnectionId() &&
+            $this->createdAt === $other->getCreatedAt() &&
+            $this->role === $other->getRole() &&
+            $this->token === $other->getToken() &&
+            $this->location === $other->getLocation() &&
+            $this->platform === $other->getPlatform() &&
+            $this->serverData === $other->getServerData() &&
             $this->clientData === $other->clientData &&
-            count($this->subscribers) === count($other->subscribers) &&
-            count($this->publishers) === count($other->publishers));
+            count($this->subscribers) === count($other->getSubscribers()) &&
+            count($this->publishers) === count($other->getPublishers()));
 
         if ($equals) {
-            $equals = json_encode($this->subscribers) === json_encode($other->subscribers);
+            $equals = json_encode($this->subscribers) === json_encode($other->getSubscribers());
             if ($equals) {
                 $i = 0;
-                while ($equals && $i < count($this->publishers)) {
-                    $equals = $this->publishers[$i]->equalTo($other->publishers[$i]);
+                while ($equals && $i < count($this->getPublishers())) {
+                    $equals = $this->publishers[$i]->equalTo($other->getPublishers()[$i]);
                     $i++;
                 }
                 return $equals;

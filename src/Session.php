@@ -7,6 +7,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use JsonSerializable;
+use SquareetLabs\LaravelOpenVidu\Builders\ConnectionBuilder;
+use SquareetLabs\LaravelOpenVidu\Builders\PublisherBuilder;
+use SquareetLabs\LaravelOpenVidu\Builders\SessionPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OpenViduRole;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
@@ -215,21 +218,12 @@ class Session implements JsonSerializable
                     } else {
                         $connectionClosed = $connection;
                         return false;
-
                     }
                 });
                 if ($connectionClosed != null) {
                     foreach ($connectionClosed->getPublishers() as $publisher) {
                         foreach ($this->activeConnections as $con) {
-                            $con->subscribers = array_filter($con->subscribers, function ($subscriber) use ($publisher) {
-                                if (is_array($subscriber) && array_key_exists('streamId', $subscriber)) {
-                                    // Subscriber with advanced webRtc configuration properties
-                                    return $subscriber['streamId'] !== $publisher->getStreamId();
-                                } else {
-                                    // Regular string subscribers
-                                    return $subscriber !== $publisher->getStreamId();
-                                }
-                            });
+                            $con->unsubscribe($publisher->getStreamId());
                         }
                     }
                 }
@@ -281,21 +275,8 @@ class Session implements JsonSerializable
         switch ($response->getStatusCode()) {
             case 204:
                 foreach ($this->activeConnections as $connection) {
-                    $connection->publishers = array_filter($connection->publishers, function (array $publisher) use ($streamId) {
-                        return $streamId !== $publisher->getStreamId();
-                    });
-
-                    if ($connection->subscribers && count($connection->subscribers) > 0) {
-                        $connection->subscribers = array_filter($connection->subscribers, function (array $subscriber) use ($streamId) {
-                            if (array_key_exists('streamId', $subscriber)) {
-                                // Subscriber with advanced webRtc configuration properties
-                                return $subscriber['streamId'] !== $streamId;
-                            } else {
-                                // Regular string subscribers
-                                return $subscriber !== $streamId;
-                            }
-                        });
-                    }
+                    $connection->unpublish($streamId);
+                    $connection->unsubscribe($streamId);
                 }
                 Cache::store('openvidu')->update($this->sessionId, $this->toJson());
                 break;
@@ -429,32 +410,37 @@ class Session implements JsonSerializable
      */
     public function fromJson(string $json): Session
     {
-        $JSONSession = json_decode($json);
-        $this->sessionId = $JSONSession->sessionId;
-        $this->createdAt = isset($JSONSession->createdAt) ? $JSONSession->createdAt : null;
-        $this->recording = isset($JSONSession->recording) ? $this->recording : null;;
+        return $this->fromArray(json_decode($json, true));
+    }
 
-        if (isset($JSONSession->properties)) {
-            $this->properties = new SessionProperties($JSONSession->properties->mediaMode, $JSONSession->properties->recordingMode, $JSONSession->properties->defaultOutputMode, isset($JSONSession->properties->defaultRecordingLayout) ? $JSONSession->properties->defaultRecordingLayout : null,
-                isset($JSONSession->properties->customSessionId) ? $JSONSession->properties->customSessionId : null,
-                isset($JSONSession->properties->defaultCustomLayout) ? $JSONSession->properties->defaultCustomLayout : null);
-        } else {
-            $this->properties = new SessionProperties($JSONSession->properties->mediaMode, $JSONSession->properties->recordingMode, $JSONSession->properties->defaultOutputMode, $JSONSession->properties->defaultRecordingLayout, $JSONSession->properties->customSessionId, $JSONSession->properties->defaultCustomLayout);
+
+    /**
+     * @param array $sessionArray
+     * @return Session
+     */
+    public function fromArray(array $sessionArray): Session
+    {
+        $this->sessionId = $sessionArray['sessionId'];
+        $this->createdAt =  $sessionArray['createdAt'] ?? null;
+        $this->recording = $sessionArray['recording'] ??  null;
+
+        if (array_key_exists('properties', $sessionArray)) {
+            $this->properties =  SessionPropertiesBuilder::build($sessionArray['properties']);
         }
 
         $this->activeConnections = [];
-        if (isset($JSONSession->connections)) {
-            foreach ($JSONSession->connections as $connection) {
-                $content = $connection->content;
+        if (array_key_exists('connections', $sessionArray)) {
+            foreach ($sessionArray['connections'] as $connection) {
                 $publishers = [];
-                foreach ($content->publishers as $publisher) {
-                    $publishers[] = new Publisher($publisher->streamId, $publisher->createdAt, $publisher->hasAudio, $publisher->hasVideo, $publisher->audioActive, $publisher->videoActive, $publisher->frameRate, $publisher->typeOfVideo, $publisher->videoDimensions);
+                $ensure = $connection['content'] ?? $connection;
+                foreach ($ensure['publishers'] as $publisher) {
+                    $publishers[] = PublisherBuilder::build($publisher);
                 }
                 $subscribers = [];
-                foreach ($content->subscribers as $subscriber) {
+                foreach ($ensure->subscribers as $subscriber) {
                     $subscribers[] = $subscriber->streamId;
                 }
-                $this->activeConnections[] = new Connection($content->connectionId, $content->createdAt, $content->role, $content->token, $content->location, $content->platform, $content->serverData, $content->clientData, $publishers, $subscribers);
+                $this->activeConnections[] = ConnectionBuilder::build($ensure, $publishers, $subscribers);
             }
             usort($this->activeConnections[], function ($a, $b) {
                 if ($a->createdAt > $b->createdAt) {
