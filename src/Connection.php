@@ -198,41 +198,6 @@ class Connection implements JsonSerializable
     }
 
     /**
-     * @param Connection $other
-     * @return bool
-     */
-    public function equal(Connection $other): bool
-    {
-        $equals = (
-            $this->connectionId === $other->getConnectionId() &&
-            $this->createdAt === $other->getCreatedAt() &&
-            $this->role === $other->getRole() &&
-            $this->token === $other->getToken() &&
-            $this->location === $other->getLocation() &&
-            $this->platform === $other->getPlatform() &&
-            $this->serverData === $other->getServerData() &&
-            $this->clientData === $other->clientData &&
-            count($this->subscribers) === count($other->getSubscribers()) &&
-            count($this->publishers) === count($other->getPublishers()));
-
-        if ($equals) {
-            $equals = json_encode($this->subscribers) === json_encode($other->getSubscribers());
-            if ($equals) {
-                $i = 0;
-                while ($equals && $i < count($this->getPublishers())) {
-                    $equals = $this->publishers[$i]->equalTo($other->getPublishers()[$i]);
-                    $i++;
-                }
-                return $equals;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * @return int
      */
     public function getCreatedAt(): int
