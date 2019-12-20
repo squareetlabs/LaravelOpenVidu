@@ -22,7 +22,7 @@ class Recording implements JsonSerializable
     /** @var  string */
     private $sessionId;
 
-    /** @var string */
+    /** @var int */
     private $createdAt;
 
     /** @var int */
@@ -45,13 +45,13 @@ class Recording implements JsonSerializable
      * Session constructor.
      * @param string $id
      * @param string $sessionId
-     * @param string $createdAt
+     * @param int $createdAt
      * @param int $size
      * @param float $duration
      * @param string $url
      * @param RecordingProperties|null $recordingProperties
      */
-    public function __construct(string $id, string $sessionId, string $createdAt, int $size, ?float $duration, ?string $url, ?RecordingProperties $recordingProperties = null)
+    public function __construct(string $id, string $sessionId, int $createdAt, int $size, ?float $duration, ?string $url, ?RecordingProperties $recordingProperties = null)
     {
         $this->id = $id;
         $this->sessionId = $sessionId;
