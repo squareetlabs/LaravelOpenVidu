@@ -1,4 +1,5 @@
 <?php
+
 namespace SquareetLabs\LaravelOpenVidu\Builders;
 
 use SquareetLabs\LaravelOpenVidu\Connection;

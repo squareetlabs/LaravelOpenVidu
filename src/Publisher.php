@@ -97,70 +97,6 @@ class Publisher implements JsonSerializable
 
     }
 
-    /**
-     * @return int
-     */
-    public function getCreatedAt(): int
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasAudio(): bool
-    {
-        return $this->hasAudio;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasVideo(): bool
-    {
-        return $this->hasVideo;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAudioActive(): bool
-    {
-        return $this->audioActive;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isVideoActive(): bool
-    {
-        return $this->videoActive;
-    }
-
-    /**
-     * @return int
-     */
-    public function getFrameRate(): int
-    {
-        return $this->frameRate;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTypeOfVideo(): string
-    {
-        return $this->typeOfVideo;
-    }
-
-    /**
-     * @return string
-     */
-    public function getVideoDimensions(): string
-    {
-        return $this->videoDimensions;
-    }
-
     public function __toString(): string
     {
         return $this->getStreamId();
@@ -239,5 +175,69 @@ class Publisher implements JsonSerializable
             $this->typeOfVideo === $other->getTypeOfVideo() &&
             $this->videoDimensions === $other->getVideoDimensions()
         );
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreatedAt(): int
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasAudio(): bool
+    {
+        return $this->hasAudio;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasVideo(): bool
+    {
+        return $this->hasVideo;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAudioActive(): bool
+    {
+        return $this->audioActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVideoActive(): bool
+    {
+        return $this->videoActive;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFrameRate(): int
+    {
+        return $this->frameRate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTypeOfVideo(): string
+    {
+        return $this->typeOfVideo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVideoDimensions(): string
+    {
+        return $this->videoDimensions;
     }
 }

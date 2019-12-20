@@ -280,7 +280,6 @@ class OpenVidu
      * <li>Calling {@see OpenVidu::startRecording(string)}
      * and {@see LaravelOpenVidu::stopRecording(string)}
      * automatically updates the recording status of the Session
-     * ({@see Session::isBeingRecorded()})</li>
      * </ul>
      * <br>
      * To get the list of active sessions with their current actual value, you must

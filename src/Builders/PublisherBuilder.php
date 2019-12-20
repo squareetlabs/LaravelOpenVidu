@@ -1,5 +1,7 @@
 <?php
+
 namespace SquareetLabs\LaravelOpenVidu\Builders;
+
 use SquareetLabs\LaravelOpenVidu\Publisher;
 
 class PublisherBuilder
@@ -14,9 +16,9 @@ class PublisherBuilder
             $properties['createdAt'],
             $properties['hasAudio'],
             $properties['hasVideo'],
-            $properties['audioActive'] ,
+            $properties['audioActive'],
             $properties['videoActive'],
-            $properties['frameRate'] ,
+            $properties['frameRate'],
             $properties['typeOfVideo'],
             $properties['videoDimensions']
         );

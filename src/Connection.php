@@ -99,73 +99,9 @@ class Connection implements JsonSerializable
     /**
      * @return string
      */
-    public function getRole(): string
-    {
-        return $this->role;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCreatedAt(): int
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @return string
-     */
-    public function getToken(): string
-    {
-        return $this->token;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLocation(): string
-    {
-        return $this->location;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPlatform(): string
-    {
-        return $this->platform;
-    }
-
-    /**
-     * @return string
-     */
-    public function getServerData(): string
-    {
-        return $this->serverData;
-    }
-
-    /**
-     * @return string
-     */
     public function getClientData(): string
     {
         return $this->clientData;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPublishers(): array
-    {
-        return $this->publishers;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSubscribers(): array
-    {
-        return $this->subscribers;
     }
 
     public function __toString(): string
@@ -207,7 +143,6 @@ class Connection implements JsonSerializable
             });
         }
     }
-
 
     /**
      * Convert the model instance to JSON.
@@ -262,7 +197,6 @@ class Connection implements JsonSerializable
         return $array;
     }
 
-
     /**
      * @param Connection $other
      * @return bool
@@ -296,5 +230,69 @@ class Connection implements JsonSerializable
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreatedAt(): int
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToken(): string
+    {
+        return $this->token;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation(): string
+    {
+        return $this->location;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlatform(): string
+    {
+        return $this->platform;
+    }
+
+    /**
+     * @return string
+     */
+    public function getServerData(): string
+    {
+        return $this->serverData;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSubscribers(): array
+    {
+        return $this->subscribers;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPublishers(): array
+    {
+        return $this->publishers;
     }
 }

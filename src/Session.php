@@ -54,8 +54,33 @@ class Session implements JsonSerializable
     public function __construct(Client $client, ?SessionProperties $properties = null)
     {
         $this->client = $client;
-        $this->properties = $properties ? $properties : $this->getDefaultSessionProperties();
+        $this->properties = $properties ? $properties : new SessionProperties(MediaMode::ROUTED, RecordingMode::MANUAL, OutputMode::COMPOSED, RecordingLayout::BEST_FIT);
         $this->sessionId = $this->getSessionId();
+    }
+
+    /**
+     * @return string
+     * @throws OpenViduException
+     */
+    public function getSessionId()
+    {
+        if (empty($this->sessionId)) {
+            $response = $this->client->post(Uri::SESSION_URI, [
+                RequestOptions::JSON => $this->properties->toArray()
+            ]);
+            switch ($response->getStatusCode()) {
+                case 200:
+                    return json_decode($response->getBody()->getContents())->id;
+                case 409:
+                    return $this->properties->getCustomSessionId();
+                    break;
+                default:
+                    throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                    break;
+            }
+        } else {
+            return $this->sessionId;
+        }
     }
 
     /**
@@ -69,12 +94,10 @@ class Session implements JsonSerializable
      */
     public function generateToken(?TokenOptions $tokenOptions = null)
     {
-        if (!$this->hasSessionId()) {
-            $this->getSessionId();
-        }
+        $this->getSessionId();
         try {
             if (!$tokenOptions) {
-                $tokenOptions = $this->getDefaultTokenOptions();
+                $tokenOptions = new TokenOptions(OpenViduRole::PUBLISHER);;
             }
             $response = $this->client->post(Uri::TOKEN_URI, [
                 RequestOptions::JSON => array_merge($tokenOptions->toArray(), ['session' => $this->sessionId])
@@ -84,50 +107,6 @@ class Session implements JsonSerializable
             throw new OpenViduTokenCantCreateException($e->getMessage(), $e);
         }
     }
-
-    /**
-     * @return TokenOptions
-     */
-    private function getDefaultTokenOptions(): TokenOptions
-    {
-        return new TokenOptions(OpenViduRole::PUBLISHER);
-    }
-
-
-    /**
-     * @return SessionProperties
-     */
-    private function getDefaultSessionProperties(): SessionProperties
-    {
-        return new SessionProperties(MediaMode::ROUTED, RecordingMode::MANUAL, OutputMode::COMPOSED, RecordingLayout::BEST_FIT);
-    }
-
-    /**
-     * @return string
-     * @throws OpenViduException
-     */
-    public function getSessionId()
-    {
-        if (!$this->hasSessionId()) {
-            $response = $this->client->post(Uri::SESSION_URI, [
-                RequestOptions::JSON => $this->properties->toArray()
-            ]);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->getContents())->id;
-            } else if ($response->getStatusCode() == 409) {
-                return $this->properties->getCustomSessionId();
-            } else {
-                $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result, 'message')) {
-                    throw new OpenViduException($result->message, $response->getStatusCode());
-                }
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
-            }
-        } else {
-            return $this->sessionId;
-        }
-    }
-
 
     /**
      * Gracefully closes the Session: unpublishes all streams and evicts every
@@ -145,10 +124,6 @@ class Session implements JsonSerializable
                 throw new OpenViduSessionNotFoundException();
                 break;
             default:
-                $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result, 'message')) {
-                    throw new OpenViduException($result->message, $response->getStatusCode());
-                }
                 throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
@@ -188,177 +163,6 @@ class Session implements JsonSerializable
         }
         return false;
     }
-
-
-    /**
-     * Forces the user with Connection `connectionId` to leave the session. OpenVidu Browser will trigger the proper events on the client-side
-     * (`streamDestroyed`, `connectionDestroyed`, `sessionDisconnected`) with reason set to `"forceDisconnectByServer"`
-     *
-     * You can get `connection` parameter from activeConnections array {@see Connection::getConnectionId()} for getting each `connectionId` property).
-     * Remember to call {@see fetch()} before to fetch the current actual properties of the Session from OpenVidu Server
-     *
-     * @param string $connectionId
-     * @return bool
-     * @throws OpenViduException
-     */
-    public function forceDisconnect(string $connectionId): bool
-    {
-        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId . '/connection/' . $connectionId, [
-            'headers' => [
-                'Content-Type' => 'application/x-www-form-urlencoded',
-                'Accept' => 'application/json',
-            ]
-        ]);
-        switch ($response->getStatusCode()) {
-            case 204:
-                $connectionClosed = null;
-                $this->activeConnections = array_filter($this->activeConnections, function (Connection $connection) use ($connectionId) {
-                    if ($connection->getConnectionId() !== $connectionId) {
-                        return true;
-                    } else {
-                        $connectionClosed = $connection;
-                        return false;
-                    }
-                });
-                if ($connectionClosed != null) {
-                    foreach ($connectionClosed->getPublishers() as $publisher) {
-                        foreach ($this->activeConnections as $con) {
-                            $con->unsubscribe($publisher->getStreamId());
-                        }
-                    }
-                }
-                Cache::store('openvidu')->update($this->sessionId, $this->toJson());
-                break;
-            case 400:
-                throw new OpenViduSessionNotFoundException();
-                break;
-            case 404:
-                throw new OpenViduConnectionNotFoundException();
-                break;
-            default:
-                $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result, 'message')) {
-                    throw new OpenViduException($result->message, $response->getStatusCode());
-                }
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
-        }
-    }
-
-    /**
-     * Forces some user to unpublish a Stream. OpenVidu Browser will trigger the
-     * proper events on the client-side (<code>streamDestroyed</code>) with reason
-     * set to "forceUnpublishByServer". <br>
-     *
-     * You can get <code>streamId</code> parameter with
-     * {@see Session::getActiveConnections()} and then for
-     * each Connection you can call
-     * {@see  Connection::getPublishers()}. Finally
-     * {@see Publisher::getStreamId()}) will give you the
-     * <code>streamId</code>. Remember to call
-     * {@see fetch()} before to fetch the current
-     * actual properties of the Session from OpenVidu Server
-     *
-     * @param string $streamId
-     * @return void
-     * @throws OpenViduConnectionNotFoundException
-     * @throws OpenViduException
-     * @throws OpenViduSessionNotFoundException
-     */
-    public function forceUnpublish(string $streamId)
-    {
-        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId . '/stream/' . $streamId, [
-            'headers' => [
-                'Content-Type' => 'application/x-www-form-urlencoded',
-                'Accept' => 'application/json',
-            ]
-        ]);
-        switch ($response->getStatusCode()) {
-            case 204:
-                foreach ($this->activeConnections as $connection) {
-                    $connection->unpublish($streamId);
-                    $connection->unsubscribe($streamId);
-                }
-                Cache::store('openvidu')->update($this->sessionId, $this->toJson());
-                break;
-            case 400:
-                throw new OpenViduSessionNotFoundException();
-                break;
-            case 404:
-                throw new OpenViduConnectionNotFoundException();
-                break;
-            default:
-                $result = json_decode($response->getBody()->getContents());
-                if ($result && property_exists($result, 'message')) {
-                    throw new OpenViduException($result->message, $response->getStatusCode());
-                }
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
-        }
-    }
-
-    /**
-     * Returns the list of active connections to the session. <strong>This value
-     * will remain unchanged since the last time method
-     * {@see fetch()} was called</strong>.
-     * Exceptions to this rule are:
-     * <ul>
-     * <li>Calling {@see Session::forceUnpublish(string)}
-     * updates each affected Connection status</li>
-     * <li>Calling {@see Session::forceDisconnect(string)}
-     * updates each affected Connection status</li>
-     * </ul>
-     * <br>
-     * To get the list of active connections with their current actual value, you
-     * must call first {@see Session::fetch()} and then
-     * {@see Session::getActiveConnections()}
-     */
-    public function getActiveConnections(): array
-    {
-        return $this->activeConnections;
-    }
-
-    /**
-     * Returns the properties defining the session
-     */
-    public function getProperties(): SessionProperties
-    {
-        return $this->properties;
-    }
-
-    /**
-     * The following values are considered empty:
-     * <ul><li>"" (an empty string)</li>
-     * <li>0 (0 as an integer)</li>
-     * <li>0.0 (0 as a float)</li>
-     * <li>"0" (0 as a string)</li>
-     * <li>NULL</li>
-     * <li>FALSE </li>
-     * <li>array() (an empty array)</li></ul>
-     * @return bool
-     */
-    private function hasSessionId(): bool
-    {
-        return !empty($this->sessionId);
-    }
-
-
-    /**
-     * Returns whether the session is being recorded or not
-     */
-    public function isBeingRecorded(): bool
-    {
-        return $this->recording;
-    }
-
-    /**
-     * Set value
-     * @param bool $recording
-     */
-    public function setIsBeingRecorded(bool $recording)
-    {
-        $this->recording = $recording;
-        Cache::store('openvidu')->update($this->sessionId, $this->toJson());
-    }
-
 
     /**
      * Convert the model instance to JSON.
@@ -413,7 +217,6 @@ class Session implements JsonSerializable
         return $this->fromArray(json_decode($json, true));
     }
 
-
     /**
      * @param array $sessionArray
      * @return Session
@@ -421,11 +224,11 @@ class Session implements JsonSerializable
     public function fromArray(array $sessionArray): Session
     {
         $this->sessionId = $sessionArray['sessionId'];
-        $this->createdAt =  $sessionArray['createdAt'] ?? null;
-        $this->recording = $sessionArray['recording'] ??  null;
+        $this->createdAt = $sessionArray['createdAt'] ?? null;
+        $this->recording = $sessionArray['recording'] ?? null;
 
         if (array_key_exists('properties', $sessionArray)) {
-            $this->properties =  SessionPropertiesBuilder::build($sessionArray['properties']);
+            $this->properties = SessionPropertiesBuilder::build($sessionArray['properties']);
         }
 
         $this->activeConnections = [];
@@ -453,6 +256,150 @@ class Session implements JsonSerializable
             });
         }
         return $this;
+    }
+
+    /**
+     * Forces the user with Connection `connectionId` to leave the session. OpenVidu Browser will trigger the proper events on the client-side
+     * (`streamDestroyed`, `connectionDestroyed`, `sessionDisconnected`) with reason set to `"forceDisconnectByServer"`
+     *
+     *
+     * @param string $connectionId
+     * @return bool
+     * @throws OpenViduException
+     */
+    public function forceDisconnect(string $connectionId): bool
+    {
+        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId . '/connection/' . $connectionId, [
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Accept' => 'application/json',
+            ]
+        ]);
+        switch ($response->getStatusCode()) {
+            case 204:
+                $this->leaveSession($connectionId);
+                Cache::store('openvidu')->update($this->sessionId, $this->toJson());
+                break;
+            case 400:
+                throw new OpenViduSessionNotFoundException();
+                break;
+            case 404:
+                throw new OpenViduConnectionNotFoundException();
+                break;
+            default:
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+        }
+    }
+
+    /**
+     * Get `connection` parameter from activeConnections array {@see Connection::getConnectionId()} for getting each `connectionId` property).
+     * Remember to call {@see fetch()} before to fetch the current actual properties of the Session from OpenVidu Server
+     * @param string $connectionId
+     */
+
+    private function leaveSession(string $connectionId)
+    {
+        $connectionClosed = null;
+        $this->activeConnections = array_filter($this->activeConnections, function (Connection $connection) use (&$connectionClosed, $connectionId) {
+            if ($connection->getConnectionId() !== $connectionId) {
+                return true;
+            }
+            $connectionClosed = $connection;
+            return false;
+        });
+        if ($connectionClosed != null) {
+            foreach ($connectionClosed->getPublishers() as $publisher) {
+                foreach ($this->activeConnections as $con) {
+                    $con->unsubscribe($publisher->getStreamId());
+                }
+            }
+        }
+    }
+
+    /**
+     * Forces some user to unpublish a Stream. OpenVidu Browser will trigger the
+     * proper events on the client-side (<code>streamDestroyed</code>) with reason
+     * set to "forceUnpublishByServer". <br>
+     *
+     * You can get <code>streamId</code> parameter with
+     * {@see Session::getActiveConnections()} and then for
+     * each Connection you can call
+     * {@see  Connection::getPublishers()}. Finally
+     * {@see Publisher::getStreamId()}) will give you the
+     * <code>streamId</code>. Remember to call
+     * {@see fetch()} before to fetch the current
+     * actual properties of the Session from OpenVidu Server
+     *
+     * @param string $streamId
+     * @return void
+     * @throws OpenViduConnectionNotFoundException
+     * @throws OpenViduException
+     * @throws OpenViduSessionNotFoundException
+     */
+    public function forceUnpublish(string $streamId)
+    {
+        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId . '/stream/' . $streamId, [
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Accept' => 'application/json',
+            ]
+        ]);
+        switch ($response->getStatusCode()) {
+            case 204:
+                foreach ($this->activeConnections as $connection) {
+                    $connection->unpublish($streamId);
+                    $connection->unsubscribe($streamId);
+                }
+                Cache::store('openvidu')->update($this->sessionId, $this->toJson());
+                break;
+            case 400:
+                throw new OpenViduSessionNotFoundException();
+                break;
+            case 404:
+                throw new OpenViduConnectionNotFoundException();
+                break;
+            default:
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+        }
+    }
+
+    /**
+     * Returns the list of active connections to the session. <strong>This value
+     * will remain unchanged since the last time method
+     * {@see fetch()} was called</strong>.
+     * Exceptions to this rule are:
+     * <ul>
+     * <li>Calling {@see Session::forceUnpublish(string)}
+     * updates each affected Connection status</li>
+     * <li>Calling {@see Session::forceDisconnect(string)}
+     * updates each affected Connection status</li>
+     * </ul>
+     * <br>
+     * To get the list of active connections with their current actual value, you
+     * must call first {@see Session::fetch()} and then
+     * {@see Session::getActiveConnections()}
+     */
+    public function getActiveConnections(): array
+    {
+        return $this->activeConnections;
+    }
+
+    /**
+     * Returns whether the session is being recorded or not
+     */
+    public function isBeingRecorded(): bool
+    {
+        return $this->recording;
+    }
+
+    /**
+     * Set value
+     * @param bool $recording
+     */
+    public function setIsBeingRecorded(bool $recording)
+    {
+        $this->recording = $recording;
+        Cache::store('openvidu')->update($this->sessionId, $this->toJson());
     }
 
     /**

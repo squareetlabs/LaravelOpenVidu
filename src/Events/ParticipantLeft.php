@@ -3,7 +3,6 @@
 namespace SquareetLabs\LaravelOpenVidu\Events;
 
 
-
 /**
  * Class ParticipantJoined
  * @package SquareetLabs\LaravelOpenVidu\Events
