@@ -200,12 +200,10 @@ class Connection implements JsonSerializable
     {
         if ($this->subscribers && count($this->subscribers) > 0) {
             $this->subscribers = array_filter($this->subscribers, function ($subscriber) use ($streamId) {
-                if (is_array($subscriber) && array_key_exists('streamId', $subscriber)) {
-                    return $subscriber['streamId'] !== $streamId;
-                } else {
-
+                if (is_string($subscriber)) {
                     return $subscriber !== $streamId;
                 }
+                return $subscriber['streamId'] !== $streamId;
             });
         }
     }
@@ -263,7 +261,6 @@ class Connection implements JsonSerializable
         }
         return $array;
     }
-
 
 
     /**

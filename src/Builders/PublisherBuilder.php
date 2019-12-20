@@ -10,15 +10,15 @@ class PublisherBuilder
      */
     public static function build(array $properties)
     {
-        return new Publisher($publishedArray['streamId'] ?? null,
-            $publishedArray['createdAt'] ?? null,
-            $publishedArray['hasAudio'] ?? null,
-            $publishedArray['hasVideo'] ?? null,
-            $publishedArray['audioActive'] ?? null,
-            $publishedArray['videoActive'] ?? null,
-            $publishedArray['frameRate'] ?? null,
-            $publishedArray['typeOfVideo'] ?? null,
-            $publishedArray['videoDimensions'] ?? null
+        return new Publisher($properties['streamId'],
+            $properties['createdAt'],
+            $properties['hasAudio'],
+            $properties['hasVideo'],
+            $properties['audioActive'] ,
+            $properties['videoActive'],
+            $properties['frameRate'] ,
+            $properties['typeOfVideo'],
+            $properties['videoDimensions']
         );
     }
 }
