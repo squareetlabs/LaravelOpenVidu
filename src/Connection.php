@@ -134,7 +134,7 @@ class Connection implements JsonSerializable
      */
     public function unsubscribe(string $streamId)
     {
-        if ($this->subscribers && count($this->subscribers) > 0) {
+        if (!empty($this->subscribers)) {
             $this->subscribers = array_filter($this->subscribers, function ($subscriber) use ($streamId) {
                 if (is_string($subscriber)) {
                     return $subscriber !== $streamId;

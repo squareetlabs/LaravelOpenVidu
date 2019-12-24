@@ -12,7 +12,7 @@ use SquareetLabs\LaravelOpenVidu\SessionProperties;
  * Class SessionPropertiesBuilder
  * @package SquareetLabs\LaravelOpenVidu\Builders
  */
-class SessionPropertiesBuilder
+class SessionPropertiesBuilder implements BuilderInterface
 {
     /**
      * @param array $properties

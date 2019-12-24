@@ -4,7 +4,7 @@ namespace SquareetLabs\LaravelOpenVidu\Builders;
 
 use SquareetLabs\LaravelOpenVidu\Publisher;
 
-class PublisherBuilder
+class PublisherBuilder implements BuilderInterface
 {
     /**
      * @param array $properties

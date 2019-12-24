@@ -13,7 +13,7 @@ use SquareetLabs\LaravelOpenVidu\RecordingProperties;
  * Class RecordingBuilder
  * @package SquareetLabs\LaravelOpenVidu\Builders
  */
-class RecordingBuilder
+class RecordingBuilder implements BuilderInterface
 {
     /**
      * @param array $properties

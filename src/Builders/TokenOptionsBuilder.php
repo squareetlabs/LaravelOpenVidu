@@ -8,7 +8,7 @@ use SquareetLabs\LaravelOpenVidu\TokenOptions;
  * Class TokenOptionsBuilder
  * @package SquareetLabs\LaravelOpenVidu\Builders
  */
-class TokenOptionsBuilder
+class TokenOptionsBuilder implements BuilderInterface
 {
     /**
      * @param mixed $tokenOptions

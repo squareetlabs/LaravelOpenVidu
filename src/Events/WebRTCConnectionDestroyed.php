@@ -117,12 +117,16 @@ class WebRTCConnectionDestroyed
         $this->sessionId = $data['sessionId'];
         $this->timestamp = $data['timestamp'];
         $this->participantId = $data['participantId'];
-        $this->receivingFrom = $data['receivingFrom'];
+        if (array_key_exists('receivingFrom', $data)) {
+            $this->receivingFrom = $data['receivingFrom'];
+        }
         $this->audioEnabled = $data['audioEnabled'];
         $this->videoEnabled = $data['videoEnabled'];
-        $this->videoSource = $data['videoSource'];
-        $this->videoFramerate = $data['videoFramerate'];
-        $this->videoDimensions = $data['videoDimensions'];
+        if (array_key_exists('videoSource', $data)) {
+            $this->videoSource = $data['videoSource'];
+            $this->videoFramerate = $data['videoFramerate'];
+            $this->videoDimensions = $data['videoDimensions'];
+        }
         $this->startTime = $data['startTime'];
         $this->duration = $data['duration'];
         $this->reason = $data['reason'];

@@ -4,7 +4,7 @@ namespace SquareetLabs\LaravelOpenVidu\Builders;
 
 use SquareetLabs\LaravelOpenVidu\Connection;
 
-class ConnectionBuilder
+class ConnectionBuilder implements BuilderInterface
 {
     /**
      * @param array $properties
