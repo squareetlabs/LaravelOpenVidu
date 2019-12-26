@@ -131,7 +131,9 @@ class RecordingStatusChanged
     {
         $this->sessionId = $data['sessionId'];
         $this->timestamp = $data['timestamp'];
-        $this->participantId = $data['participantId'];
+        if (array_key_exists('participantId', $data)) {
+            $this->participantId = $data['participantId'];
+        }
         $this->startTime = $data['startTime'];
         $this->id = $data['id'];
         $this->name = $data['name'];
@@ -140,10 +142,12 @@ class RecordingStatusChanged
         $this->hasVideo = $data['hasVideo'];
         $this->recordingLayout = $data['recordingLayout'];
         $this->resolution = $data['resolution'];
-        $this->size = $data['size'];
-        $this->duration = $data['duration'];
         $this->status = $data['status'];
-        $this->reason = $data['reason'];
+        if (array_key_exists('reason', $data)) {
+            $this->size = $data['size'];
+            $this->duration = $data['duration'];
+            $this->reason = $data['reason'];
+        }
         $this->event = $data['event'];
     }
 }
