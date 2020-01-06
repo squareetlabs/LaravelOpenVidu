@@ -11,14 +11,14 @@ use SquareetLabs\LaravelOpenVidu\SessionProperties;
 /**
  * Class LaravelOpenVidu
  * @package SquareetLabs\LaravelOpenVidu\Facades
- * @method Session createSession(?SessionProperties $properties = null)
- * @method Session getSession(string $sessionId)
- * @method bool deleteRecording(string $recordingId)
- * @method array getActiveSessions()
- * @method string getRecording(string $recordingId)
- * @method array getRecordings()
- * @method Recording startRecording(?RecordingProperties $properties = null)
- * @method Recording stopRecording(string $recordingId)
+ * @method static Session createSession(?SessionProperties $properties = null)
+ * @method static Session getSession(string $sessionId)
+ * @method static bool deleteRecording(string $recordingId)
+ * @method static array getActiveSessions()
+ * @method static string getRecording(string $recordingId)
+ * @method static array getRecordings()
+ * @method static Recording startRecording(?RecordingProperties $properties = null)
+ * @method static Recording stopRecording(string $recordingId)
  */
 class OpenVidu extends Facade
 {

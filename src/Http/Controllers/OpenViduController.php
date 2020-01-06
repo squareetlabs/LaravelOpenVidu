@@ -94,7 +94,7 @@ class OpenViduController extends Controller
     public function isBeingRecording(string $sessionId)
     {
         $session = OpenVidu::getSession($sessionId);
-        $isBeingRecording = $session->isBeingRecording();
+        $isBeingRecording = $session->isBeingRecorded();
         return Response::json(['isBeingRecording' => $isBeingRecording], 200);
     }
 
