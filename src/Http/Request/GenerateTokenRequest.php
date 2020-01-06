@@ -14,7 +14,7 @@ use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
  * Class GenerateTokenRequest
  * @package SquareetLabs\LaravelOpenVidu\Http\Requests
  */
-class GenerateTokenRequest extends FormRequest
+class GenerateTokenRequest extends /** @scrutinizer ignore-call */ FormRequest
 {
 
 
@@ -55,12 +55,12 @@ class GenerateTokenRequest extends FormRequest
     public function messages()
     {
         return [
-            'session.mediaMode.in' => __('validation.session.mediaMode_in'),
-            'session.recordingMode.in' => __('validation.session.recordingMode_in'),
-            'session.defaultOutputMode.in' => __('validation.session.defaultOutputMode_in'),
-            'session.defaultRecordingLayout.in' => __('validation.session.defaultRecordingLayout_in'),
-            'session.defaultCustomLayout.in' => __('validation.session.defaultCustomLayout_in'),
-            'tokenOptions.role.in' => __('validation.session.defaultCustomLayout_in'),
+            'session.mediaMode.in' => /** @scrutinizer ignore-call */ __('validation.session.mediaMode_in'),
+            'session.recordingMode.in' => /** @scrutinizer ignore-call */ __('validation.session.recordingMode_in'),
+            'session.defaultOutputMode.in' => /** @scrutinizer ignore-call */ __('validation.session.defaultOutputMode_in'),
+            'session.defaultRecordingLayout.in' => /** @scrutinizer ignore-call */ __('validation.session.defaultRecordingLayout_in'),
+            'session.defaultCustomLayout.in' => /** @scrutinizer ignore-call */ __('validation.session.defaultCustomLayout_in'),
+            'tokenOptions.role.in' => /** @scrutinizer ignore-call */ __('validation.session.defaultCustomLayout_in'),
         ];
     }
 }

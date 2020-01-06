@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class WebhookEventRequest
  * @package SquareetLabs\LaravelOpenVidu\Http\Requests
  */
-class WebhookEventRequest extends FormRequest
+class WebhookEventRequest extends /** @scrutinizer ignore-call */ FormRequest
 {
 
 
@@ -42,7 +42,7 @@ class WebhookEventRequest extends FormRequest
     public function messages()
     {
         return [
-            'event.required' => __('validation.webhook_event.required'),
+            'event.required' => /** @scrutinizer ignore-call */ __('validation.webhook_event.required'),
         ];
     }
 }

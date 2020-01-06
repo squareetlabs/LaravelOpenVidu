@@ -13,7 +13,7 @@ class OpenViduSessionHasNotConnectedParticipantsException extends OpenViduExcept
 {
     public function __construct(Throwable $previous = null)
     {
-        parent::__construct(__('The session has no connected participants'), 406, $previous);
+        parent::__construct('The session has no connected participants', 406, $previous);
     }
 
     public function __toString()

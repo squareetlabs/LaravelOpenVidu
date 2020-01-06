@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class StartRecordingRequest
  * @package SquareetLabs\LaravelOpenVidu\Http\Requests
  */
-class StartRecordingRequest extends FormRequest
+class StartRecordingRequest extends /** @scrutinizer ignore-call */ FormRequest
 {
 
 
@@ -48,8 +48,8 @@ class StartRecordingRequest extends FormRequest
     public function messages()
     {
         return [
-            'hasAudio.boolean' => __('validation.recording.hasAudio_boolean'),
-            'hasVideo.boolean' => __('validation.recording.hasVideo_boolean'),
+            'hasAudio.boolean' => /** @scrutinizer ignore-call */ __('validation.recording.hasAudio_boolean'),
+            'hasVideo.boolean' => /** @scrutinizer ignore-call */ __('validation.recording.hasVideo_boolean'),
         ];
     }
 }

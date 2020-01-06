@@ -3,6 +3,7 @@
 namespace SquareetLabs\LaravelOpenVidu\Http\Controllers;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Response;
 use SquareetLabs\LaravelOpenVidu\Builders\RecordingPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\SessionPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\TokenOptionsBuilder;
@@ -22,12 +23,13 @@ class OpenViduController extends Controller
     /**
      * @param GenerateTokenRequest $request
      * @return string
+     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
      */
     public function token(GenerateTokenRequest $request)
     {
         $session = OpenVidu::createSession(SessionPropertiesBuilder::build($request->get('session')));
         $token = $session->generateToken(TokenOptionsBuilder::build($request->get('tokenOptions')));
-        return response()->json(['token' => $token], 200);
+        return Response::json(['token' => $token], 200);
     }
 
     /**
@@ -37,7 +39,7 @@ class OpenViduController extends Controller
     public function session(string $sessionId)
     {
         $session = OpenVidu::getSession($sessionId);
-        return response()->json(['session' => $session], 200);
+        return Response::json(['session' => $session], 200);
     }
 
     /**
@@ -46,7 +48,7 @@ class OpenViduController extends Controller
     public function sessions()
     {
         $sessions = OpenVidu::getActiveSessions();
-        return response()->json(['sessions' => $sessions], 200);
+        return Response::json(['sessions' => $sessions], 200);
     }
 
     /**
@@ -57,18 +59,19 @@ class OpenViduController extends Controller
     {
         $session = $session = OpenVidu::getSession($sessionId);
         $connections = $session->getActiveConnections();
-        return response()->json(['connections' => $connections], 200);
+        return Response::json(['connections' => $connections], 200);
     }
 
     /**
      * @param string $sessionId
      * @return string
+     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
      */
     public function close(string $sessionId)
     {
         $session = OpenVidu::getSession($sessionId);
         $closed = $session->close();
-        return response()->json(['closed' => $closed], 200);
+        return Response::json(['closed' => $closed], 200);
     }
 
 
@@ -80,7 +83,7 @@ class OpenViduController extends Controller
     {
         $session = OpenVidu::getSession($sessionId);
         $hasChanges = $session->fetch();
-        return response()->json(['session' => $session, 'hasChanges' => $hasChanges], 200);
+        return Response::json(['session' => $session, 'hasChanges' => $hasChanges], 200);
     }
 
 
@@ -92,31 +95,35 @@ class OpenViduController extends Controller
     {
         $session = OpenVidu::getSession($sessionId);
         $isBeingRecording = $session->isBeingRecording();
-        return response()->json(['isBeingRecording' => $isBeingRecording], 200);
+        return Response::json(['isBeingRecording' => $isBeingRecording], 200);
     }
 
     /**
      * @param string $sessionId
      * @param string $streamId
      * @return string
+     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduConnectionNotFoundException
+     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
+     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionNotFoundException
      */
     public function forceUnpublish(string $sessionId, string $streamId)
     {
         $session = OpenVidu::getSession($sessionId);
-        $unpublished = $session->forceUnpublish($streamId);
-        return response()->json(['unpublished' => $unpublished], 200);
+        $session->forceUnpublish($streamId);
+        return Response::json(['unpublished' => true], 200);
     }
 
     /**
      * @param string $sessionId
      * @param string $connectionId
      * @return string
+     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
      */
     public function forceDisconnect(string $sessionId, string $connectionId)
     {
         $session = OpenVidu::getSession($sessionId);
-        $disconnect = $session->forceDisconnect($connectionId);
-        return response()->json(['disconnected' => $disconnect], 200);
+        $session->forceDisconnect($connectionId);
+        return Response::json(['disconnected' => true], 200);
     }
 
 
@@ -128,7 +135,7 @@ class OpenViduController extends Controller
     public function startRecording(StartRecordingRequest $request)
     {
         $recording = OpenVidu::startRecording(RecordingPropertiesBuilder::build($request->all()));
-        return response()->json(['recording' => $recording], 200);
+        return Response::json(['recording' => $recording], 200);
     }
 
 
@@ -139,7 +146,7 @@ class OpenViduController extends Controller
     public function stopRecording(string $recordingId)
     {
         $recording = OpenVidu::stopRecording($recordingId);
-        return response()->json(['recording' => $recording], 200);
+        return Response::json(['recording' => $recording], 200);
     }
 
     /**
@@ -149,7 +156,7 @@ class OpenViduController extends Controller
     public function recording(string $recordingId)
     {
         $recording = OpenVidu::getRecording($recordingId);
-        return response()->json(['recording' => $recording], 200);
+        return Response::json(['recording' => $recording], 200);
     }
 
 
@@ -160,7 +167,7 @@ class OpenViduController extends Controller
     public function deleteRecording(string $recordingId)
     {
         $recording = OpenVidu::deleteRecording($recordingId);
-        return response()->json(['recording' => $recording], 200);
+        return Response::json(['recording' => $recording], 200);
     }
 
 
@@ -171,6 +178,6 @@ class OpenViduController extends Controller
     public function webhook(WebhookEventRequest $request)
     {
         WebhookEventDispatcher::dispatch($request->all());
-        return response()->json(['success' => true], 200);
+        return Response::json(['success' => true], 200);
     }
 }
