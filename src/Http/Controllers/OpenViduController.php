@@ -57,7 +57,7 @@ class OpenViduController extends Controller
      */
     public function connections(string $sessionId)
     {
-        $session = $session = OpenVidu::getSession($sessionId);
+        $session = OpenVidu::getSession($sessionId);
         $connections = $session->getActiveConnections();
         return Response::json(['connections' => $connections], 200);
     }
