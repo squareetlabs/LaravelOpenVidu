@@ -17,8 +17,8 @@ class TokenOptions implements JsonSerializable
 
     /**
      * TokenOptions constructor.
-     * @param string $role
-     * @param string $data
+     * @param  string  $role
+     * @param  string  $data
      */
     public function __construct(string $role, ?string $data = null)
     {
@@ -29,7 +29,7 @@ class TokenOptions implements JsonSerializable
     /**
      * Convert the model instance to JSON.
      *
-     * @param int $options
+     * @param  int  $options
      * @return string
      *
      */
@@ -60,8 +60,9 @@ class TokenOptions implements JsonSerializable
     {
         $array = ['role' => $this->role, 'data' => $this->data];
         foreach ($array as $key => $value) {
-            if (is_null($value) || $value == '')
+            if (is_null($value) || $value == '') {
                 unset($array[$key]);
+            }
         }
         return $array;
     }

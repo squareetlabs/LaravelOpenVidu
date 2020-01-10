@@ -34,8 +34,8 @@ class SessionStore implements Store
     /**
      * Create a new database store.
      *
-     * @param ConnectionInterface $connection
-     * @param string $table
+     * @param  ConnectionInterface  $connection
+     * @param  string  $table
      */
     public function __construct(ConnectionInterface $connection, $table)
     {
@@ -46,7 +46,7 @@ class SessionStore implements Store
     /**
      * Update an item from the cache by key.
      *
-     * @param string $key
+     * @param  string  $key
      * @param $value
      * @return mixed
      */
@@ -73,7 +73,7 @@ class SessionStore implements Store
     /**
      * Serialize the given value.
      *
-     * @param mixed $value
+     * @param  mixed  $value
      * @return string
      */
     protected function serialize($value)
@@ -90,7 +90,7 @@ class SessionStore implements Store
     /**
      * Retrieve an item from the cache by key.
      *
-     * @param string $key
+     * @param  string  $key
      * @return mixed
      */
     public function get($key)
@@ -103,7 +103,7 @@ class SessionStore implements Store
             return;
         }
 
-        $cache = is_array($cache) ? (object)$cache : $cache;
+        $cache = is_array($cache) ? (object) $cache : $cache;
 
         // If this cache expiration date is past the current time, we will remove this
         // item from the cache. Then we will return a null value since the cache is
@@ -120,7 +120,7 @@ class SessionStore implements Store
     /**
      * Remove an item from the cache.
      *
-     * @param string $key
+     * @param  string  $key
      * @return bool
      */
     public function forget($key)
@@ -133,7 +133,7 @@ class SessionStore implements Store
     /**
      * Unserialize the given value.
      *
-     * @param string $value
+     * @param  string  $value
      * @return mixed
      */
     protected function unserialize($value)
@@ -162,7 +162,7 @@ class SessionStore implements Store
             return;
         }
 
-        $cache = is_array($cache) ? (object)$cache : $cache;
+        $cache = is_array($cache) ? (object) $cache : $cache;
         // If this cache expiration date is past the current time, we will remove this
         // item from the cache. Then we will return a null value since the cache is
         // expired. We will use "Carbon" to make this comparison with the column.
@@ -182,8 +182,8 @@ class SessionStore implements Store
     /**
      * Increment the value of an item in the cache.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return int|bool
      * @throws Throwable
      */
@@ -197,9 +197,9 @@ class SessionStore implements Store
     /**
      * Increment or decrement an item in the cache.
      *
-     * @param string $key
-     * @param mixed $value
-     * @param Closure $callback
+     * @param  string  $key
+     * @param  mixed  $value
+     * @param  Closure  $callback
      * @return int|bool
      * @throws Throwable
      */
@@ -218,14 +218,14 @@ class SessionStore implements Store
                 return false;
             }
 
-            $cache = is_array($cache) ? (object)$cache : $cache;
+            $cache = is_array($cache) ? (object) $cache : $cache;
 
             $current = $this->unserialize($cache->value);
 
             // Here we'll call this callback function that was given to the function which
             // is used to either increment or decrement the function. We use a callback
             // so we do not have to recreate all this logic in each of the functions.
-            $new = $callback((int)$current, $value);
+            $new = $callback((int) $current, $value);
 
             if (!is_numeric($current)) {
                 return false;
@@ -245,8 +245,8 @@ class SessionStore implements Store
     /**
      * Decrement the value of an item in the cache.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return int|bool
      * @throws Throwable
      */
@@ -260,8 +260,8 @@ class SessionStore implements Store
     /**
      * Store an item in the cache indefinitely.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return bool
      */
     public function forever($key, $value)
@@ -272,9 +272,9 @@ class SessionStore implements Store
     /**
      * Store an item in the cache for a given number of seconds.
      *
-     * @param string $key
-     * @param mixed $value
-     * @param int $seconds
+     * @param  string  $key
+     * @param  mixed  $value
+     * @param  int  $seconds
      * @return bool
      */
     public function put($key, $value, $seconds)
@@ -340,7 +340,7 @@ class SessionStore implements Store
      *
      * Items not found in the cache will have a null value.
      *
-     * @param array $keys
+     * @param  array  $keys
      * @return void
      */
     public function many(array $keys)
@@ -351,8 +351,8 @@ class SessionStore implements Store
     /**
      * Store multiple items in the cache for a given number of seconds.
      *
-     * @param array $values
-     * @param int $seconds
+     * @param  array  $values
+     * @param  int  $seconds
      * @return void
      */
     public function putMany(array $values, $seconds)

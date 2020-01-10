@@ -14,7 +14,8 @@ use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
  * Class GenerateTokenRequest
  * @package SquareetLabs\LaravelOpenVidu\Http\Requests
  */
-class GenerateTokenRequest extends /** @scrutinizer ignore-call */ FormRequest
+class GenerateTokenRequest extends /** @scrutinizer ignore-call */
+    FormRequest
 {
 
 

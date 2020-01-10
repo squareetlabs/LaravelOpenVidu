@@ -70,16 +70,16 @@ class Connection implements JsonSerializable
 
     /**
      * Connection constructor.
-     * @param string $connectionId
-     * @param int $createdAt
-     * @param string $role
-     * @param string $token
-     * @param string $location
-     * @param string $platform
-     * @param string $serverData
-     * @param string $clientData
-     * @param array $publishers
-     * @param array $subscribers
+     * @param  string  $connectionId
+     * @param  int  $createdAt
+     * @param  string  $role
+     * @param  string  $token
+     * @param  string  $location
+     * @param  string  $platform
+     * @param  string  $serverData
+     * @param  string  $clientData
+     * @param  array  $publishers
+     * @param  array  $subscribers
      */
     public function __construct(string $connectionId, int $createdAt, string $role, string $token, string $location, string $platform, string $serverData, string $clientData, array $publishers, array $subscribers)
     {
@@ -119,7 +119,7 @@ class Connection implements JsonSerializable
 
     /**
      * Remove publishers based on streamId
-     * @param string $streamId
+     * @param  string  $streamId
      */
     public function unpublish(string $streamId)
     {
@@ -130,7 +130,7 @@ class Connection implements JsonSerializable
 
     /**
      * Remove subscribers  based on streamId
-     * @param string $streamId
+     * @param  string  $streamId
      */
     public function unsubscribe(string $streamId)
     {
@@ -147,7 +147,7 @@ class Connection implements JsonSerializable
     /**
      * Convert the model instance to JSON.
      *
-     * @param int $options
+     * @param  int  $options
      * @return string
      *
      */
@@ -176,7 +176,8 @@ class Connection implements JsonSerializable
      */
     public function toArray(): array
     {
-        $array = ['connectionId' => $this->connectionId,
+        $array = [
+            'connectionId' => $this->connectionId,
             'createdAt' => $this->createdAt,
             'role' => $this->role,
             'token' => $this->token,
@@ -184,15 +185,17 @@ class Connection implements JsonSerializable
             'platform' => $this->platform,
             'serverData' => $this->serverData,
             'clientData' => $this->clientData,
-            'subscribers' => $this->subscribers];
+            'subscribers' => $this->subscribers
+        ];
         foreach ($this->publishers as $publisher) {
             $array['publishers'][] = $publisher->toArray();
         }
 
 
         foreach ($array as $key => $value) {
-            if (is_null($value) || $value == '')
+            if (is_null($value) || $value == '') {
                 unset($array[$key]);
+            }
         }
         return $array;
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace SquareetLabs\LaravelOpenVidu\Builders;
 
 /**

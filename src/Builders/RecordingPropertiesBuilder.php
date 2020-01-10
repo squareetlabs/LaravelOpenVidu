@@ -15,7 +15,7 @@ use SquareetLabs\LaravelOpenVidu\RecordingProperties;
 class RecordingPropertiesBuilder implements BuilderInterface
 {
     /**
-     * @param array $properties
+     * @param  array  $properties
      * @return RecordingProperties|null
      * @throws OpenViduInvalidArgumentException
      */

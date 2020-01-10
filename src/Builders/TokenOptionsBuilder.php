@@ -11,7 +11,7 @@ use SquareetLabs\LaravelOpenVidu\TokenOptions;
 class TokenOptionsBuilder implements BuilderInterface
 {
     /**
-     * @param mixed $tokenOptions
+     * @param  mixed  $tokenOptions
      * @return TokenOptions|null
      */
     public static function build(array $tokenOptions)

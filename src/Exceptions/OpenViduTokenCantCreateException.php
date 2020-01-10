@@ -16,8 +16,8 @@ class OpenViduTokenCantCreateException extends OpenViduException
      * The 424 (Failed Dependency) status code means that the method could not be performed on the resource because the requested action depended on another action and that action failed.
      * In this case, in obtaining the session.
      * https://tools.ietf.org/html/rfc4918#section-11.4
-     * @param string $message
-     * @param Throwable|null $previous
+     * @param  string  $message
+     * @param  Throwable|null  $previous
      *
      */
     public function __construct($message = "", Throwable $previous = null)
@@ -27,6 +27,6 @@ class OpenViduTokenCantCreateException extends OpenViduException
 
     public function __toString()
     {
-        return __CLASS__ . ":[{$this->code}]:{$this->message}\n";
+        return __CLASS__.":[{$this->code}]:{$this->message}\n";
     }
 }

@@ -8,7 +8,8 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class StartRecordingRequest
  * @package SquareetLabs\LaravelOpenVidu\Http\Requests
  */
-class StartRecordingRequest extends /** @scrutinizer ignore-call */ FormRequest
+class StartRecordingRequest extends /** @scrutinizer ignore-call */
+    FormRequest
 {
 
 

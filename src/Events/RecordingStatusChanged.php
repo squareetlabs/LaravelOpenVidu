@@ -125,7 +125,7 @@ class RecordingStatusChanged
 
     /**
      * Create a new SessionCreated event instance.
-     * @param array $data
+     * @param  array  $data
      */
     public function __construct(array $data)
     {

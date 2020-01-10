@@ -7,9 +7,9 @@ use SquareetLabs\LaravelOpenVidu\Connection;
 class ConnectionBuilder implements BuilderInterface
 {
     /**
-     * @param array $properties
-     * @param array $publishers
-     * @param array $subscribers
+     * @param  array  $properties
+     * @param  array  $publishers
+     * @param  array  $subscribers
      * @return Connection
      */
     public static function build(array $properties, ?array $publishers = [], ?array $subscribers = [])

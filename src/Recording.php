@@ -3,10 +3,8 @@
 namespace SquareetLabs\LaravelOpenVidu;
 
 use JsonSerializable;
-use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
-use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
 use SquareetLabs\LaravelOpenVidu\Enums\RecordingStatus;
 
 /**
@@ -43,13 +41,13 @@ class Recording implements JsonSerializable
 
     /**
      * Session constructor.
-     * @param string $id
-     * @param string $sessionId
-     * @param int $createdAt
-     * @param int $size
-     * @param float $duration
-     * @param string $url
-     * @param RecordingProperties|null $recordingProperties
+     * @param  string  $id
+     * @param  string  $sessionId
+     * @param  int  $createdAt
+     * @param  int  $size
+     * @param  float  $duration
+     * @param  string  $url
+     * @param  RecordingProperties|null  $recordingProperties
      */
     public function __construct(string $id, string $sessionId, int $createdAt, int $size, ?float $duration, ?string $url, ?RecordingProperties $recordingProperties = null)
     {
@@ -159,7 +157,7 @@ class Recording implements JsonSerializable
     /**
      * Convert the model instance to JSON.
      *
-     * @param int $options
+     * @param  int  $options
      * @return string
      *
      */
@@ -190,8 +188,9 @@ class Recording implements JsonSerializable
     {
         $array = ['id' => $this->id, 'sessionId' => $this->sessionId, 'size' => $this->size, 'status' => $this->status, 'duration' => $this->duration, 'resolution' => $this->getResolution(), 'hasAudio' => $this->hasAudio(), 'hasVideo' => $this->hasVideo(), 'url' => $this->url, 'createdAt' => $this->createdAt];
         foreach ($array as $key => $value) {
-            if (is_null($value) || $value == '')
+            if (is_null($value) || $value == '') {
                 unset($array[$key]);
+            }
         }
         return $array;
     }

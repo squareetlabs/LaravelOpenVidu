@@ -7,7 +7,7 @@ use SquareetLabs\LaravelOpenVidu\Publisher;
 class PublisherBuilder implements BuilderInterface
 {
     /**
-     * @param array $properties
+     * @param  array  $properties
      * @return Publisher
      */
     public static function build(array $properties)

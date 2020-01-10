@@ -21,7 +21,7 @@ use SquareetLabs\LaravelOpenVidu\Http\Requests\WebhookEventRequest;
 class OpenViduController extends Controller
 {
     /**
-     * @param GenerateTokenRequest $request
+     * @param  GenerateTokenRequest  $request
      * @return string
      * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
      */
@@ -33,7 +33,7 @@ class OpenViduController extends Controller
     }
 
     /**
-     * @param string $sessionId
+     * @param  string  $sessionId
      * @return string
      */
     public function session(string $sessionId)
@@ -52,7 +52,7 @@ class OpenViduController extends Controller
     }
 
     /**
-     * @param string $sessionId
+     * @param  string  $sessionId
      * @return string
      */
     public function connections(string $sessionId)
@@ -63,7 +63,7 @@ class OpenViduController extends Controller
     }
 
     /**
-     * @param string $sessionId
+     * @param  string  $sessionId
      * @return string
      * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
      */
@@ -76,7 +76,7 @@ class OpenViduController extends Controller
 
 
     /**
-     * @param string $sessionId
+     * @param  string  $sessionId
      * @return string
      */
     public function fetch(string $sessionId)
@@ -88,7 +88,7 @@ class OpenViduController extends Controller
 
 
     /**
-     * @param string $sessionId
+     * @param  string  $sessionId
      * @return string
      */
     public function isBeingRecording(string $sessionId)
@@ -99,8 +99,8 @@ class OpenViduController extends Controller
     }
 
     /**
-     * @param string $sessionId
-     * @param string $streamId
+     * @param  string  $sessionId
+     * @param  string  $streamId
      * @return string
      * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduConnectionNotFoundException
      * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
@@ -114,8 +114,8 @@ class OpenViduController extends Controller
     }
 
     /**
-     * @param string $sessionId
-     * @param string $connectionId
+     * @param  string  $sessionId
+     * @param  string  $connectionId
      * @return string
      * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
      */
@@ -128,7 +128,7 @@ class OpenViduController extends Controller
 
 
     /**
-     * @param StartRecordingRequest $request
+     * @param  StartRecordingRequest  $request
      * @return string
      * @throws OpenViduInvalidArgumentException
      */
@@ -140,7 +140,7 @@ class OpenViduController extends Controller
 
 
     /**
-     * @param string $recordingId
+     * @param  string  $recordingId
      * @return string
      */
     public function stopRecording(string $recordingId)
@@ -150,7 +150,7 @@ class OpenViduController extends Controller
     }
 
     /**
-     * @param string $recordingId
+     * @param  string  $recordingId
      * @return string
      */
     public function recording(string $recordingId)
@@ -161,7 +161,7 @@ class OpenViduController extends Controller
 
 
     /**
-     * @param string $recordingId
+     * @param  string  $recordingId
      * @return string
      */
     public function deleteRecording(string $recordingId)
@@ -172,7 +172,7 @@ class OpenViduController extends Controller
 
 
     /**
-     * @param WebhookEventRequest $request
+     * @param  WebhookEventRequest  $request
      * @return string
      */
     public function webhook(WebhookEventRequest $request)

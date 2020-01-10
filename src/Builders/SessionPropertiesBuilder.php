@@ -15,7 +15,7 @@ use SquareetLabs\LaravelOpenVidu\SessionProperties;
 class SessionPropertiesBuilder implements BuilderInterface
 {
     /**
-     * @param array $properties
+     * @param  array  $properties
      * @return SessionProperties|null
      */
     public static function build(array $properties)

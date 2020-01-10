@@ -39,12 +39,12 @@ class SessionProperties implements JsonSerializable
 
     /**
      * SessionProperties constructor.
-     * @param string $mediaMode
-     * @param string $recordingMode
-     * @param string $defaultOutputMode
-     * @param string $defaultRecordingLayout
-     * @param string $defaultCustomLayout
-     * @param string $customSessionId
+     * @param  string  $mediaMode
+     * @param  string  $recordingMode
+     * @param  string  $defaultOutputMode
+     * @param  string  $defaultRecordingLayout
+     * @param  string  $defaultCustomLayout
+     * @param  string  $customSessionId
      */
     public function __construct(string $mediaMode, string $recordingMode, string $defaultOutputMode, ?string $defaultRecordingLayout, ?string $customSessionId = null, ?string $defaultCustomLayout = null)
     {
@@ -110,7 +110,7 @@ class SessionProperties implements JsonSerializable
     /**
      * Convert the model instance to JSON.
      *
-     * @param int $options
+     * @param  int  $options
      * @return string
      *
      */
@@ -139,15 +139,18 @@ class SessionProperties implements JsonSerializable
      */
     public function toArray(): array
     {
-        $array = ['mediaMode' => $this->mediaMode,
+        $array = [
+            'mediaMode' => $this->mediaMode,
             'recordingMode' => $this->recordingMode,
             'defaultOutputMode' => $this->defaultOutputMode,
             'defaultRecordingLayout' => $this->defaultRecordingLayout,
             'defaultCustomLayout' => $this->defaultCustomLayout,
-            'customSessionId' => $this->customSessionId];
+            'customSessionId' => $this->customSessionId
+        ];
         foreach ($array as $key => $value) {
-            if (is_null($value) || $value == '')
+            if (is_null($value) || $value == '') {
                 unset($array[$key]);
+            }
         }
         return $array;
     }

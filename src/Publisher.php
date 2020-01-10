@@ -73,15 +73,15 @@ class Publisher implements JsonSerializable
 
     /**
      * Publisher constructor.
-     * @param string $streamId
-     * @param int $createdAt
-     * @param bool $hasAudio
-     * @param bool $hasVideo
-     * @param bool $audioActive
-     * @param bool $videoActive
-     * @param int $frameRate
-     * @param string $typeOfVideo
-     * @param string $videoDimensions
+     * @param  string  $streamId
+     * @param  int  $createdAt
+     * @param  bool  $hasAudio
+     * @param  bool  $hasVideo
+     * @param  bool  $audioActive
+     * @param  bool  $videoActive
+     * @param  int  $frameRate
+     * @param  string  $typeOfVideo
+     * @param  string  $videoDimensions
      */
     public function __construct(string $streamId, int $createdAt, bool $hasAudio, bool $hasVideo, bool $audioActive, bool $videoActive, int $frameRate, string $typeOfVideo, string $videoDimensions)
     {
@@ -113,7 +113,7 @@ class Publisher implements JsonSerializable
     /**
      * Convert the model instance to JSON.
      *
-     * @param int $options
+     * @param  int  $options
      * @return string
      *
      */
@@ -142,7 +142,8 @@ class Publisher implements JsonSerializable
      */
     public function toArray(): array
     {
-        $array = ['streamId' => $this->streamId,
+        $array = [
+            'streamId' => $this->streamId,
             'createdAt' => $this->createdAt,
             'hasAudio' => $this->hasAudio,
             'hasVideo' => $this->hasVideo,
@@ -150,16 +151,18 @@ class Publisher implements JsonSerializable
             'videoActive' => $this->videoActive,
             'frameRate' => $this->frameRate,
             'typeOfVideo' => $this->typeOfVideo,
-            'videoDimensions' => $this->videoDimensions];
+            'videoDimensions' => $this->videoDimensions
+        ];
         foreach ($array as $key => $value) {
-            if (is_null($value) || $value == '')
+            if (is_null($value) || $value == '') {
                 unset($array[$key]);
+            }
         }
         return $array;
     }
 
     /**
-     * @param Publisher $other
+     * @param  Publisher  $other
      * @return bool
      */
     public function equalTo(Publisher $other): bool

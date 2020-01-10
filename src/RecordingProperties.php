@@ -31,14 +31,14 @@ class RecordingProperties implements JsonSerializable
 
     /**
      * RecordingProperties constructor.
-     * @param string $session
-     * @param bool $hasAudio
-     * @param bool $hasVideo
-     * @param string $name
-     * @param string $outputMode
-     * @param string $recordingLayout
-     * @param string $resolution
-     * @param string $customLayout
+     * @param  string  $session
+     * @param  bool  $hasAudio
+     * @param  bool  $hasVideo
+     * @param  string  $name
+     * @param  string  $outputMode
+     * @param  string  $recordingLayout
+     * @param  string  $resolution
+     * @param  string  $customLayout
      */
     public function __construct(string $session, string $name, string $outputMode, string $recordingLayout, ?string $resolution = null, ?bool $hasAudio = true, ?bool $hasVideo = true, ?string $customLayout = null)
     {
@@ -160,7 +160,7 @@ class RecordingProperties implements JsonSerializable
     /**
      * Convert the model instance to JSON.
      *
-     * @param int $options
+     * @param  int  $options
      * @return string
      *
      */
@@ -189,17 +189,20 @@ class RecordingProperties implements JsonSerializable
      */
     public function toArray(): array
     {
-        $array = ['session' => $this->session,
+        $array = [
+            'session' => $this->session,
             'hasAudio' => $this->hasAudio,
             'hasVideo' => $this->hasVideo,
             'name' => $this->name,
             'outputMode' => $this->outputMode,
             'recordingLayout' => $this->recordingLayout,
             'resolution' => $this->resolution,
-            'customLayout' => $this->customLayout];
+            'customLayout' => $this->customLayout
+        ];
         foreach ($array as $key => $value) {
-            if (is_null($value) || $value == '')
+            if (is_null($value) || $value == '') {
                 unset($array[$key]);
+            }
         }
         return $array;
     }

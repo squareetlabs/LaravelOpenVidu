@@ -47,8 +47,8 @@ class Session implements JsonSerializable
 
     /**
      * Session constructor.
-     * @param Client $client
-     * @param SessionProperties|null $properties
+     * @param  Client  $client
+     * @param  SessionProperties|null  $properties
      * @throws OpenViduException
      */
     public function __construct(Client $client, ?SessionProperties $properties = null)
@@ -74,7 +74,7 @@ class Session implements JsonSerializable
                 case 409:
                     return $this->properties->getCustomSessionId();
                 default:
-                    throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                    throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
             }
         } else {
             return $this->sessionId;
@@ -86,7 +86,7 @@ class Session implements JsonSerializable
      * {@see TokenOptions}. This always translates into a
      * new request to OpenVidu Server
      *
-     * @param TokenOptions|null $tokenOptions
+     * @param  TokenOptions|null  $tokenOptions
      * @return string The generated token
      * @throws OpenViduException
      */
@@ -113,16 +113,16 @@ class Session implements JsonSerializable
      */
     public function close()
     {
-        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId);
+        $response = $this->client->delete(Uri::SESSION_URI.'/'.$this->sessionId);
         switch ($response->getStatusCode()) {
             case 204:
                 Cache::store('openvidu')->forget($this->sessionId);
-                break;
+                return true;
             case 404:
                 throw new OpenViduSessionNotFoundException();
                 break;
             default:
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -144,7 +144,7 @@ class Session implements JsonSerializable
 
     public function fetch()
     {
-        $response = $this->client->get(Uri::SESSION_URI . '/' . $this->sessionId, [
+        $response = $this->client->get(Uri::SESSION_URI.'/'.$this->sessionId, [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
                 'Accept' => 'application/json',
@@ -165,7 +165,7 @@ class Session implements JsonSerializable
     /**
      * Convert the model instance to JSON.
      *
-     * @param int $options
+     * @param  int  $options
      * @return string
      *
      */
@@ -200,14 +200,15 @@ class Session implements JsonSerializable
         }
 
         foreach ($array as $key => $value) {
-            if (is_null($value) || $value == '')
+            if (is_null($value) || $value == '') {
                 unset($array[$key]);
+            }
         }
         return $array;
     }
 
     /**
-     * @param string $json
+     * @param  string  $json
      * @return Session
      */
     public function fromJson(string $json): Session
@@ -216,7 +217,7 @@ class Session implements JsonSerializable
     }
 
     /**
-     * @param array $sessionArray
+     * @param  array  $sessionArray
      * @return Session
      */
     public function fromArray(array $sessionArray): Session
@@ -252,12 +253,12 @@ class Session implements JsonSerializable
      * (`streamDestroyed`, `connectionDestroyed`, `sessionDisconnected`) with reason set to `"forceDisconnectByServer"`
      *
      *
-     * @param string $connectionId
+     * @param  string  $connectionId
      * @throws OpenViduException
      */
     public function forceDisconnect(string $connectionId)
     {
-        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId . '/connection/' . $connectionId, [
+        $response = $this->client->delete(Uri::SESSION_URI.'/'.$this->sessionId.'/connection/'.$connectionId, [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
                 'Accept' => 'application/json',
@@ -275,14 +276,14 @@ class Session implements JsonSerializable
                 throw new OpenViduConnectionNotFoundException();
                 break;
             default:
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
     }
 
     /**
      * Get `connection` parameter from activeConnections array {@see Connection::getConnectionId()} for getting each `connectionId` property).
      * Remember to call {@see fetch()} before to fetch the current actual properties of the Session from OpenVidu Server
-     * @param string $connectionId
+     * @param  string  $connectionId
      */
 
     private function leaveSession(string $connectionId)
@@ -318,7 +319,7 @@ class Session implements JsonSerializable
      * {@see fetch()} before to fetch the current
      * actual properties of the Session from OpenVidu Server
      *
-     * @param string $streamId
+     * @param  string  $streamId
      * @return void
      * @throws OpenViduConnectionNotFoundException
      * @throws OpenViduException
@@ -326,7 +327,7 @@ class Session implements JsonSerializable
      */
     public function forceUnpublish(string $streamId)
     {
-        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId . '/stream/' . $streamId, [
+        $response = $this->client->delete(Uri::SESSION_URI.'/'.$this->sessionId.'/stream/'.$streamId, [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
                 'Accept' => 'application/json',
@@ -347,7 +348,7 @@ class Session implements JsonSerializable
                 throw new OpenViduConnectionNotFoundException();
                 break;
             default:
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -382,7 +383,7 @@ class Session implements JsonSerializable
 
     /**
      * Set value
-     * @param bool $recording
+     * @param  bool  $recording
      */
     public function setIsBeingRecorded(bool $recording)
     {

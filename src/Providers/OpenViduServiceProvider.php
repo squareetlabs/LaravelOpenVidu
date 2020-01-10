@@ -21,7 +21,7 @@ class OpenViduServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(OpenVidu::class, function ($app) {
-            return new OpenVidu(config('services.openvidu'));
+            return new OpenVidu(/** @scrutinizer ignore-call */ config('services.openvidu'));
         });
 
         $this->app->alias(OpenVidu::class, 'openVidu');
@@ -36,7 +36,7 @@ class OpenViduServiceProvider extends ServiceProvider
     private function registerRoutes()
     {
         Route::group($this->routeConfiguration(), function () {
-            $this->loadRoutesFrom(__DIR__ . '/../Http/routes.php');
+            $this->loadRoutesFrom(__DIR__.'/../Http/routes.php');
         });
     }
 
@@ -62,15 +62,15 @@ class OpenViduServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+            $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
 
             $this->publishes([
-                __DIR__ . '/../../database/migrations' => database_path('migrations'),
+                __DIR__.'/../../database/migrations' => /** @scrutinizer ignore-call */ database_path('migrations'),
             ], 'openvidu-migrations');
 
         }
         Cache::extend('openvidu', function () {
-            return Cache::repository(new SessionStore(DB::connection(), config('cache.stores.openvidu.table')));
+            return Cache::repository(new SessionStore(DB::connection(), /** @scrutinizer ignore-call */ config('cache.stores.openvidu.table')));
         });
     }
 }

@@ -33,7 +33,7 @@ class OpenVidu
 
     /**
      * SmsUp constructor.
-     * @param array $config
+     * @param  array  $config
      */
     public function __construct(array $config)
     {
@@ -41,7 +41,7 @@ class OpenVidu
     }
 
     /**
-     * @param SessionProperties|null $properties
+     * @param  SessionProperties|null  $properties
      * @return Session
      * @throws Exceptions\OpenViduException
      */
@@ -65,7 +65,7 @@ class OpenVidu
             'auth' => [
                 $this->config['app'], $this->config['secret']
             ],
-            'base_uri' => $this->config['domain'] . ':' . $this->config['port'],
+            'base_uri' => $this->config['domain'].':'.$this->config['port'],
             'debug' => $this->config['debug'],
             'http_errors' => false,
             'verify' => false
@@ -75,7 +75,7 @@ class OpenVidu
 
     /**
      * Starts the recording of a {@see Session}
-     * @param RecordingProperties|null $properties
+     * @param  RecordingProperties  $properties
      * @return Recording
      * @throws OpenViduException
      * @throws OpenViduRecordingResolutionException
@@ -86,7 +86,7 @@ class OpenVidu
      * @throws InvalidArgumentException
      * @throws Exceptions\OpenViduInvalidArgumentException
      */
-    public function startRecording(?RecordingProperties $properties = null): Recording
+    public function startRecording(RecordingProperties $properties): Recording
     {
         $response = $this->client()->post(Uri::RECORDINGS_START, [
             RequestOptions::JSON => $properties->toArray() ?? null
@@ -115,13 +115,13 @@ class OpenVidu
                 throw new OpenViduServerRecordingIsDisabledException();
                 break;
             default:
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
     }
 
     /**
      * Gets an existing {@see Session}
-     * @param string $sessionId
+     * @param  string  $sessionId
      * @return Session
      * @throws OpenViduException
      * @throws OpenViduSessionNotFoundException
@@ -137,7 +137,7 @@ class OpenVidu
 
     /**
      * Stops the recording of a {@see Session}
-     * @param string $recordingId The `id` property of the {@see Recording} you want to stop
+     * @param  string  $recordingId  The `id` property of the {@see Recording} you want to stop
      * @return Recording
      * @throws OpenViduException
      * @throws OpenViduRecordingNotFoundException
@@ -148,7 +148,7 @@ class OpenVidu
      */
     public function stopRecording(string $recordingId): Recording
     {
-        $response = $this->client()->post(Uri::RECORDINGS_STOP . '/' . $recordingId);
+        $response = $this->client()->post(Uri::RECORDINGS_STOP.'/'.$recordingId);
         switch ($response->getStatusCode()) {
             case 200:
                 $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
@@ -164,13 +164,13 @@ class OpenVidu
                 throw new OpenViduRecordingStatusException("The recording has `starting` status. Wait until `started` status before stopping the recording.");
                 break;
             default:
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
     }
 
     /**
      * Gets an existing {@see Recording}
-     * @param string $recordingId The `id` property of the {@see Recording} you want to retrieve
+     * @param  string  $recordingId  The `id` property of the {@see Recording} you want to retrieve
      * @return string
      * @throws OpenViduException
      * @throws OpenViduRecordingNotFoundException
@@ -178,7 +178,7 @@ class OpenVidu
      */
     public function getRecording(string $recordingId): string
     {
-        $response = $this->client()->get(Uri::RECORDINGS_URI . '/' . $recordingId);
+        $response = $this->client()->get(Uri::RECORDINGS_URI.'/'.$recordingId);
         switch ($response->getStatusCode()) {
             case 200:
                 $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
@@ -187,7 +187,7 @@ class OpenVidu
                 throw new OpenViduRecordingNotFoundException();
                 break;
             default:
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -209,14 +209,14 @@ class OpenVidu
                 }
                 return $recordings;
             default:
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
     }
 
 
     /**
      * Deletes a {@see Recording}. The recording must have status `stopped`, `ready` or `failed`
-     * @param string $recordingId The `id` property of the {@see Recording} you want to delete
+     * @param  string  $recordingId  The `id` property of the {@see Recording} you want to delete
      * @return bool
      * @throws OpenViduException
      * @throws OpenViduRecordingNotFoundException
@@ -224,7 +224,7 @@ class OpenVidu
      */
     public function deleteRecording(string $recordingId): bool
     {
-        $response = $this->client()->delete(Uri::RECORDINGS_URI . '/' . $recordingId);
+        $response = $this->client()->delete(Uri::RECORDINGS_URI.'/'.$recordingId);
 
         switch ($response->getStatusCode()) {
             case 200:
@@ -236,7 +236,7 @@ class OpenVidu
                 throw new OpenViduRecordingStatusException("The recording has `started` status. Stop it before deletion.");
                 break;
             default:
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
     }
 

@@ -8,7 +8,8 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class WebhookEventRequest
  * @package SquareetLabs\LaravelOpenVidu\Http\Requests
  */
-class WebhookEventRequest extends /** @scrutinizer ignore-call */ FormRequest
+class WebhookEventRequest extends /** @scrutinizer ignore-call */
+    FormRequest
 {
 
 
