@@ -20,7 +20,7 @@ class OpenViduServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(OpenVidu::class, function ($app) {
+        $this->app->singleton(OpenVidu::class, function () {
             return new OpenVidu(/** @scrutinizer ignore-call */ config('services.openvidu'));
         });
 
