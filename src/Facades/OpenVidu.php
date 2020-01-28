@@ -13,6 +13,7 @@ use SquareetLabs\LaravelOpenVidu\SessionProperties;
  * @package SquareetLabs\LaravelOpenVidu\Facades
  * @method static Session createSession(?SessionProperties $properties = null)
  * @method static Session getSession(string $sessionId)
+ * @method static bool existsSession(string $sessionId)
  * @method static bool deleteRecording(string $recordingId)
  * @method static array getActiveSessions()
  * @method static string getRecording(string $recordingId)

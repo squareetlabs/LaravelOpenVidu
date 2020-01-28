@@ -135,6 +135,18 @@ class OpenVidu
         throw new OpenViduSessionNotFoundException();
     }
 
+
+    /**
+     * Check if exists {@see Session}
+     * @param  string  $sessionId
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function existsSession(string $sessionId): bool
+    {
+        return Cache::store('openvidu')->has($sessionId);
+    }
+
     /**
      * Stops the recording of a {@see Session}
      * @param  string  $recordingId  The `id` property of the {@see Recording} you want to stop
