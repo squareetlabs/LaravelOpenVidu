@@ -43,7 +43,7 @@ class GenerateTokenRequest extends /** @scrutinizer ignore-call */
             'session.defaultRecordingLayout' => ['string', Rule::in([RecordingLayout::CUSTOM, RecordingLayout::BEST_FIT])],
             'session.defaultCustomLayout' => 'string',
             'session.customSessionId' => 'string',
-            'tokenOptions.data' => 'string',
+            'tokenOptions.data' => 'nullable|string',
             'tokenOptions.role' => ['string', Rule::in([OpenViduRole::MODERATOR, OpenViduRole::PUBLISHER, OpenViduRole::SUBSCRIBER])],
         ];
     }
