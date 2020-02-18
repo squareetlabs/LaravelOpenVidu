@@ -188,7 +188,7 @@ class OpenVidu
      * @throws OpenViduRecordingNotFoundException
      * @throws Exceptions\OpenViduInvalidArgumentException
      */
-    public function getRecording(string $recordingId): string
+    public function getRecording(string $recordingId)
     {
         $response = $this->client()->get(Uri::RECORDINGS_URI.'/'.$recordingId);
         switch ($response->getStatusCode()) {
