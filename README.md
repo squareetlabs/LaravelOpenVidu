@@ -846,6 +846,8 @@ class ParticipantJoinedListener
         $event->timestamp;      // Time when the event was triggered, UTC milliseconds
         $event->participantId;  // Identifier of the participant, a string with the participant unique identifier
         $event->platform;       // Complete description of the platform used by the participant to connect to the session
+        $event->clientData;     // Additional data added client side while connecting to Session
+        $event->serverData;     // Additional data added server side while generating Token
     }
 }
 ```
@@ -869,6 +871,8 @@ class ParticipantLeftListener
         $event->timestamp;      // Time when the event was triggered
         $event->participantId;  // Identifier of the participant
         $event->platform;       // Complete description of the platform used by the participant to connect to the session
+        $event->clientData;     // Additional data added client side while connecting to Session
+        $event->serverData;     // Additional data added server side while generating Token
         $event->startTime;      // Time when the participant joined the session
         $event->duration;       // Total duration of the participant's connection to the session
         $event->reason;         // How the participant left the session.
