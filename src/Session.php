@@ -378,7 +378,7 @@ class Session implements JsonSerializable
      */
     public function isBeingRecorded(): bool
     {
-        return $this->recording;
+        return !!$this->recording;
     }
 
     /**
