@@ -24,7 +24,7 @@ class RecordingPropertiesBuilder implements BuilderInterface
         if (array_key_exists('session', $properties)) {
             return new RecordingProperties(
                 $properties['session'],
-                array_key_exists('name', $properties) ? $properties['name'] : RecordingLayout::BEST_FIT,
+                array_key_exists('name', $properties) ? $properties['name'] : '',
                 array_key_exists('outputMode', $properties) ? $properties['outputMode'] : OutputMode::COMPOSED,
                 array_key_exists('recordingLayout', $properties) ? $properties['recordingLayout'] : RecordingLayout::BEST_FIT,
                 array_key_exists('resolution', $properties) ? $properties['resolution'] : null,

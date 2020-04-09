@@ -39,6 +39,9 @@ class Session implements JsonSerializable
     /** @var bool */
     private $recording;
 
+    /** @var string */
+    private $lastRecordingId;
+
     /** @var array */
     private $activeConnections = [];
 
@@ -378,7 +381,7 @@ class Session implements JsonSerializable
      */
     public function isBeingRecorded(): bool
     {
-        return $this->recording;
+        return !!$this->recording;
     }
 
     /**
@@ -388,6 +391,15 @@ class Session implements JsonSerializable
     public function setIsBeingRecorded(bool $recording)
     {
         $this->recording = $recording;
+        Cache::store('openvidu')->update($this->sessionId, $this->toJson());
+    }
+
+    public function getLastRecordingId() {
+        return $this->lastRecordingId;        
+    }
+
+    public function setLastRecordingId(string $lastRecordingId) {
+        $this->lastRecordingId = $lastRecordingId;
         Cache::store('openvidu')->update($this->sessionId, $this->toJson());
     }
 

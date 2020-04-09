@@ -57,6 +57,14 @@ class RecordingProperties implements JsonSerializable
         }
     }
 
+    /**
+     * Session name of the recording
+     * 
+     * @return string
+     */
+    public function session() {
+        return $this->session;
+    }
 
     /**
      * Defines the name you want to give to the video file. You can access this same
