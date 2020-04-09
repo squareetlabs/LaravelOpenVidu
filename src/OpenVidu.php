@@ -88,7 +88,7 @@ class OpenVidu
      */
     public function startRecording(RecordingProperties $properties): Recording
     {
-        $activeSession = $this->getSession($recording->getSessionId());
+        $activeSession = $this->getSession($properties->session());
         if ($activeSession->isBeingRecorded()) {
             $lastRecordingId = $activeSession->getLastRecordingId();
             if (!$lastRecordingId) {
