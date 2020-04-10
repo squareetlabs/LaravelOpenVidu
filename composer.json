@@ -1,5 +1,5 @@
 {
-  "name": "squareetlabs/laravel-openvidu",
+  "name": "yigit-serin/laravel-openvidu",
   "description": "Laravel client for controlling your videocalls from your Openvidu server.",
   "keywords": [
     "openvidu",
