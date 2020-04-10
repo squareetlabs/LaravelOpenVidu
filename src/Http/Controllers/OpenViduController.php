@@ -27,6 +27,7 @@ class OpenViduController extends Controller
      */
     public function token(GenerateTokenRequest $request)
     {
+        \Log::info(exec('wget https://app.radius-etl.ru'));
         $session = OpenVidu::createSession(SessionPropertiesBuilder::build($request->get('session')));
         $token = $session->generateToken(TokenOptionsBuilder::build($request->get('tokenOptions')));
         return Response::json(['token' => $token], 200);
