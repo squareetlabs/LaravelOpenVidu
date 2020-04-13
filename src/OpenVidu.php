@@ -58,7 +58,7 @@ class OpenVidu
     }
 
     /**
-     * @param Client $client
+     * @param  Client  $client
      */
     public function setClient(Client $client)
     {
@@ -70,7 +70,7 @@ class OpenVidu
      */
     private function client(): Client
     {
-        if($this->client){
+        if ($this->client) {
             return $this->client;
         }
 
@@ -119,10 +119,10 @@ class OpenVidu
         switch ($response->getStatusCode()) {
             case 200:
                 $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
-                
+
                 if ($activeSession != null) {
                     $activeSession->setIsBeingRecorded(true);
-                    $activeSession->setLastRecordingId($recording->id);
+                    $activeSession->setLastRecordingId($recording->getId());
                 }
                 return $recording;
             case 404:
@@ -185,7 +185,7 @@ class OpenVidu
      * @throws Exceptions\OpenViduInvalidArgumentException
      */
     public function stopRecording(string $recordingId): Recording
-    {        
+    {
         $response = $this->client()->post(Uri::RECORDINGS_STOP.'/'.$recordingId);
         switch ($response->getStatusCode()) {
             case 200:
@@ -210,12 +210,12 @@ class OpenVidu
     /**
      * Gets an existing {@see Recording}
      * @param  string  $recordingId  The `id` property of the {@see Recording} you want to retrieve
-     * @return string
+     * @return Recording
+     * @throws Exceptions\OpenViduInvalidArgumentException
      * @throws OpenViduException
      * @throws OpenViduRecordingNotFoundException
-     * @throws Exceptions\OpenViduInvalidArgumentException
      */
-    public function getRecording(string $recordingId)
+    public function getRecording(string $recordingId): Recording
     {
         $response = $this->client()->get(Uri::RECORDINGS_URI.'/'.$recordingId);
         switch ($response->getStatusCode()) {
@@ -316,16 +316,16 @@ class OpenVidu
 
     /**
      * Sends signal to session with given SignalProperties
-     * @param SignalProperties $properties
+     * @param  SignalProperties  $properties
      * @return bool
      * @throws OpenViduException
      * @throws OpenViduProblemWithBodyParameterException
      * @throws OpenViduSessionHasNotConnectedParticipantsException
      * @throws OpenViduSessionNotFoundException
+     * @throws InvalidArgumentException
      */
     public function sendSignal(SignalProperties $properties): bool
     {
-        $activeSession = $this->getSession($properties->session());
         $response = $this->client()->post(Uri::SIGNAL_URI, [
             RequestOptions::JSON => $properties->toArray() ?? null
         ]);
@@ -342,7 +342,7 @@ class OpenVidu
                 throw new OpenViduSessionHasNotConnectedParticipantsException();
                 break;
             default:
-                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
     }
 }
