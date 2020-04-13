@@ -28,4 +28,9 @@ class Uri
      * https://openvidu.io/docs/reference-docs/REST-API/#post-apitokens
      */
     public const TOKEN_URI = 'api/tokens';
+
+    /**
+     * https://docs.openvidu.io/en/2.12.0/reference-docs/REST-API/#post-apisignal
+     */
+    public const SIGNAL_URI = 'api/signal';
 }
