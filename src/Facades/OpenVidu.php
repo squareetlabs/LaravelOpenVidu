@@ -22,6 +22,7 @@ use SquareetLabs\LaravelOpenVidu\SignalProperties;
  * @method static Recording startRecording(?RecordingProperties $properties = null)
  * @method static Recording stopRecording(string $recordingId)
  * @method static bool sendSignal(?SignalProperties $properties = null)
+ * @method static setClient(GuzzleHttp\Client $client)
  */
 class OpenVidu extends Facade
 {

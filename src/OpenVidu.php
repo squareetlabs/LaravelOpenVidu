@@ -25,6 +25,10 @@ use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionNotFoundException;
  */
 class OpenVidu
 {
+    /**
+     * @var Client
+     */
+    private $client;
 
     /**
      * @var
@@ -54,10 +58,22 @@ class OpenVidu
     }
 
     /**
+     * @param Client $client
+     */
+    public function setClient(Client $client)
+    {
+        $this->client = $client;
+    }
+
+    /**
      * @return Client
      */
     private function client(): Client
     {
+        if($this->client){
+            return $this->client;
+        }
+
         $client = new Client([
             'headers' => [
                 'Content-Type' => 'application/json',

@@ -38,6 +38,18 @@ class ParticipantJoined
     public $platform;
 
     /**
+     * @var string $clientData
+     * Additional data added client side while connecting to Session
+     */
+    public $clientData;
+
+    /**
+     * @var string $serverData
+     * Additional data added server side while generating Token
+     */
+    public $serverData;
+
+    /**
      * @var string $event
      * Openvidu server webhook event
      */
@@ -53,6 +65,9 @@ class ParticipantJoined
         $this->timestamp = $data['timestamp'];
         $this->participantId = $data['participantId'];
         $this->platform = $data['platform'];
+        $this->clientData = $data['clientData'] ?? "";
+        $this->serverData = $data['serverData'] ?? "";
         $this->event = $data['event'];
     }
 }
+
