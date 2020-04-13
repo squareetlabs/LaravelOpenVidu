@@ -7,6 +7,7 @@ use SquareetLabs\LaravelOpenVidu\Recording;
 use SquareetLabs\LaravelOpenVidu\RecordingProperties;
 use SquareetLabs\LaravelOpenVidu\Session;
 use SquareetLabs\LaravelOpenVidu\SessionProperties;
+use SquareetLabs\LaravelOpenVidu\SignalProperties;
 
 /**
  * Class LaravelOpenVidu
@@ -20,6 +21,7 @@ use SquareetLabs\LaravelOpenVidu\SessionProperties;
  * @method static array getRecordings()
  * @method static Recording startRecording(?RecordingProperties $properties = null)
  * @method static Recording stopRecording(string $recordingId)
+ * @method static bool sendSignal(?SignalProperties $properties = null)
  * @method static setClient(GuzzleHttp\Client $client)
  */
 class OpenVidu extends Facade

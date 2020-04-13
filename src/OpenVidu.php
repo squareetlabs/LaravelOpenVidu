@@ -10,6 +10,7 @@ use Psr\SimpleCache\InvalidArgumentException;
 use SquareetLabs\LaravelOpenVidu\Builders\RecordingBuilder;
 use SquareetLabs\LaravelOpenVidu\Enums\Uri;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduProblemWithBodyParameterException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingNotFoundException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingResolutionException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingStatusException;
@@ -310,6 +311,38 @@ class OpenVidu
             return Cache::store('openvidu')->getAll();
         } catch (Exception $e) {
             throw new OpenViduException("Make sure you have correctly configured the openvidu cache driver.", 500);
+        }
+    }
+
+    /**
+     * Sends signal to session with given SignalProperties
+     * @param SignalProperties $properties
+     * @return bool
+     * @throws OpenViduException
+     * @throws OpenViduProblemWithBodyParameterException
+     * @throws OpenViduSessionHasNotConnectedParticipantsException
+     * @throws OpenViduSessionNotFoundException
+     */
+    public function sendSignal(SignalProperties $properties): bool
+    {
+        $activeSession = $this->getSession($properties->session());
+        $response = $this->client()->post(Uri::SIGNAL_URI, [
+            RequestOptions::JSON => $properties->toArray() ?? null
+        ]);
+        switch ($response->getStatusCode()) {
+            case 200:
+                return true;
+            case 400:
+                throw new OpenViduProblemWithBodyParameterException();
+                break;
+            case 404:
+                throw new OpenViduSessionNotFoundException();
+                break;
+            case 406:
+                throw new OpenViduSessionHasNotConnectedParticipantsException();
+                break;
+            default:
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 }
