@@ -20,6 +20,7 @@ use SquareetLabs\LaravelOpenVidu\SessionProperties;
  * @method static array getRecordings()
  * @method static Recording startRecording(?RecordingProperties $properties = null)
  * @method static Recording stopRecording(string $recordingId)
+ * @method static setClient(GuzzleHttp\Client $client)
  */
 class OpenVidu extends Facade
 {
