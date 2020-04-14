@@ -42,13 +42,16 @@ class OpenVidu
 
     /**
      * @param  SessionProperties|null  $properties
+     * @param bool $force 
      * @return Session
      * @throws Exceptions\OpenViduException
      */
-    public function createSession(?SessionProperties $properties = null): Session
+    public function createSession(?SessionProperties $properties = null, $force = false): Session
     {
         $session = new Session($this->client(), $properties);
-        Cache::store('openvidu')->forever($session->getSessionId(), $session->toJson());
+        $sessionId = $session->getSessionId();
+        $sessionData = Cache::store('openvidu')->has($sessionId) && !$force ? $this->getSession($sessionId) : $session;
+        Cache::store('openvidu')->forever($session->getSessionId(), $sessionData->toJson());
         return $session;
     }
 
@@ -95,8 +98,8 @@ class OpenVidu
         $recording = RecordingBuilder::build(json_decode($recordingResponse->getBody()->getContents(), true));
                 
         if ($activeSession != null) {
-            $activeSession->setIsBeingRecorded(true);
-            $activeSession->setLastRecordingId($recording->getId());
+        $activeSession->setIsBeingRecorded(true);
+        $activeSession->setLastRecordingId($recording->getId());
         }
         return $recording;
     }

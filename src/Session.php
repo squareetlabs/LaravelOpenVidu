@@ -98,7 +98,7 @@ class Session implements JsonSerializable
         $this->getSessionId();
         try {
             if (!$tokenOptions) {
-                $tokenOptions = new TokenOptions(OpenViduRole::PUBLISHER);;
+                $tokenOptions = new TokenOptions(OpenViduRole::PUBLISHER);
             }
             $response = $this->client->post(Uri::TOKEN_URI, [
                 RequestOptions::JSON => array_merge($tokenOptions->toArray(), ['session' => $this->sessionId])
@@ -197,7 +197,7 @@ class Session implements JsonSerializable
      */
     public function toArray(): array
     {
-        $array = ['sessionId' => $this->sessionId, 'properties' => $this->properties->toArray(), 'recording' => $this->recording, 'createdAt' => $this->createdAt];
+        $array = ['sessionId' => $this->sessionId, 'properties' => $this->properties->toArray(), 'recording' => $this->recording, 'createdAt' => $this->createdAt, 'lastRecordingId'=>$this->lastRecordingId];
         foreach ($this->activeConnections as $connection) {
             $array['activeConnections'][] = $connection->toArray();
         }
@@ -228,6 +228,7 @@ class Session implements JsonSerializable
         $this->sessionId = $sessionArray['sessionId'];
         $this->createdAt = $sessionArray['createdAt'] ?? null;
         $this->recording = $sessionArray['recording'] ?? null;
+        $this->lastRecordingId = $sessionArray['lastRecordingId'] ?? null;
 
         if (array_key_exists('properties', $sessionArray)) {
             $this->properties = SessionPropertiesBuilder::build($sessionArray['properties']);
@@ -398,7 +399,7 @@ class Session implements JsonSerializable
         return $this->lastRecordingId;        
     }
 
-    public function setLastRecordingId(string $lastRecordingId) {
+    public function setLastRecordingId($lastRecordingId) {
         $this->lastRecordingId = $lastRecordingId;
         Cache::store('openvidu')->update($this->sessionId, $this->toJson());
     }
