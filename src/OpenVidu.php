@@ -47,16 +47,13 @@ class OpenVidu
 
     /**
      * @param  SessionProperties|null  $properties
-     * @param bool $force 
      * @return Session
      * @throws Exceptions\OpenViduException
      */
-    public function createSession(?SessionProperties $properties = null, $force = false): Session
+    public function createSession(?SessionProperties $properties = null): Session
     {
         $session = new Session($this->client(), $properties);
-        $sessionId = $session->getSessionId();
-        $sessionData = Cache::store('openvidu')->has($sessionId) && !$force ? $this->getSession($sessionId) : $session;
-        Cache::store('openvidu')->forever($session->getSessionId(), $sessionData->toJson());
+        Cache::store('openvidu')->forever($session->getSessionId(), $session->toJson());
         return $session;
     }
 
@@ -94,34 +91,6 @@ class OpenVidu
     }
 
     /**
-     * 
-     * @param Session $activeSession
-     * @return Recording
-     */
-    protected function getCurrentRecording($activeSession) {
-        $lastRecordingId = $activeSession->getLastRecordingId();
-        if (!$lastRecordingId) {
-            throw new OpenViduSessionCantRecordingException("The session is not configured for using media routed or has recording problems");
-        }
-        return $this->getRecording($lastRecordingId);
-    }
-
-    /**
-     * @param $recordingResponse
-     * @param Session $activeSession
-     * @return Recording
-     */
-    protected function startNewRecording($recordingResponse, $activeSession) {
-        $recording = RecordingBuilder::build(json_decode($recordingResponse->getBody()->getContents(), true));
-                
-        if ($activeSession != null) {
-            $activeSession->setIsBeingRecorded(true);
-            $activeSession->setLastRecordingId($recording->getId());
-        }
-        return $recording;
-    }
-
-    /**
      * Starts the recording of a {@see Session}
      * @param  RecordingProperties  $properties
      * @return Recording
@@ -138,14 +107,24 @@ class OpenVidu
     {
         $activeSession = $this->getSession($properties->session());
         if ($activeSession->isBeingRecorded()) {
-            return $this->getCurrentRecording($activeSession);
+            $lastRecordingId = $activeSession->getLastRecordingId();
+            if (!$lastRecordingId) {
+                throw new OpenViduSessionCantRecordingException("The session is not configured for using media routed or has recording problems");
+            }
+            return $this->getRecording($lastRecordingId);
         }
         $response = $this->client()->post(Uri::RECORDINGS_START, [
             RequestOptions::JSON => $properties->toArray() ?? null
         ]);
         switch ($response->getStatusCode()) {
             case 200:
-                return $this->startNewRecording($response, $activeSession);
+                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
+
+                if ($activeSession != null) {
+                    $activeSession->setIsBeingRecorded(true);
+                    $activeSession->setLastRecordingId($recording->getId());
+                }
+                return $recording;
             case 404:
                 throw new OpenViduSessionNotFoundException();
                 break;
