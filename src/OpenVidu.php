@@ -10,6 +10,7 @@ use Psr\SimpleCache\InvalidArgumentException;
 use SquareetLabs\LaravelOpenVidu\Builders\RecordingBuilder;
 use SquareetLabs\LaravelOpenVidu\Enums\Uri;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduProblemWithBodyParameterException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingNotFoundException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingResolutionException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduRecordingStatusException;
@@ -24,6 +25,10 @@ use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionNotFoundException;
  */
 class OpenVidu
 {
+    /**
+     * @var Client
+     */
+    private $client;
 
     /**
      * @var
@@ -56,10 +61,22 @@ class OpenVidu
     }
 
     /**
+     * @param  Client  $client
+     */
+    public function setClient(Client $client)
+    {
+        $this->client = $client;
+    }
+
+    /**
      * @return Client
      */
     private function client(): Client
     {
+        if ($this->client) {
+            return $this->client;
+        }
+
         $client = new Client([
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -98,8 +115,8 @@ class OpenVidu
         $recording = RecordingBuilder::build(json_decode($recordingResponse->getBody()->getContents(), true));
                 
         if ($activeSession != null) {
-        $activeSession->setIsBeingRecorded(true);
-        $activeSession->setLastRecordingId($recording->getId());
+            $activeSession->setIsBeingRecorded(true);
+            $activeSession->setLastRecordingId($recording->getId());
         }
         return $recording;
     }
@@ -189,7 +206,7 @@ class OpenVidu
      * @throws Exceptions\OpenViduInvalidArgumentException
      */
     public function stopRecording(string $recordingId): Recording
-    {        
+    {
         $response = $this->client()->post(Uri::RECORDINGS_STOP.'/'.$recordingId);
         switch ($response->getStatusCode()) {
             case 200:
@@ -214,12 +231,12 @@ class OpenVidu
     /**
      * Gets an existing {@see Recording}
      * @param  string  $recordingId  The `id` property of the {@see Recording} you want to retrieve
-     * @return string
+     * @return Recording
+     * @throws Exceptions\OpenViduInvalidArgumentException
      * @throws OpenViduException
      * @throws OpenViduRecordingNotFoundException
-     * @throws Exceptions\OpenViduInvalidArgumentException
      */
-    public function getRecording(string $recordingId)
+    public function getRecording(string $recordingId): Recording
     {
         $response = $this->client()->get(Uri::RECORDINGS_URI.'/'.$recordingId);
         switch ($response->getStatusCode()) {
@@ -315,6 +332,38 @@ class OpenVidu
             return Cache::store('openvidu')->getAll();
         } catch (Exception $e) {
             throw new OpenViduException("Make sure you have correctly configured the openvidu cache driver.", 500);
+        }
+    }
+
+    /**
+     * Sends signal to session with given SignalProperties
+     * @param  SignalProperties  $properties
+     * @return bool
+     * @throws OpenViduException
+     * @throws OpenViduProblemWithBodyParameterException
+     * @throws OpenViduSessionHasNotConnectedParticipantsException
+     * @throws OpenViduSessionNotFoundException
+     * @throws InvalidArgumentException
+     */
+    public function sendSignal(SignalProperties $properties): bool
+    {
+        $response = $this->client()->post(Uri::SIGNAL_URI, [
+            RequestOptions::JSON => $properties->toArray() ?? null
+        ]);
+        switch ($response->getStatusCode()) {
+            case 200:
+                return true;
+            case 400:
+                throw new OpenViduProblemWithBodyParameterException();
+                break;
+            case 404:
+                throw new OpenViduSessionNotFoundException();
+                break;
+            case 406:
+                throw new OpenViduSessionHasNotConnectedParticipantsException();
+                break;
+            default:
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
     }
 }

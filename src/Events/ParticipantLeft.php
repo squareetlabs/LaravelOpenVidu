@@ -38,6 +38,18 @@ class ParticipantLeft
     public $platform;
 
     /**
+     * @var string $clientData
+     * Additional data added client side while connecting to Session
+     */
+    public $clientData;
+
+    /**
+     * @var string $serverData
+     * Additional data added server side while generating Token
+     */
+    public $serverData;
+
+    /**
      * @var int $startTime
      * Time when the participant joined the session
      * UTC milliseconds
@@ -74,9 +86,12 @@ class ParticipantLeft
         $this->timestamp = $data['timestamp'];
         $this->participantId = $data['participantId'];
         $this->platform = $data['platform'];
+        $this->clientData = $data['clientData'] ?? "";
+        $this->serverData = $data['serverData'] ?? "";
         $this->startTime = $data['startTime'];
         $this->duration = $data['duration'];
         $this->reason = $data['reason'];
         $this->event = $data['event'];
     }
 }
+
