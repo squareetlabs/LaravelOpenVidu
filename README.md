@@ -54,8 +54,7 @@ return [
 ```
 Set `debug` to `true` if you want to debug OpenVidu API consumptions from Guzzle Client
 
-```
-Set `use_routes` to `false` if you don't want to use packages' default routes.
+Set `use_routes` to `false` if you don't want to use default defined routes.
 
 You must also add the openvidu cache driver to your `config/cache.php` file:
 ```php
