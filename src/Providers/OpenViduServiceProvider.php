@@ -25,7 +25,10 @@ class OpenViduServiceProvider extends ServiceProvider
         });
 
         $this->app->alias(OpenVidu::class, 'openVidu');
-        $this->registerRoutes();
+        //Default param added true due to the compatibly
+        if(config('services.openvidu.use_routes', true)){
+            $this->registerRoutes();
+        }
     }
 
     /**
