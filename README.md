@@ -47,11 +47,15 @@ return [
            'domain' => env('OPENVIDU_DOMAIN'), //Your OpenVidu Server machine public IP
            'port' => env('OPENVIDU_PORT'), //Listening port of your OpenVidu server, default 4443
            'secret' => env('OPENVIDU_SECRET'), //The password used to secure your OpenVidu Server
-           'debug' => env('OPENVIDU_DEBUG') // true or false
+           'debug' => env('OPENVIDU_DEBUG'), // true or false
+           'use_routes' => env('OPENVIDU_USE_ROUTES') // true or false
        ]
     ...
 ```
 Set `debug` to `true` if you want to debug OpenVidu API consumptions from Guzzle Client
+
+```
+Set `use_routes` to `false` if you don't want to use packages' default routes.
 
 You must also add the openvidu cache driver to your `config/cache.php` file:
 ```php
