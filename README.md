@@ -790,8 +790,8 @@ use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 ...
 /** @var string */
 $recordingName = "Recording of my session";
-$recordingProperties = new RecordingProperties($customSessionId, true,true, $recordingName, OutputMode::INDIVIDUAL)
-$recording = OpenVidu::startRecording($customSessionId);
+$recordingProperties = new RecordingProperties($customSessionId, $recordingName, OutputMode::INDIVIDUAL, RecordingLayout::BEST_FIT, '1920x1080', true, true, $customLayout)
+$recording = OpenVidu::startRecording($recordingProperties);
 ```
 
 
