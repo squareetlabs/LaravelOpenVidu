@@ -27,7 +27,7 @@ class OpenViduController extends Controller
      */
     public function token(GenerateTokenRequest $request)
     {
-        $session = OpenVidu::createSession(SessionPropertiesBuilder::build($request->get('session')), $request->get('force'));
+        $session = OpenVidu::createSession(SessionPropertiesBuilder::build($request->get('session')));
         $token = $session->generateToken(TokenOptionsBuilder::build($request->get('tokenOptions')));
         return Response::json(['token' => $token], 200);
     }

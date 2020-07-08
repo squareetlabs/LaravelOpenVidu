@@ -66,7 +66,6 @@ class RecordingProperties implements JsonSerializable
         return $this->session;
     }
 
-
     /**
      * Defines the name you want to give to the video file. You can access this same
      * value in your clients on recording events (<code>recordingStarted</code>,
