@@ -242,8 +242,8 @@ class Session implements JsonSerializable
                     $publishers[] = PublisherBuilder::build($publisher);
                 }
                 $subscribers = [];
-                foreach ($ensure->subscribers as $subscriber) {
-                    $subscribers[] = $subscriber->streamId;
+                foreach ($ensure->subscribers as $subscriber) {                
+                    $subscribers[] = $subscriber['streamId'];
                 }
                 $this->activeConnections[] = ConnectionBuilder::build($ensure, $publishers, $subscribers);
             }
