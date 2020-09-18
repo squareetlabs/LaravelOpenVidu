@@ -255,6 +255,7 @@ class Session implements JsonSerializable
                     $publishers[] = PublisherBuilder::build($publisher);
                 }
                 $subscribers = [];
+
                 foreach ($ensure['subscribers'] as $subscriber) {
                     $subscribers[] = SubscriberBuilder::build($subscriber);
                 }
