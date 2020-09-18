@@ -193,7 +193,7 @@ class OpenVidu
                 $activeSession = $this->getSession($recording->getSessionId());
                 if ($activeSession != null) {
                     $activeSession->setIsBeingRecorded(false);
-                    $activeSession->setLastRecordingId(null);
+                    $activeSession->setLastRecordingId($recordingId);
                 }
                 return $recording;
             case 404:
