@@ -5,7 +5,7 @@ namespace SquareetLabs\LaravelOpenVidu;
 use JsonSerializable;
 
 /**
- * Class Connection
+ * Class Publisher
  * @package SquareetLabs\LaravelOpenVidu
  * This is a backend representation of a published media stream (see [OpenVidu Browser Stream class](/api/openvidu-browser/classes/stream.html)
  * {@see Connection::getPublishers()}
@@ -119,8 +119,7 @@ class Publisher implements JsonSerializable
      */
     public function toJson($options = 0): string
     {
-        $json = json_encode($this->jsonSerialize(), $options);
-        return $json;
+        return json_encode($this->jsonSerialize(), $options);
     }
 
     /**

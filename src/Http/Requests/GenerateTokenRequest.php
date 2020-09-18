@@ -39,7 +39,7 @@ class GenerateTokenRequest extends /** @scrutinizer ignore-call */
         return [
             'session.mediaMode' => ['string', Rule::in([MediaMode::ROUTED, MediaMode::RELAYED])],
             'session.recordingMode' => ['string', Rule::in([RecordingMode::MANUAL, RecordingMode::ALWAYS])],
-            'session.defaultOutputMode' => ['string', Rule::in([OutputMode::COMPOSED, OutputMode::INDIVIDUAL])],
+            'session.defaultOutputMode' => ['string', Rule::in([OutputMode::COMPOSED, OutputMode::COMPOSED_QUICK_START, OutputMode::INDIVIDUAL])],
             'session.defaultRecordingLayout' => ['string', Rule::in([RecordingLayout::CUSTOM, RecordingLayout::BEST_FIT])],
             'session.defaultCustomLayout' => 'string',
             'session.customSessionId' => 'string',

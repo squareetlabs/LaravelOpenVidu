@@ -32,13 +32,13 @@ class RecordingProperties implements JsonSerializable
     /**
      * RecordingProperties constructor.
      * @param  string  $session
-     * @param  bool  $hasAudio
-     * @param  bool  $hasVideo
      * @param  string  $name
      * @param  string  $outputMode
      * @param  string  $recordingLayout
-     * @param  string  $resolution
-     * @param  string  $customLayout
+     * @param  string|null  $resolution
+     * @param  bool  $hasAudio
+     * @param  bool  $hasVideo
+     * @param  string|null  $customLayout
      */
     public function __construct(string $session, string $name, string $outputMode, string $recordingLayout, ?string $resolution = null, ?bool $hasAudio = true, ?bool $hasVideo = true, ?string $customLayout = null)
     {
@@ -59,10 +59,11 @@ class RecordingProperties implements JsonSerializable
 
     /**
      * Session name of the recording
-     * 
+     *
      * @return string
      */
-    public function session() {
+    public function session()
+    {
         return $this->session;
     }
 
@@ -79,7 +80,7 @@ class RecordingProperties implements JsonSerializable
     }
 
     /**
-     * Defines the mode of recording: {@see OutputMode::COMPOSED} for a
+     * Defines the mode of recording: {@see OutputMode::COMPOSED} or {@see OutputMode::COMPOSED_QUICK_START} for a
      * single archive in a grid layout or {@@see OutputMode::INDIVIDUAL}
      * for one archive for each stream.<br>
      * <br>
@@ -95,7 +96,7 @@ class RecordingProperties implements JsonSerializable
 
     /**
      * Defines the layout to be used in the recording.<br>
-     * Will only have effect if has been cealled with value {@see OutputMode::COMPOSED}.<br>
+     * Will only have effect if has been cealled with value {@see OutputMode::COMPOSED} or {@see OutputMode::COMPOSED_QUICK_START}.<br>
      * <br>
      *
      * Default to {@see RecordingLayout#BEST_FIT}
@@ -123,10 +124,9 @@ class RecordingProperties implements JsonSerializable
     /**
      * Defines the resolution of the recorded video.<br>
      * Will only have effect if has been called with value
-     * {@see  outputMode::COMPOSED}. For
-     * {@see  OutputMode::INDIVIDUAL} all
-     * individual video files will have the native resolution of the published
-     * stream.<br>
+     * {@see  outputMode::COMPOSED}.
+     * {@see  OutputMode::COMPOSED_QUICK_START}
+     * {@see  OutputMode::INDIVIDUAL}
      * <br>
      *
      * Default to "1920x1080"
@@ -174,8 +174,7 @@ class RecordingProperties implements JsonSerializable
      */
     public function toJson($options = 0): string
     {
-        $json = json_encode($this->jsonSerialize(), $options);
-        return $json;
+        return json_encode($this->jsonSerialize(), $options);
     }
 
     /**

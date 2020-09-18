@@ -4,12 +4,16 @@ namespace SquareetLabs\LaravelOpenVidu\Builders;
 
 use SquareetLabs\LaravelOpenVidu\Connection;
 
+/**
+ * Class ConnectionBuilder
+ * @package SquareetLabs\LaravelOpenVidu\Builders
+ */
 class ConnectionBuilder implements BuilderInterface
 {
     /**
      * @param  array  $properties
-     * @param  array  $publishers
-     * @param  array  $subscribers
+     * @param  array|null  $publishers
+     * @param  array|null  $subscribers
      * @return Connection
      */
     public static function build(array $properties, ?array $publishers = [], ?array $subscribers = [])

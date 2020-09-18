@@ -10,6 +10,7 @@ use JsonSerializable;
 use SquareetLabs\LaravelOpenVidu\Builders\ConnectionBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\PublisherBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\SessionPropertiesBuilder;
+use SquareetLabs\LaravelOpenVidu\Builders\SubscriberBuilder;
 use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
 use SquareetLabs\LaravelOpenVidu\Enums\OpenViduRole;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
@@ -18,7 +19,9 @@ use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
 use SquareetLabs\LaravelOpenVidu\Enums\Uri;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduConnectionNotFoundException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduProblemWithBodyParameterException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionNotFoundException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduStreamCantCloseException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduTokenCantCreateException;
 
 /**
@@ -74,6 +77,8 @@ class Session implements JsonSerializable
             switch ($response->getStatusCode()) {
                 case 200:
                     return json_decode($response->getBody()->getContents())->id;
+                case 400:
+                    throw  new OpenViduProblemWithBodyParameterException();
                 case 409:
                     return $this->properties->getCustomSessionId();
                 default:
@@ -98,12 +103,21 @@ class Session implements JsonSerializable
         $this->getSessionId();
         try {
             if (!$tokenOptions) {
-                $tokenOptions = new TokenOptions(OpenViduRole::PUBLISHER);;
+                $tokenOptions = new TokenOptions(OpenViduRole::PUBLISHER);
             }
             $response = $this->client->post(Uri::TOKEN_URI, [
                 RequestOptions::JSON => array_merge($tokenOptions->toArray(), ['session' => $this->sessionId])
             ]);
-            return json_decode($response->getBody()->getContents());
+            switch ($response->getStatusCode()) {
+                case 200:
+                    return json_decode($response->getBody()->getContents());
+                case 400:
+                    throw new OpenViduProblemWithBodyParameterException();
+                case 404:
+                    throw new OpenViduSessionNotFoundException();
+                default:
+                    throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+            }
         } catch (Exception $e) {
             throw new OpenViduTokenCantCreateException($e->getMessage(), $e);
         }
@@ -123,7 +137,6 @@ class Session implements JsonSerializable
                 return true;
             case 404:
                 throw new OpenViduSessionNotFoundException();
-                break;
             default:
                 throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
@@ -235,15 +248,15 @@ class Session implements JsonSerializable
 
         $this->activeConnections = [];
         if (array_key_exists('connections', $sessionArray)) {
-            foreach ($sessionArray['connections'] as $connection) {
+            foreach ($sessionArray['connections']['content'] as $connection) {
                 $publishers = [];
                 $ensure = $connection['content'] ?? $connection;
                 foreach ($ensure['publishers'] as $publisher) {
                     $publishers[] = PublisherBuilder::build($publisher);
                 }
                 $subscribers = [];
-                foreach ($ensure->subscribers as $subscriber) {
-                    $subscribers[] = $subscriber->streamId;
+                foreach ($ensure['subscribers'] as $subscriber) {
+                    $subscribers[] = SubscriberBuilder::build($subscriber);
                 }
                 $this->activeConnections[] = ConnectionBuilder::build($ensure, $publishers, $subscribers);
             }
@@ -274,10 +287,8 @@ class Session implements JsonSerializable
                 break;
             case 400:
                 throw new OpenViduSessionNotFoundException();
-                break;
             case 404:
                 throw new OpenViduConnectionNotFoundException();
-                break;
             default:
                 throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
@@ -305,6 +316,35 @@ class Session implements JsonSerializable
                     $con->unsubscribe($publisher->getStreamId());
                 }
             }
+        }
+    }
+
+
+    /**
+     * Allows publish a Stream (For now can only be IPCAM).
+     * Remember to call
+     * {@see fetch()} before to fetch the current
+     * actual properties of the Session from OpenVidu Server
+     *
+     * @param  IPCameraOptions  $IPCameraOptions
+     * @return Connection
+     * @throws OpenViduException
+     * @throws OpenViduSessionNotFoundException
+     */
+    public function publish(IPCameraOptions $IPCameraOptions)
+    {
+        $response = $this->client->post(Uri::SESSION_URI.'/'.$this->sessionId.'/connection', [
+            RequestOptions::JSON => array_merge($IPCameraOptions->toArray())
+        ]);
+        switch ($response->getStatusCode()) {
+            case 200:
+                return json_decode($response->getBody()->getContents());
+            case 400:
+                throw new OpenViduProblemWithBodyParameterException();
+            case 404:
+                throw new OpenViduSessionNotFoundException();
+            default:
+                throw new OpenViduException("Unexpected error when publishing the IP camera stream into the session.");
         }
     }
 
@@ -346,10 +386,10 @@ class Session implements JsonSerializable
                 break;
             case 400:
                 throw new OpenViduSessionNotFoundException();
-                break;
             case 404:
                 throw new OpenViduConnectionNotFoundException();
-                break;
+            case 405:
+                throw new OpenViduStreamCantCloseException("You cannot directly delete the stream of an IPCAM participant");
             default:
                 throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
@@ -394,11 +434,13 @@ class Session implements JsonSerializable
         Cache::store('openvidu')->update($this->sessionId, $this->toJson());
     }
 
-    public function getLastRecordingId() {
-        return $this->lastRecordingId;        
+    public function getLastRecordingId()
+    {
+        return $this->lastRecordingId;
     }
 
-    public function setLastRecordingId(string $lastRecordingId) {
+    public function setLastRecordingId(string $lastRecordingId)
+    {
         $this->lastRecordingId = $lastRecordingId;
         Cache::store('openvidu')->update($this->sessionId, $this->toJson());
     }

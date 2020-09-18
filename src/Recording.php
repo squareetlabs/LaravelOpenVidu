@@ -45,8 +45,8 @@ class Recording implements JsonSerializable
      * @param  string  $sessionId
      * @param  int  $createdAt
      * @param  int  $size
-     * @param  float  $duration
-     * @param  string  $url
+     * @param  float|null  $duration
+     * @param  string|null  $url
      * @param  RecordingProperties|null  $recordingProperties
      */
     public function __construct(string $id, string $sessionId, int $createdAt, int $size, ?float $duration, ?string $url, ?RecordingProperties $recordingProperties = null)

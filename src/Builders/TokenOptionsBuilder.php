@@ -2,6 +2,7 @@
 
 namespace SquareetLabs\LaravelOpenVidu\Builders;
 
+
 use SquareetLabs\LaravelOpenVidu\TokenOptions;
 
 /**

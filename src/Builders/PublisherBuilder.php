@@ -4,6 +4,10 @@ namespace SquareetLabs\LaravelOpenVidu\Builders;
 
 use SquareetLabs\LaravelOpenVidu\Publisher;
 
+/**
+ * Class PublisherBuilder
+ * @package SquareetLabs\LaravelOpenVidu\Builders
+ */
 class PublisherBuilder implements BuilderInterface
 {
     /**
@@ -14,13 +18,13 @@ class PublisherBuilder implements BuilderInterface
     {
         return new Publisher($properties['streamId'],
             $properties['createdAt'],
-            $properties['hasAudio'],
-            $properties['hasVideo'],
-            $properties['audioActive'],
-            $properties['videoActive'],
-            $properties['frameRate'],
-            $properties['typeOfVideo'],
-            $properties['videoDimensions']
+            $properties['mediaOptions']['hasAudio'],
+            $properties['mediaOptions']['hasVideo'],
+            $properties['mediaOptions']['audioActive'],
+            $properties['mediaOptions']['videoActive'],
+            $properties['mediaOptions']['frameRate'],
+            $properties['mediaOptions']['typeOfVideo'],
+            $properties['mediaOptions']['videoDimensions']
         );
     }
 }

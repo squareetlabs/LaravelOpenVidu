@@ -24,12 +24,12 @@ Once the package is added, the service provider and facade will be autodiscovere
 #### For Older versions of Laravel
 Add the ServiceProvider to the providers array in `config/app.php`:
 ```php
-SquareetLabs\LaravelOpenVidu\Providers\OpenViduServiceProvider::class,
+SquareetLabs\LaravelOpenVidu\Providers\OpenViduServiceProvider::class;
 ```
 
 Add the Facade to the aliases array in `config/app.php`:
 ```php
-'OpenVidu' => SquareetLabs\LaravelOpenVidu\Facades\LaravelOpenVidu::class,
+'OpenVidu' => SquareetLabs\LaravelOpenVidu\Facades\LaravelOpenVidu::class;
 ```
 ### Run migrations
 ```bash
@@ -40,7 +40,6 @@ php artisan migrate
 Add your OpenVidu Server configuration values to your `config/services.php` file:
 ```php
 return [   
-    ...
     ...
     'openvidu' => [
            'app' => env('OPENVIDU_APP'), //At the moment, always "OPENVIDUAPP"
@@ -60,7 +59,6 @@ You must also add the openvidu cache driver to your `config/cache.php` file:
 ```php
 return [   
     'stores' => [
-            ...
             ...
             'openvidu' => [
                    'driver' => 'openvidu',
@@ -508,8 +506,67 @@ Sample return:
                     
 ```
 
+###### 6-  Allows publish a Stream (For now can only be IPCAM).
 
-###### 6- Forces some user to unpublish a Stream.
+```bash
+
+---------------------------------------------------------------------------------
+Method:         POST
+---------------------------------------------------------------------------------
+Route name:     openvidu.sessions.session.publish
+---------------------------------------------------------------------------------
+Uri:            openvidu/session/{sessionId}/publish 
+---------------------------------------------------------------------------------
+Body:           {
+                   "rtspUri":"rtsp://check.squareet.com:1935/live/sys3.stream",
+                   "type":"IPCAM",
+                   "adaptativeBitrate":true,
+                   "onlyPlayWithSubscribers":true,
+                   "data":"Reception room"
+                 }
+---------------------------------------------------------------------------------
+Sample return:
+                 {
+                    "connection: {
+                       "connectionId":"ipc_IPCAM_rtsp_A8MJ_91_191_213_49_554_live_mpeg4_sdp",
+                       "createdAt":1538482432559,
+                       "location":"unknown",
+                       "platform":"IPCAM",
+                       "token":undefined,
+                       "role":"PUBLISHER",
+                       "serverData":"Reception room",
+                   
+                       "publishers":[
+                         {
+                            "createdAt":1582121476439,
+                            "streamId":"str_IPC_XC1W_ipc_IPCAM_rtsp_A8MJ_91_191_213_49_554_live_mpeg4_sdp",
+                            "rtspUri":"rtsp://91.191.213.49:554/live_mpeg4.sdp",
+                            "mediaOptions":{
+                               "hasAudio":true,
+                               "audioActive":true,
+                               "hasVideo":true,
+                               "videoActive":true,
+                               "typeOfVideo":"IPCAM",
+                               "frameRate":null,
+                               "videoDimensions":null,
+                               "filter":{
+                                  
+                               },
+                               "adaptativeBitrate":true,
+                               "onlyPlayWithSubscribers":true
+                            }
+                         }
+                      ],
+                      "subscribers":[
+                         
+                      ]
+                    }
+                }
+
+```
+
+
+###### 7- Forces some user to unpublish a Stream.
 
 ```bash
 
@@ -520,13 +577,12 @@ Route name:     openvidu.sessions.session.forceUnpublish
 ---------------------------------------------------------------------------------
 Uri:            openvidu/session/{sessionId}/forceUnpublish/{streamId}
 ---------------------------------------------------------------------------------
-Sample return:
-                'unpublished': true
+Sample return: 'unpublished': true
                     
 ```
 
 
-###### 7- Forces the user with connectionId to leave the session
+###### 8- Forces the user with connectionId to leave the session
 
 ```bash
 
@@ -537,13 +593,12 @@ Route name:     openvidu.sessions.session.forceDisconnect
 ---------------------------------------------------------------------------------
 Uri:            openvidu/session/{sessionId}/forceDisconnect/{connectionId}
 ---------------------------------------------------------------------------------
-Sample return:
-                'disconnected': true
+Sample return: 'disconnected': true
                     
 ```
 
 
-###### 8-  Gracefully closes the Session: unpublishes all streams and evicts every
+###### 9- Gracefully closes the Session: unpublish all streams and evicts every
 
 ```bash
 
@@ -554,13 +609,12 @@ Route name:     openvidu.sessions.session.close
 ---------------------------------------------------------------------------------
 Uri:            openvidu/session/{sessionId}/close
 ---------------------------------------------------------------------------------
-Sample return:
-                'closed': true
+Sample return:  'closed': true
                     
 ```
 
 
-###### 9- Checks if a session is being recorded
+###### 10- Checks if a session is being recorded
 
 ```bash
 
@@ -571,13 +625,12 @@ Route name:     openvidu.sessions.session.isBeingRecording
 ---------------------------------------------------------------------------------
 Uri:            openvidu/session/{sessionId}/isBeingRecording
 ---------------------------------------------------------------------------------
-Sample return:
-                'isBeingRecording': true
+Sample return:  'isBeingRecording': true
                     
 ```
 
 
-###### 10- Start recording a session
+###### 11- Start recording a session
 
 ```bash
 
@@ -620,7 +673,7 @@ Sample return:
 ```
 
 
-###### 11- Stop recording a session
+###### 12- Stop recording a session
 
 ```bash
 
@@ -651,7 +704,7 @@ Sample return:
 ```
 
 
-###### 12- Get the recording of a session
+###### 13- Get the recording of a session
 
 ```bash
 
@@ -682,7 +735,7 @@ Sample return:
 ```
 
 
-###### 13- Delete the recording of a session
+###### 14- Delete the recording of a session
 
 ```bash
 
@@ -697,6 +750,29 @@ Returns nothing
 
 ```
 
+###### 15- Sends signal to session 
+
+```bash
+
+---------------------------------------------------------------------------------
+Method:         POST
+---------------------------------------------------------------------------------
+Route name:     openvidu.sendsignal
+---------------------------------------------------------------------------------
+Uri:            openvidu/sendSignal
+---------------------------------------------------------------------------------
+Body:
+                {
+                   "session":"SESSION_ID",
+                   "to":["connectionId1", "connectionId2"],
+                   "type":"Test type",
+                   "data":"This is my signal test data"
+                }
+---------------------------------------------------------------------------------
+Sample return: "sent": true
+           
+```
+
 
 ### Using OpenVidu Facade
 
@@ -704,6 +780,10 @@ Returns nothing
 ```php
 use SquareetLabs\LaravelOpenVidu\Facades\OpenVidu;
 use SquareetLabs\LaravelOpenVidu\SessionProperties;
+use SquareetLabs\LaravelOpenVidu\Enums\MediaMode;
+use SquareetLabs\LaravelOpenVidu\Enums\RecordingMode;
+use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
+use SquareetLabs\LaravelOpenVidu\Enums\RecordingLayout;
 use Illuminate\Support\Str;
 ...
 /** var string */
@@ -755,6 +835,27 @@ $closed = $session->close();
 ```
 
 
+######  Publish a stream on session (For now only can be IPCAM)
+
+```php
+use SquareetLabs\LaravelOpenVidu\Facades\OpenVidu;
+use SquareetLabs\LaravelOpenVidu\IPCameraOptions;
+...
+/** @var string */
+$rtspUri = "rtsp://check.squareet.com:1935/live/sys3.stream";
+/** @var string */
+$type = "IPCAM";
+/** @var bool */
+$adaptativeBitrate = true;
+/** @var bool */
+$onlyPlayWithSubscribers = true;
+/** @var string */
+$data = "Reception room";
+$ipCamera = new IPCameraOptions($rtspUri,$type,$adaptativeBitrate,$onlyPlayWithSubscribers,$data);
+$session = OpenVidu::getSession($customSessionId);
+$connection = $session->publish($ipCamera);
+```
+
 ######  Forces some user to unpublish a Stream.
 
 ```php
@@ -790,6 +891,7 @@ $isBeingRecording = $session->isBeingRecording($connectionId);
 ```php
 use SquareetLabs\LaravelOpenVidu\Facades\OpenVidu;
 use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
+use SquareetLabs\LaravelOpenVidu\RecordingProperties;
 ...
 /** @var string */
 $recordingName = "Recording of my session";
@@ -826,6 +928,22 @@ use SquareetLabs\LaravelOpenVidu\Enums\OutputMode;
 OpenVidu::deleteRecording($recordingId);
 ```
 
+###### Sends signal to session 
+```php
+use SquareetLabs\LaravelOpenVidu\Facades\OpenVidu;
+use SquareetLabs\LaravelOpenVidu\SignalProperties;
+...
+/** @var string */
+$session = "SESSION_ID";
+/** @var array */
+$to = ["connectionId1", "connectionId2"];
+/** @var string */
+$type = "Test type";
+/** @var string */
+$data = "This is my signal test data";
+$signalProperties = new SignalProperties($session,  $data, $type, $to);
+$sent = OpenVidu::sendSignal($signalProperties);
+```
 
 ### Available Events
 At the moment of raising the OpenVidu server we can indicate multiple [configuration options](https://openvidu.io/docs/reference-docs/openvidu-server-params/), one of them is if we want to use the webhook service to receive events in an endpoint. In our case the default endpoint is _'/openvidu/webhook'_ 
@@ -855,7 +973,7 @@ class ParticipantJoinedListener
 }
 ```
 
-##### Event `ParticipantLeft` is launchedwhen a user has left a session.  Example of use:
+##### Event `ParticipantLeft` is launched when a user has left a session.  Example of use:
 
 ```php
 use SquareetLabs\LaravelOpenVidu\Events\ParticipantLeft;
@@ -939,7 +1057,7 @@ class SessionCreatedListener
 ```
 
 
-##### Event `SessionDestroyed` is launched when when a session has finished.  Example of use:
+##### Event `SessionDestroyed` is launched when a session has finished.  Example of use:
 
 ```php
 use SquareetLabs\LaravelOpenVidu\Events\SessionDestroyed;
@@ -963,7 +1081,7 @@ class SessionDestroyedListener
 }
 ```
 
-##### Event `WebRTCConnectionCreated` is launched hen a new media stream has been established. Can be an "INBOUND" connection (the user is receiving a stream from a publisher of the session) or an "OUTBOUND" connection (the user is a publishing a stream to the session).  Example of use:
+##### Event `WebRTCConnectionCreated` is launched when a new media stream has been established. Can be an "INBOUND" connection (the user is receiving a stream from a publisher of the session) or an "OUTBOUND" connection (the user is a publishing a stream to the session).  Example of use:
 
 ```php
 use SquareetLabs\LaravelOpenVidu\Events\WebRTCConnectionCreated;
@@ -992,7 +1110,7 @@ class WebRTCConnectionCreatedListener
 }
 ```
 
-##### Event `WebRTCConnectionCreated` is launched when  when any media stream connection is closed.  Example of use:
+##### Event `WebRTCConnectionCreated` is launched when any media stream connection is closed.  Example of use:
 
 ```php
 use SquareetLabs\LaravelOpenVidu\Events\WebRTCConnectionDestroyed;
@@ -1024,6 +1142,33 @@ class WebRTCConnectionDestroyedListener
 }
 ```
 
+
+##### Event `FilterEventDispatched` is launched when a filter event has been dispatched. This event can only be triggered if a filter has been applied to a stream and a listener has been added to a specific event offered by the filter.  Example of use:
+
+```php
+use SquareetLabs\LaravelOpenVidu\Events\FilterEventDispatched;
+
+class FilterEventDispatchedListener
+{
+    /**
+     * Handle the event.
+     *
+     * @param  FilterEventDispatched  $event
+     * @return void
+     */
+    public function handle(FilterEventDispatched $event)
+    {
+        $event->sessionId;      // Session for which the event was triggered
+        $event->timestamp;      // Time when the event was triggered
+        $event->participantId;	// Identifier of the participant
+        $event->streamId;	    // Identifier of the stream for which the filter is applied
+        $event->filterType;	    // Type of the filter applied to the stream
+        $event->data;	        // Data of the filter event
+    }
+}
+```
+
+
 Finally remember to add them to your `EventServiceProvider`:
 ````php
 protected $listen = [
@@ -1049,10 +1194,12 @@ protected $listen = [
         'SquareetLabs\LaravelOpenVidu\Events\WebRTCConnectionDestroyed' => [
             'App\Listeners\WebRTCConnectionDestroyedListener',
         ],
+        'SquareetLabs\LaravelOpenVidu\Events\FilterEventDispatched' => [
+            'App\Listeners\FilterEventDispatchedListener',
+        ],
         ...
     ];
 ````
-
 
 ## OpenVidu
 Visit [OpenVidu Documentation](https://openvidu.io/docs/home/) for more information.

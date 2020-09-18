@@ -4,15 +4,24 @@ namespace SquareetLabs\LaravelOpenVidu\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Response;
+use SquareetLabs\LaravelOpenVidu\Builders\PublishStreamBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\RecordingPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\SessionPropertiesBuilder;
+use SquareetLabs\LaravelOpenVidu\Builders\SignalPropertiesBuilder;
 use SquareetLabs\LaravelOpenVidu\Builders\TokenOptionsBuilder;
 use SquareetLabs\LaravelOpenVidu\Dispatchers\WebhookEventDispatcher;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduConnectionNotFoundException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException;
 use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduInvalidArgumentException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionNotFoundException;
+use SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduStreamTypeInvalidException;
 use SquareetLabs\LaravelOpenVidu\Facades\OpenVidu;
 use SquareetLabs\LaravelOpenVidu\Http\Requests\GenerateTokenRequest;
+use SquareetLabs\LaravelOpenVidu\Http\Requests\PublishStreamRequest;
+use SquareetLabs\LaravelOpenVidu\Http\Requests\SignalRequest;
 use SquareetLabs\LaravelOpenVidu\Http\Requests\StartRecordingRequest;
 use SquareetLabs\LaravelOpenVidu\Http\Requests\WebhookEventRequest;
+use SquareetLabs\LaravelOpenVidu\SignalProperties;
 
 /**
  * Class SmsUpReportController
@@ -23,7 +32,7 @@ class OpenViduController extends Controller
     /**
      * @param  GenerateTokenRequest  $request
      * @return string
-     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
+     * @throws OpenViduException
      */
     public function token(GenerateTokenRequest $request)
     {
@@ -65,7 +74,7 @@ class OpenViduController extends Controller
     /**
      * @param  string  $sessionId
      * @return string
-     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
+     * @throws OpenViduException
      */
     public function close(string $sessionId)
     {
@@ -98,13 +107,30 @@ class OpenViduController extends Controller
         return Response::json(['isBeingRecording' => $isBeingRecording], 200);
     }
 
+
+    /**
+     * @param  string  $sessionId
+     * @param  PublishStreamRequest  $request
+     * @return string
+     * @throws OpenViduException
+     * @throws OpenViduSessionNotFoundException
+     * @throws OpenViduStreamTypeInvalidException
+     */
+    public function publish(string $sessionId, PublishStreamRequest $request)
+    {
+        $session = OpenVidu::getSession($sessionId);
+        $connection = $session->publish(PublishStreamBuilder::build($request->all()));
+        return Response::json(['connection' => $connection], 200);
+    }
+
+
     /**
      * @param  string  $sessionId
      * @param  string  $streamId
      * @return string
-     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduConnectionNotFoundException
-     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
-     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduSessionNotFoundException
+     * @throws OpenViduConnectionNotFoundException
+     * @throws OpenViduException
+     * @throws OpenViduSessionNotFoundException
      */
     public function forceUnpublish(string $sessionId, string $streamId)
     {
@@ -117,7 +143,7 @@ class OpenViduController extends Controller
      * @param  string  $sessionId
      * @param  string  $connectionId
      * @return string
-     * @throws \SquareetLabs\LaravelOpenVidu\Exceptions\OpenViduException
+     * @throws OpenViduException
      */
     public function forceDisconnect(string $sessionId, string $connectionId)
     {
@@ -170,6 +196,16 @@ class OpenViduController extends Controller
         return Response::json(['recording' => $recording], 200);
     }
 
+    /**
+     * @param  SignalRequest  $request
+     * @return string
+     * @throws OpenViduInvalidArgumentException
+     */
+    public function signal(SignalRequest $request)
+    {
+        $sent = OpenVidu::sendSignal(SignalPropertiesBuilder::build($request->all()));
+        return Response::json(['sent' => $sent], 200);
+    }
 
     /**
      * @param  WebhookEventRequest  $request

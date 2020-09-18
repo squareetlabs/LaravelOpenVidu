@@ -3,6 +3,7 @@
 namespace SquareetLabs\LaravelOpenVidu\Dispatchers;
 
 use Illuminate\Support\Facades\Event;
+use SquareetLabs\LaravelOpenVidu\Events\FilterEventDispatched;
 use SquareetLabs\LaravelOpenVidu\Events\ParticipantJoined;
 use SquareetLabs\LaravelOpenVidu\Events\ParticipantLeft;
 use SquareetLabs\LaravelOpenVidu\Events\RecordingStatusChanged;
@@ -40,6 +41,9 @@ class WebhookEventDispatcher
                 break;
             case 'recordingStatusChanged':
                 Event::dispatch(new RecordingStatusChanged($webhookEvent));
+                break;
+            case 'filterEventDispatched':
+                Event::dispatch(new FilterEventDispatched($webhookEvent));
                 break;
         }
     }

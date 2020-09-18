@@ -12,7 +12,7 @@ class SignalProperties implements JsonSerializable
 {
     /** @var  string */
     private $session;
-    /** @var  string */
+    /** @var  array */
     private $to;
     /** @var  string */
     private $type;
@@ -21,12 +21,12 @@ class SignalProperties implements JsonSerializable
 
     /**
      * SignalProperties constructor.
-     * @param string $session
-     * @param string|null $data
-     * @param string|null $type
-     * @param string|null $to
+     * @param  string  $session
+     * @param  string|null  $data
+     * @param  string|null  $type
+     * @param  array|null  $to
      */
-    public function __construct(string $session, ?string $data = null, ?string $type = null, ?string $to = null)
+    public function __construct(string $session, ?string $data = null, ?string $type = null, ?array $to = null)
     {
         $this->session = $session;
         $this->data = $data;
@@ -47,14 +47,13 @@ class SignalProperties implements JsonSerializable
     /**
      * Convert the model instance to JSON.
      *
-     * @param int $options
+     * @param  int  $options
      * @return string
      *
      */
     public function toJson($options = 0): string
     {
-        $json = json_encode($this->jsonSerialize(), $options);
-        return $json;
+        return json_encode($this->jsonSerialize(), $options);
     }
 
     /**

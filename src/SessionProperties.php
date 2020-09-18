@@ -42,9 +42,9 @@ class SessionProperties implements JsonSerializable
      * @param  string  $mediaMode
      * @param  string  $recordingMode
      * @param  string  $defaultOutputMode
-     * @param  string  $defaultRecordingLayout
-     * @param  string  $defaultCustomLayout
-     * @param  string  $customSessionId
+     * @param  string|null  $defaultRecordingLayout
+     * @param  string|null  $customSessionId
+     * @param  string|null  $defaultCustomLayout
      */
     public function __construct(string $mediaMode, string $recordingMode, string $defaultOutputMode, ?string $defaultRecordingLayout, ?string $customSessionId = null, ?string $defaultCustomLayout = null)
     {

@@ -58,14 +58,6 @@ class OpenVidu
     }
 
     /**
-     * @param  Client  $client
-     */
-    public function setClient(Client $client)
-    {
-        $this->client = $client;
-    }
-
-    /**
      * @return Client
      */
     private function client(): Client
@@ -88,6 +80,14 @@ class OpenVidu
             'verify' => false
         ]);
         return $client;
+    }
+
+    /**
+     * @param  Client  $client
+     */
+    public function setClient(Client $client)
+    {
+        $this->client = $client;
     }
 
     /**
@@ -127,19 +127,14 @@ class OpenVidu
                 return $recording;
             case 404:
                 throw new OpenViduSessionNotFoundException();
-                break;
             case 406:
                 throw new OpenViduSessionHasNotConnectedParticipantsException();
-                break;
             case 409:
                 throw new OpenViduSessionCantRecordingException("The session is not configured for using media routed or it is already being recorded");
-                break;
             case 422:
                 throw new OpenViduRecordingResolutionException();
-                break;
             case 501:
                 throw new OpenViduServerRecordingIsDisabledException();
-                break;
             default:
                 throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
@@ -161,6 +156,26 @@ class OpenVidu
         throw new OpenViduSessionNotFoundException();
     }
 
+    /**
+     * Gets an existing {@see Recording}
+     * @param  string  $recordingId  The `id` property of the {@see Recording} you want to retrieve
+     * @return Recording
+     * @throws Exceptions\OpenViduInvalidArgumentException
+     * @throws OpenViduException
+     * @throws OpenViduRecordingNotFoundException
+     */
+    public function getRecording(string $recordingId): Recording
+    {
+        $response = $this->client()->get(Uri::RECORDINGS_URI.'/'.$recordingId);
+        switch ($response->getStatusCode()) {
+            case 200:
+                return RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
+            case 404:
+                throw new OpenViduRecordingNotFoundException();
+            default:
+                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+        }
+    }
 
     /**
      * Check if exists {@see Session}
@@ -193,38 +208,13 @@ class OpenVidu
                 $activeSession = $this->getSession($recording->getSessionId());
                 if ($activeSession != null) {
                     $activeSession->setIsBeingRecorded(false);
-                    $activeSession->setLastRecordingId(null);
+                    $activeSession->setLastRecordingId($recordingId);
                 }
                 return $recording;
             case 404:
                 throw new OpenViduRecordingNotFoundException();
-                break;
             case 406:
                 throw new OpenViduRecordingStatusException("The recording has `starting` status. Wait until `started` status before stopping the recording.");
-                break;
-            default:
-                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
-        }
-    }
-
-    /**
-     * Gets an existing {@see Recording}
-     * @param  string  $recordingId  The `id` property of the {@see Recording} you want to retrieve
-     * @return Recording
-     * @throws Exceptions\OpenViduInvalidArgumentException
-     * @throws OpenViduException
-     * @throws OpenViduRecordingNotFoundException
-     */
-    public function getRecording(string $recordingId): Recording
-    {
-        $response = $this->client()->get(Uri::RECORDINGS_URI.'/'.$recordingId);
-        switch ($response->getStatusCode()) {
-            case 200:
-                $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
-                return $recording;
-            case 404:
-                throw new OpenViduRecordingNotFoundException();
-                break;
             default:
                 throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }
@@ -322,7 +312,6 @@ class OpenVidu
      * @throws OpenViduProblemWithBodyParameterException
      * @throws OpenViduSessionHasNotConnectedParticipantsException
      * @throws OpenViduSessionNotFoundException
-     * @throws InvalidArgumentException
      */
     public function sendSignal(SignalProperties $properties): bool
     {
@@ -334,13 +323,10 @@ class OpenVidu
                 return true;
             case 400:
                 throw new OpenViduProblemWithBodyParameterException();
-                break;
             case 404:
                 throw new OpenViduSessionNotFoundException();
-                break;
             case 406:
                 throw new OpenViduSessionHasNotConnectedParticipantsException();
-                break;
             default:
                 throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
         }

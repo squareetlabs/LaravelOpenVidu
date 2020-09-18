@@ -14,16 +14,21 @@ class TokenOptions implements JsonSerializable
     private $data;
     /** @var  string */
     private $role;
+    /** @var  KurentoOptions */
+    private $kurentoOptions;
+
 
     /**
      * TokenOptions constructor.
      * @param  string  $role
-     * @param  string  $data
+     * @param  string|null  $data
+     * @param  KurentoOptions|null  $kurentoOptions
      */
-    public function __construct(string $role, ?string $data = null)
+    public function __construct(string $role, ?string $data = null, ?KurentoOptions $kurentoOptions = null)
     {
         $this->role = $role;
         $this->data = $data;
+        $this->kurentoOptions = $kurentoOptions;
     }
 
     /**
@@ -35,8 +40,7 @@ class TokenOptions implements JsonSerializable
      */
     public function toJson($options = 0): string
     {
-        $json = json_encode($this->jsonSerialize(), $options);
-        return $json;
+        return json_encode($this->jsonSerialize(), $options);
     }
 
     /**

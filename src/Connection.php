@@ -129,17 +129,14 @@ class Connection implements JsonSerializable
     }
 
     /**
-     * Remove subscribers  based on streamId
+     * Remove subscribers  based on publisher streamId
      * @param  string  $streamId
      */
     public function unsubscribe(string $streamId)
     {
         if (!empty($this->subscribers)) {
-            $this->subscribers = array_filter($this->subscribers, function ($subscriber) use ($streamId) {
-                if (is_string($subscriber)) {
-                    return $subscriber !== $streamId;
-                }
-                return $subscriber['streamId'] !== $streamId;
+            $this->subscribers = array_filter($this->subscribers, function (Subscriber $subscriber) use ($streamId) {
+                return $subscriber->getPublisherStreamId() !== $streamId;
             });
         }
     }
@@ -198,6 +195,37 @@ class Connection implements JsonSerializable
             }
         }
         return $array;
+    }
+
+    /**
+     * @param  string  $json
+     * @return Connection
+     */
+    public function fromJson(string $json): Connection
+    {
+        return $this->fromArray(json_decode($json, true));
+    }
+
+    /**
+     * @param  array  $connectionArray
+     * @return Connection
+     */
+    public function fromArray(array $connectionArray): Connection
+    {
+        $this->connectionId = $connectionArray['connectionId'];
+        $this->createdAt = $connectionArray['createdAt'] ?? null;
+        $this->role = $connectionArray['role'] ?? null;
+        $this->token = $connectionArray['token'] ?? null;
+        $this->location = $connectionArray['location'] ?? null;
+        $this->platform = $connectionArray['platform'] ?? null;
+        $this->serverData = $connectionArray['serverData'] ?? null;
+        $this->clientData = $connectionArray['clientData'] ?? null;
+
+
+        if (array_key_exists('subscribers', $connectionArray)) {
+            $this->subscribers = $connectionArray['subscribers'];
+        }
+        return $this;
     }
 
     /**

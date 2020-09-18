@@ -4,7 +4,7 @@ namespace SquareetLabs\LaravelOpenVidu\Events;
 
 
 /**
- * Class ParticipantJoined
+ * Class ParticipantLeft
  * @package SquareetLabs\LaravelOpenVidu\Events
  */
 class ParticipantLeft
