@@ -57,11 +57,14 @@ class Session implements JsonSerializable
      * @param  SessionProperties|null  $properties
      * @throws OpenViduException
      */
-    public function __construct(Client $client, ?SessionProperties $properties = null)
+    public function __construct(Client $client, bool $isGetSession, ?SessionProperties $properties = null)
     {
         $this->client = $client;
-        $this->properties = $properties ? $properties : new SessionProperties(MediaMode::ROUTED, RecordingMode::MANUAL, OutputMode::COMPOSED, RecordingLayout::BEST_FIT);
-        $this->sessionId = $this->getSessionId();
+
+        if (!$isGetSession) {
+            $this->properties = $properties ? $properties : new SessionProperties(MediaMode::ROUTED, RecordingMode::MANUAL, OutputMode::COMPOSED, RecordingLayout::BEST_FIT);
+            $this->sessionId = $this->getSessionId();
+        }
     }
 
     /**
