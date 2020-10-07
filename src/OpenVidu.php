@@ -151,7 +151,7 @@ class OpenVidu
     public function getSession(string $sessionId): Session
     {
         if (Cache::store('openvidu')->has($sessionId)) {
-            return (new Session($this->client()))->fromJson(Cache::store('openvidu')->get($sessionId));
+            return (new Session($this->client(), $sessionId))->fromJson(Cache::store('openvidu')->get($sessionId));
         }
         throw new OpenViduSessionNotFoundException();
     }
