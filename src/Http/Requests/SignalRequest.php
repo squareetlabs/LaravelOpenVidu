@@ -8,7 +8,8 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class SignalRequest
  * @package SquareetLabs\LaravelOpenVidu\Http\Requests
  */
-class SignalRequest extends /** @scrutinizer ignore-call */ FormRequest
+class SignalRequest extends /** @scrutinizer ignore-call */
+    FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

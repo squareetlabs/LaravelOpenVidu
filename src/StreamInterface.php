@@ -1,4 +1,5 @@
 <?php
+
 namespace SquareetLabs\LaravelOpenVidu;
 
 
@@ -10,12 +11,16 @@ interface StreamInterface
 {
     /** @return  string */
     public function getRtspUri();
+
     /** @return  string */
-    public function  getType();
+    public function getType();
+
     /** @return  bool */
-    public function  getAdaptativeBitrate();
+    public function getAdaptativeBitrate();
+
     /** @return  bool */
-    public function  getOnlyPlayWithSubscribers();
+    public function getOnlyPlayWithSubscribers();
+
     /** @return  string */
-    public function  getData();
+    public function getData();
 }

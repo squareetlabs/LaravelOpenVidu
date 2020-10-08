@@ -61,7 +61,7 @@ class Session implements JsonSerializable
     public function __construct(Client $client, ?string $sessionId = null, ?SessionProperties $properties = null)
     {
         $this->client = $client;
-        if(!$sessionId) {
+        if (!$sessionId) {
             $this->properties = $properties ? $properties : new SessionProperties(MediaMode::ROUTED, RecordingMode::MANUAL, OutputMode::COMPOSED, RecordingLayout::BEST_FIT);
             $this->sessionId = $this->getSessionId();
         }

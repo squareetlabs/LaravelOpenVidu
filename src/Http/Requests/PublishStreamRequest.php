@@ -8,7 +8,8 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class PublishStreamRequest
  * @package SquareetLabs\LaravelOpenVidu\Http\Requests
  */
-class PublishStreamRequest extends /** @scrutinizer ignore-call */ FormRequest
+class PublishStreamRequest extends /** @scrutinizer ignore-call */
+    FormRequest
 {
 
 

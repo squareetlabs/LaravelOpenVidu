@@ -21,7 +21,6 @@ use SquareetLabs\LaravelOpenVidu\Http\Requests\PublishStreamRequest;
 use SquareetLabs\LaravelOpenVidu\Http\Requests\SignalRequest;
 use SquareetLabs\LaravelOpenVidu\Http\Requests\StartRecordingRequest;
 use SquareetLabs\LaravelOpenVidu\Http\Requests\WebhookEventRequest;
-use SquareetLabs\LaravelOpenVidu\SignalProperties;
 
 /**
  * Class SmsUpReportController

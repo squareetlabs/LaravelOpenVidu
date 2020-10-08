@@ -52,7 +52,7 @@ class OpenVidu
      */
     public function createSession(?SessionProperties $properties = null): Session
     {
-        $session = new Session($this->client(),null, $properties);
+        $session = new Session($this->client(), null, $properties);
         Cache::store('openvidu')->forever($session->getSessionId(), $session->toJson());
         return $session;
     }
