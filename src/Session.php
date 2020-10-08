@@ -85,7 +85,7 @@ class Session implements JsonSerializable
                 case 409:
                     return $this->properties->getCustomSessionId();
                 default:
-                    throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+                    throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
             }
         } else {
             return $this->sessionId;
@@ -119,7 +119,7 @@ class Session implements JsonSerializable
                 case 404:
                     throw new OpenViduSessionNotFoundException();
                 default:
-                    throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+                    throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
             }
         } catch (Exception $e) {
             throw new OpenViduTokenCantCreateException($e->getMessage(), $e);
@@ -133,7 +133,7 @@ class Session implements JsonSerializable
      */
     public function close()
     {
-        $response = $this->client->delete(Uri::SESSION_URI.'/'.$this->sessionId);
+        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId);
         switch ($response->getStatusCode()) {
             case 204:
                 Cache::store('openvidu')->forget($this->sessionId);
@@ -163,7 +163,7 @@ class Session implements JsonSerializable
 
     public function fetch()
     {
-        $response = $this->client->get(Uri::SESSION_URI.'/'.$this->sessionId, [
+        $response = $this->client->get(Uri::SESSION_URI . '/' . $this->sessionId, [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
                 'Accept' => 'application/json',
@@ -278,7 +278,7 @@ class Session implements JsonSerializable
      */
     public function forceDisconnect(string $connectionId)
     {
-        $response = $this->client->delete(Uri::SESSION_URI.'/'.$this->sessionId.'/connection/'.$connectionId, [
+        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId . '/connection/' . $connectionId, [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
                 'Accept' => 'application/json',
@@ -294,7 +294,7 @@ class Session implements JsonSerializable
             case 404:
                 throw new OpenViduConnectionNotFoundException();
             default:
-                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -337,7 +337,7 @@ class Session implements JsonSerializable
      */
     public function publish(IPCameraOptions $IPCameraOptions)
     {
-        $response = $this->client->post(Uri::SESSION_URI.'/'.$this->sessionId.'/connection', [
+        $response = $this->client->post(Uri::SESSION_URI . '/' . $this->sessionId . '/connection', [
             RequestOptions::JSON => array_merge($IPCameraOptions->toArray())
         ]);
         switch ($response->getStatusCode()) {
@@ -374,7 +374,7 @@ class Session implements JsonSerializable
      */
     public function forceUnpublish(string $streamId)
     {
-        $response = $this->client->delete(Uri::SESSION_URI.'/'.$this->sessionId.'/stream/'.$streamId, [
+        $response = $this->client->delete(Uri::SESSION_URI . '/' . $this->sessionId . '/stream/' . $streamId, [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
                 'Accept' => 'application/json',
@@ -395,7 +395,7 @@ class Session implements JsonSerializable
             case 405:
                 throw new OpenViduStreamCantCloseException("You cannot directly delete the stream of an IPCAM participant");
             default:
-                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 

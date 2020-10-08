@@ -74,7 +74,7 @@ class OpenVidu
             'auth' => [
                 $this->config['app'], $this->config['secret']
             ],
-            'base_uri' => $this->config['domain'].':'.$this->config['port'],
+            'base_uri' => $this->config['domain'] . ':' . $this->config['port'],
             'debug' => $this->config['debug'],
             'http_errors' => false,
             'verify' => false
@@ -136,7 +136,7 @@ class OpenVidu
             case 501:
                 throw new OpenViduServerRecordingIsDisabledException();
             default:
-                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -166,14 +166,14 @@ class OpenVidu
      */
     public function getRecording(string $recordingId): Recording
     {
-        $response = $this->client()->get(Uri::RECORDINGS_URI.'/'.$recordingId);
+        $response = $this->client()->get(Uri::RECORDINGS_URI . '/' . $recordingId);
         switch ($response->getStatusCode()) {
             case 200:
                 return RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
             case 404:
                 throw new OpenViduRecordingNotFoundException();
             default:
-                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -201,7 +201,7 @@ class OpenVidu
      */
     public function stopRecording(string $recordingId): Recording
     {
-        $response = $this->client()->post(Uri::RECORDINGS_STOP.'/'.$recordingId);
+        $response = $this->client()->post(Uri::RECORDINGS_STOP . '/' . $recordingId);
         switch ($response->getStatusCode()) {
             case 200:
                 $recording = RecordingBuilder::build(json_decode($response->getBody()->getContents(), true));
@@ -216,7 +216,7 @@ class OpenVidu
             case 406:
                 throw new OpenViduRecordingStatusException("The recording has `starting` status. Wait until `started` status before stopping the recording.");
             default:
-                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -238,7 +238,7 @@ class OpenVidu
                 }
                 return $recordings;
             default:
-                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -253,7 +253,7 @@ class OpenVidu
      */
     public function deleteRecording(string $recordingId): bool
     {
-        $response = $this->client()->delete(Uri::RECORDINGS_URI.'/'.$recordingId);
+        $response = $this->client()->delete(Uri::RECORDINGS_URI . '/' . $recordingId);
 
         switch ($response->getStatusCode()) {
             case 200:
@@ -265,7 +265,7 @@ class OpenVidu
                 throw new OpenViduRecordingStatusException("The recording has `started` status. Stop it before deletion.");
                 break;
             default:
-                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 
@@ -328,7 +328,7 @@ class OpenVidu
             case 406:
                 throw new OpenViduSessionHasNotConnectedParticipantsException();
             default:
-                throw new OpenViduException("Invalid response status code ".$response->getStatusCode(), $response->getStatusCode());
+                throw new OpenViduException("Invalid response status code " . $response->getStatusCode(), $response->getStatusCode());
         }
     }
 }
