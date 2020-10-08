@@ -54,11 +54,11 @@ class Session implements JsonSerializable
     /**
      * Session constructor.
      * @param  Client  $client
-     * @param  int|null  $sessionId
+     * @param  string|null  $sessionId
      * @param  SessionProperties|null  $properties
      * @throws OpenViduException
      */
-    public function __construct(Client $client, int $sessionId = null, ?SessionProperties $properties = null)
+    public function __construct(Client $client, ?string $sessionId = null, ?SessionProperties $properties = null)
     {
         $this->client = $client;
         if(!$sessionId) {
