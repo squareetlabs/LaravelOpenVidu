@@ -41,6 +41,9 @@
     "illuminate/translation": "~5.8.0|^6.0|^7.0|^8.0",
     "illuminate/validation": "~5.8.0|^6.0|^7.0|^8.0"
   },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "3.5.8"
+  },
   "autoload": {
     "psr-4": {
       "SquareetLabs\\LaravelOpenVidu\\": "src"
