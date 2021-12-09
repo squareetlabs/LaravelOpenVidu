@@ -30,10 +30,10 @@
   "require": {
     "php": ">=7.2.5",
     "ext-json": "*",
-    "guzzlehttp/guzzle": "^v6.0|~7.0",
+    "guzzlehttp/guzzle": "^v6.0|~v7.0",
     "illuminate/cache": "^v6.0|^v7.0|^v8.0",
     "illuminate/config": "^v6.0|^v7.0|^v8.0",
-    "illuminate/database": "^v6.20.26|^v7.30.4|^v8.0",
+    "illuminate/database": "^v6.20.26|^v7.30.6|^v8.0",
     "illuminate/events": "^v6.0|^v7.0|^v8.0",
     "illuminate/http": "^v6.0|^v7.0|^v8.0",
     "illuminate/routing": "^v6.0|^v7.0|^v8.0",
