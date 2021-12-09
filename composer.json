@@ -30,16 +30,16 @@
   "require": {
     "php": ">=7.2.5",
     "ext-json": "*",
-    "guzzlehttp/guzzle": "~6.0|~7.0",
-    "illuminate/cache": "~5.8.0|^6.0|^7.0|^8.0",
-    "illuminate/config": "~5.8.0|^6.0|^7.0|^8.0",
-    "illuminate/database": "^6.20.26|^7.30|^8.0",
-    "illuminate/events": "~5.8.0|^6.0|^7.0|^8.0",
-    "illuminate/http": "~5.8.0|^6.0|^7.0|^8.0",
-    "illuminate/routing": "~5.8.0|^6.0|^7.0|^8.0",
-    "illuminate/support": "~5.8.0|^6.0|^7.0|^8.0",
-    "illuminate/translation": "~5.8.0|^6.0|^7.0|^8.0",
-    "illuminate/validation": "~5.8.0|^6.0|^7.0|^8.0"
+    "guzzlehttp/guzzle": "^v6.0|~7.0",
+    "illuminate/cache": "^v6.0|^v7.0|^v8.0",
+    "illuminate/config": "^v6.0|^v7.0|^v8.0",
+    "illuminate/database": "^v6.20.26|^v7.30.4|^v8.0",
+    "illuminate/events": "^v6.0|^v7.0|^v8.0",
+    "illuminate/http": "^v6.0|^v7.0|^v8.0",
+    "illuminate/routing": "^v6.0|^v7.0|^v8.0",
+    "illuminate/support": "^v6.0|^v7.0|^v8.0",
+    "illuminate/translation": "^v6.0|^v7.0|^v8.0",
+    "illuminate/validation": "^v6.0|^v7.0|^v8.0"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "3.5.8"
